@@ -5,7 +5,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, DRWin32, Grids, DRStringgrid, DRStandard, StdCtrls,
-  Mask, DRAdditional, Buttons, DRSpecial, ExtCtrls, DRColorTab;
+  Mask, DRAdditional, Buttons, DRSpecial, ExtCtrls, DRColorTab,
+  DRCodeControl;
 
 type
   TForm1 = class(TForm)
@@ -18,21 +19,19 @@ type
     DRBitBtn4: TDRBitBtn;
     DRFramePanel_Query: TDRFramePanel;
     DRLabel3: TDRLabel;
-    DRComboBox_SubDeptName: TDRComboBox;
     DRLabel5: TDRLabel;
     DRMaskEdit_Date1: TDRMaskEdit;
     DRComboBox1: TDRComboBox;
     DRLabel1: TDRLabel;
     DRPanel6: TDRPanel;
     DRPanel2: TDRPanel;
-    DRPanel_SndMailTitle: TDRPanel;
-    DRLabel_SndMail: TDRLabel;
-    DRSpeedBtn_SndMailDir: TDRSpeedButton;
-    DRSpeedBtn_Export: TDRSpeedButton;
-    DRSpeedBtn_SndMailRefresh: TDRSpeedButton;
-    DRSpeedBtn_SndMailPDFExport: TDRSpeedButton;
-    DRSpeedButton_SndMail: TDRSpeedButton;
-    DRStrGrid_SndMail: TDRStringGrid;
+    DRBitBtn5: TDRBitBtn;
+    DRLabel6: TDRLabel;
+    DRMaskEdit1: TDRMaskEdit;
+    DRLabel7: TDRLabel;
+    DRUserDblCodeCombo1: TDRUserDblCodeCombo;
+    DRPanel7: TDRPanel;
+    DRStrGrid_SntFaxTlx: TDRStringGrid;
     DRPanel4: TDRPanel;
     DRLabel_SntMail: TDRLabel;
     DRSpeedBtn_SntEmailPrint: TDRSpeedButton;
@@ -50,21 +49,24 @@ type
     DRRadioButton1: TDRRadioButton;
     DRRadioButton2: TDRRadioButton;
     DRRadioButton3: TDRRadioButton;
-    DRStrGrid_SntFaxTlx: TDRStringGrid;
+    DRPanel8: TDRPanel;
+    DRPanel_SndMailTitle: TDRPanel;
+    DRLabel_SndMail: TDRLabel;
+    DRSpeedBtn_SndMailDir: TDRSpeedButton;
+    DRSpeedBtn_Export: TDRSpeedButton;
+    DRSpeedBtn_SndMailRefresh: TDRSpeedButton;
+    DRSpeedBtn_SndMailPDFExport: TDRSpeedButton;
+    DRSpeedButton_SndMail: TDRSpeedButton;
     DRRadioButton4: TDRRadioButton;
     DRRadioButton5: TDRRadioButton;
     DRRadioButton6: TDRRadioButton;
-    DRLabel2: TDRLabel;
-    DRComboBox2: TDRComboBox;
-    DRPanel7: TDRPanel;
-    DRPanel8: TDRPanel;
-    DRLabel4: TDRLabel;
-    DRStringGrid2: TDRStringGrid;
-    DRBitBtn5: TDRBitBtn;
-    DRLabel6: TDRLabel;
     DRCheckBox1: TDRCheckBox;
-    DRMaskEdit1: TDRMaskEdit;
-    DRLabel7: TDRLabel;
+    DRStrGrid_SndMail_OnlyEmail: TDRStringGrid;
+    DRStrGrid_SndMail_OnlyFax: TDRStringGrid;
+    DRStrGrid_SndMail_NoSend: TDRStringGrid;
+    DRStrGrid_SndMail_Total: TDRStringGrid;
+    procedure FormCreate(Sender: TObject);
+    procedure DRCheckBox1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -77,5 +79,51 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TForm1.FormCreate(Sender: TObject);
+var
+  i: Integer;
+begin
+  // 사번
+  begin
+    DRUserDblCodeCombo1.AddItem('전체', '전체');
+    DRUserDblCodeCombo1.AddItem('975001', '금상1');
+    DRUserDblCodeCombo1.AddItem('975023', '금상2');
+    DRUserDblCodeCombo1.AddItem('000000', '금상3');
+    DRUserDblCodeCombo1.AddItem('123456', '금상4');
+  end;
+
+  begin
+    for i:= 0 to DRPanel8.ControlCount-1 do
+    begin
+      if DRPanel8.Controls[i] is TDRStringGrid then
+      begin
+        TDRStringGrid(DRPanel8.Controls[i]).Align := alClient;
+        if TDRStringGrid(DRPanel8.Controls[i]).Tag <> 0 then
+          TDRStringGrid(DRPanel8.Controls[i]).Visible := False;
+      end;
+    end;
+
+//    for i:= 0 to DRPanel8.ControlCount-1 do
+//    begin
+//      ShowMessage(DRPanel8.Controls[i].Name);
+//    end;
+
+
+  end;
+
+end;
+
+procedure TForm1.DRCheckBox1Click(Sender: TObject);
+begin
+  if (Sender as TDRCheckBox).Checked then
+  begin
+    DRStrGrid_SndMail_Total.Visible := False;
+    DRStrGrid_SndMail_NoSend.Visible := True;
+  end else begin
+    DRStrGrid_SndMail_Total.Visible := True;
+    DRStrGrid_SndMail_NoSend.Visible := False;
+  end;
+end;
 
 end.
