@@ -1,6 +1,6 @@
 object Form1: TForm1
-  Left = 593
-  Top = 186
+  Left = 2870
+  Top = 566
   Width = 978
   Height = 614
   Caption = '[9999] '#44552#50997#49345#54408' '#49569#49888' Manager'
@@ -147,7 +147,7 @@ object Form1: TForm1
   end
   object MessageBar: TDRMessageBar
     Left = 0
-    Top = 558
+    Top = 562
     Width = 970
     Height = 25
     Align = alBottom
@@ -304,7 +304,7 @@ object Form1: TForm1
     Left = 0
     Top = 67
     Width = 970
-    Height = 491
+    Height = 495
     Align = alClient
     BevelOuter = bvNone
     Font.Charset = DEFAULT_CHARSET
@@ -318,7 +318,7 @@ object Form1: TForm1
       Left = 0
       Top = 0
       Width = 970
-      Height = 491
+      Height = 495
       Align = alClient
       BevelOuter = bvNone
       Font.Charset = DEFAULT_CHARSET
@@ -332,7 +332,7 @@ object Form1: TForm1
         Left = 0
         Top = 257
         Width = 970
-        Height = 234
+        Height = 238
         Align = alClient
         Caption = 'DRPanel7'
         Font.Charset = DEFAULT_CHARSET
@@ -346,7 +346,7 @@ object Form1: TForm1
           Left = 1
           Top = 25
           Width = 968
-          Height = 208
+          Height = 212
           Align = alClient
           Color = clWhite
           ColCount = 13
@@ -517,7 +517,7 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434814977)
+            417933313)
         end
         object DRPanel4: TDRPanel
           Left = 1
@@ -1330,18 +1330,17 @@ object Form1: TForm1
             OnClick = DRCheckBox1Click
           end
         end
-        object DRStrGrid_SndMail_OnlyEmail: TDRStringGrid
-          Tag = 2
-          Left = 0
-          Top = 112
-          Width = 970
-          Height = 76
-          Align = alCustom
+        object DRStrGrid_SndMail_Total: TDRStringGrid
+          Left = 1
+          Top = 25
+          Width = 968
+          Height = 231
+          Align = alClient
           Color = clWhite
           ColCount = 11
           DefaultRowHeight = 18
           FixedCols = 0
-          RowCount = 6
+          RowCount = 7
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -1376,7 +1375,16 @@ object Form1: TForm1
           FixedAlignRow = {000002}
           Cells = (
             0
-            5
+            1
+            '>'
+            0
+            2
+            '>'
+            0
+            3
+            '>'
+            0
+            6
             '>'
             1
             0
@@ -1385,6 +1393,9 @@ object Form1: TForm1
             1
             '975001'
             1
+            3
+            '975001'
+            1
             5
             '975001'
             2
@@ -1394,208 +1405,101 @@ object Form1: TForm1
             1
             '11:24:00'
             2
+            3
+            '11:24:00'
+            2
             5
-            '11:24:02'
+            '11:24:00'
             3
             0
             #44228#51340#48264#54840
             3
             1
-            '99999999-98'
+            '12345678'
+            3
+            3
+            '12345678-12'
+            3
+            5
+            '12345678-12-1234'
             4
             0
             #44228#51340#47749
             4
             1
             #53580#49828#53944#44228#51340'1'
+            4
+            3
+            #53580#49828#53944#44228#51340'1-12'
+            4
+            5
+            #53580#49828#53944#44228#51340'1-12-1234'
             5
             0
             #51204#49569#44396#48516
             5
             1
-            'FAX'
+            'E-mail'
             5
             3
-            'FAX'
+            'E-mail'
             5
             5
             'E-mail'
             6
             0
-            #49688#49888#52376
+            #49688#49888#52376#47749
             6
             1
             #45936#51060#53552#47196#46300
             6
             3
-            #44592#44288'7'
+            #45936#51060#53552#47196#46300
             6
             5
-            #44592#44288'1'
+            #45936#51060#53552#47196#46300
             7
             0
-            #54057#49828#48264#54840'/'#47700#51068#51228#47785
+            #49688#49888#52376
             7
             1
-            '1234-5678'
+            'dr@dataroad.com'
             7
             3
-            '2222-3333'
+            'dr@dataroad.com'
             7
             5
-            #50504#45397#54616#49464#50836'.'
+            'dr@dataroad.com'
+            7
+            6
+            #13#10
             8
             0
             #48372#44256#49436#49436#49885
             8
             1
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
+            #48372#44256#49436'1'
             8
             2
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
+            #48372#44256#49436'2'
             8
             3
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
+            #48372#44256#49436'2'
             8
             4
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
+            #48372#44256#49436'3'
             8
             5
-            '['#52636#44552'] RP-'#50896#52380#51669#49688#50689#49688#51613
+            #48372#44256#49436'1'
+            8
+            6
+            #48372#44256#49436'2'
             9
             0
             #49436#48260#51204#49569
             9
             5
             #13#10
-            10
-            0
-            #54200#51665
-            10
-            5
-            '*')
-          FontCell = (
-            0
-            0
-            -2147483640
-            -12
-            #44404#47548#52404
-            0
-            434814977)
-        end
-        object DRStrGrid_SndMail_OnlyFax: TDRStringGrid
-          Tag = 3
-          Left = 0
-          Top = 24
-          Width = 970
-          Height = 76
-          Align = alCustom
-          Color = clWhite
-          ColCount = 11
-          DefaultRowHeight = 18
-          FixedCols = 0
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = #44404#47548#52404
-          Font.Style = []
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking]
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 2
-          AllowFixedRowClick = True
-          TopRow = 1
-          LeftCol = 0
-          SelectedCellColor = 16047570
-          SelectedFontColor = clBlack
-          ColWidths = (
-            14
-            51
-            59
-            76
-            139
-            54
-            104
-            175
-            160
-            72
-            33)
-          AlignCol = {
-            0000020100020200020300010400010500020600010700010800010900020A00
-            02}
-          AlignRow = {000002}
-          FixedAlignRow = {000002}
-          Cells = (
-            1
-            0
-            #49324#48264
-            1
-            1
-            '975001'
-            2
-            0
-            #49373#49457#49884#44036
-            2
-            1
-            '11:24:00'
-            3
-            0
-            #44228#51340#48264#54840
-            3
-            1
-            '99999999-98'
-            4
-            0
-            #44228#51340#47749
-            4
-            1
-            #53580#49828#53944#44228#51340'1'
-            5
-            0
-            #51204#49569#44396#48516
-            5
-            1
-            'FAX'
-            5
-            3
-            'FAX'
-            6
-            0
-            #49688#49888#52376
-            6
-            1
-            #45936#51060#53552#47196#46300
-            6
-            3
-            #44592#44288'7'
-            7
-            0
-            #54057#49828#48264#54840'/'#47700#51068#51228#47785
-            7
-            1
-            '1234-5678'
-            7
-            3
-            '2222-3333'
-            8
-            0
-            #48372#44256#49436#49436#49885
-            8
-            1
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
-            8
-            2
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
-            8
-            3
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
-            8
-            4
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
-            9
-            0
-            #49436#48260#51204#49569
             10
             0
             #54200#51665)
@@ -1606,366 +1510,7 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434814977)
-        end
-        object DRStrGrid_SndMail_NoSend: TDRStringGrid
-          Tag = 1
-          Left = 120
-          Top = 144
-          Width = 850
-          Height = 52
-          Align = alCustom
-          Color = clWhite
-          ColCount = 11
-          DefaultRowHeight = 18
-          FixedCols = 0
-          RowCount = 6
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = #44404#47548#52404
-          Font.Style = []
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking]
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 3
-          AllowFixedRowClick = True
-          TopRow = 1
-          LeftCol = 0
-          SelectedCellColor = 16047570
-          SelectedFontColor = clBlack
-          ColWidths = (
-            14
-            51
-            59
-            76
-            139
-            54
-            104
-            175
-            160
-            72
-            33)
-          AlignCol = {
-            0000020100020200020300010400010500020600010700010800010900020A00
-            02}
-          AlignRow = {000002}
-          FixedAlignRow = {000002}
-          Cells = (
-            0
-            5
-            '>'
-            1
-            0
-            #49324#48264
-            1
-            1
-            '975001'
-            1
-            5
-            '975001'
-            2
-            0
-            #49373#49457#49884#44036
-            2
-            1
-            '11:24:00'
-            2
-            5
-            '11:24:02'
-            3
-            0
-            #44228#51340#48264#54840
-            3
-            1
-            '99999999-98'
-            4
-            0
-            #44228#51340#47749
-            4
-            1
-            #53580#49828#53944#44228#51340'1'
-            5
-            0
-            #51204#49569#44396#48516
-            5
-            1
-            'FAX'
-            5
-            3
-            'FAX'
-            5
-            5
-            'E-mail'
-            6
-            0
-            #49688#49888#52376
-            6
-            1
-            #45936#51060#53552#47196#46300
-            6
-            3
-            #44592#44288'7'
-            6
-            5
-            #44592#44288'1'
-            7
-            0
-            #54057#49828#48264#54840'/'#47700#51068#51228#47785
-            7
-            1
-            '1234-5678'
-            7
-            3
-            '2222-3333'
-            7
-            5
-            #50504#45397#54616#49464#50836'.'
-            8
-            0
-            #48372#44256#49436#49436#49885
-            8
-            1
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
-            8
-            2
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
-            8
-            3
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
-            8
-            4
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
-            8
-            5
-            '['#52636#44552'] RP-'#50896#52380#51669#49688#50689#49688#51613
-            9
-            0
-            #49436#48260#51204#49569
-            9
-            5
-            #13#10
-            10
-            0
-            #54200#51665
-            10
-            5
-            '*')
-          FontCell = (
-            0
-            0
-            -2147483640
-            -12
-            #44404#47548#52404
-            0
-            434814977)
-        end
-        object DRStrGrid_SndMail_Total: TDRStringGrid
-          Left = 16
-          Top = 48
-          Width = 930
-          Height = 209
-          Align = alCustom
-          Color = clWhite
-          ColCount = 11
-          DefaultRowHeight = 18
-          FixedCols = 0
-          RowCount = 30
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = #44404#47548#52404
-          Font.Style = []
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking]
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 4
-          AllowFixedRowClick = True
-          TopRow = 1
-          LeftCol = 0
-          SelectedCellColor = 16047570
-          SelectedFontColor = clBlack
-          ColWidths = (
-            14
-            51
-            59
-            76
-            139
-            54
-            104
-            175
-            160
-            72
-            33)
-          AlignCol = {
-            0000020100020200020300010400010500020600010700010800010900020A00
-            02}
-          AlignRow = {000002}
-          FixedAlignRow = {000002}
-          Cells = (
-            0
-            5
-            '>'
-            1
-            0
-            #49324#48264
-            1
-            1
-            '975001'
-            1
-            5
-            '975001'
-            1
-            6
-            '975001'
-            1
-            7
-            '975001'
-            1
-            8
-            '975023'
-            2
-            0
-            #49373#49457#49884#44036
-            2
-            1
-            '11:24:00'
-            2
-            5
-            '11:24:02'
-            2
-            6
-            '11:24:11'
-            2
-            7
-            '11:24:25'
-            2
-            8
-            '11:35:57'
-            3
-            0
-            #44228#51340#48264#54840
-            3
-            1
-            '99999999-98'
-            3
-            8
-            '99999999-99'
-            4
-            0
-            #44228#51340#47749
-            4
-            1
-            #53580#49828#53944#44228#51340'1'
-            4
-            8
-            #53580#49828#53944#44228#51340'2'
-            5
-            0
-            #51204#49569#44396#48516
-            5
-            1
-            'FAX'
-            5
-            3
-            'FAX'
-            5
-            5
-            'E-mail'
-            5
-            8
-            'E-mail'#13#10
-            6
-            0
-            #49688#49888#52376
-            6
-            1
-            #45936#51060#53552#47196#46300
-            6
-            3
-            #44592#44288'7'
-            6
-            5
-            #44592#44288'1'
-            6
-            8
-            #44592#44288'3'
-            7
-            0
-            #54057#49828#48264#54840'/'#47700#51068#51228#47785
-            7
-            1
-            '1234-5678'
-            7
-            3
-            '2222-3333'
-            7
-            5
-            #50504#45397#54616#49464#50836'.'
-            7
-            6
-            #13#10
-            7
-            8
-            #48372#44256#49436' '#48372#45253#45768#45796'.'
-            8
-            0
-            #48372#44256#49436#49436#49885
-            8
-            1
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
-            8
-            2
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
-            8
-            3
-            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
-            8
-            4
-            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
-            8
-            5
-            '['#52636#44552'] RP-'#50896#52380#51669#49688#50689#49688#51613
-            8
-            6
-            '['#52636#44552'] '#51092#44256#51613#47749#49436
-            8
-            7
-            '['#51092#44256'] '#51092#44256#51613#47749#49436
-            8
-            8
-            '['#44592#53440'] '#51333#54633#44228#51340#51088#49328#54788#54889
-            9
-            0
-            #49436#48260#51204#49569
-            9
-            5
-            #13#10
-            9
-            6
-            '11:34:27'
-            9
-            7
-            '11:34:27'
-            9
-            8
-            '11:36:41'
-            10
-            0
-            #54200#51665
-            10
-            5
-            '*')
-          FontCell = (
-            0
-            0
-            -2147483640
-            -12
-            #44404#47548#52404
-            0
-            434814977)
+            417933313)
         end
       end
     end

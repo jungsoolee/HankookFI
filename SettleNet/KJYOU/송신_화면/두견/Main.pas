@@ -101,6 +101,13 @@ begin
           TDRStringGrid(DRPanel8.Controls[i]).Visible := False;
       end;
     end;
+
+//    for i:= 0 to DRPanel8.ControlCount-1 do
+//    begin
+//      ShowMessage(DRPanel8.Controls[i].Name);
+//    end;
+
+
   end;
 
 end;

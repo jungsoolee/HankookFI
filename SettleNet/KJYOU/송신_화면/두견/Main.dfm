@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 1117
-  Top = 204
-  Width = 1133
-  Height = 625
+  Left = 2870
+  Top = 566
+  Width = 978
+  Height = 614
   Caption = '[9999] '#44552#50997#49345#54408' '#49569#49888' Manager'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object Form1: TForm1
   object DRPanel1: TDRPanel
     Left = 0
     Top = 0
-    Width = 1125
+    Width = 970
     Height = 27
     Align = alTop
     BevelInner = bvLowered
@@ -30,7 +30,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 0
     DesignSize = (
-      1125
+      970
       27)
     object DRPanel3: TDRPanel
       Left = 1
@@ -51,7 +51,7 @@ object Form1: TForm1
       TabOrder = 0
     end
     object DRBitBtn1: TDRBitBtn
-      Left = 1059
+      Left = 904
       Top = 1
       Width = 65
       Height = 25
@@ -70,7 +70,7 @@ object Form1: TForm1
     end
     object DRBitBtn2: TDRBitBtn
       Tag = 2
-      Left = 992
+      Left = 837
       Top = 1
       Width = 67
       Height = 25
@@ -89,7 +89,7 @@ object Form1: TForm1
     end
     object DRBitBtn3: TDRBitBtn
       Tag = 2
-      Left = 925
+      Left = 770
       Top = 1
       Width = 67
       Height = 25
@@ -108,7 +108,7 @@ object Form1: TForm1
     end
     object DRBitBtn4: TDRBitBtn
       Tag = 2
-      Left = 858
+      Left = 703
       Top = 1
       Width = 67
       Height = 25
@@ -127,7 +127,7 @@ object Form1: TForm1
     end
     object DRBitBtn5: TDRBitBtn
       Tag = 2
-      Left = 778
+      Left = 623
       Top = 1
       Width = 80
       Height = 25
@@ -147,15 +147,15 @@ object Form1: TForm1
   end
   object MessageBar: TDRMessageBar
     Left = 0
-    Top = 573
-    Width = 1125
+    Top = 562
+    Width = 970
     Height = 25
     Align = alBottom
   end
   object DRFramePanel_Query: TDRFramePanel
     Left = 0
     Top = 27
-    Width = 1125
+    Width = 970
     Height = 40
     Align = alTop
     BevelInner = bvRaised
@@ -303,8 +303,8 @@ object Form1: TForm1
   object DRPanel6: TDRPanel
     Left = 0
     Top = 67
-    Width = 1125
-    Height = 506
+    Width = 970
+    Height = 495
     Align = alClient
     BevelOuter = bvNone
     Font.Charset = DEFAULT_CHARSET
@@ -317,8 +317,8 @@ object Form1: TForm1
     object DRPanel2: TDRPanel
       Left = 0
       Top = 0
-      Width = 1125
-      Height = 506
+      Width = 970
+      Height = 495
       Align = alClient
       BevelOuter = bvNone
       Font.Charset = DEFAULT_CHARSET
@@ -331,8 +331,8 @@ object Form1: TForm1
       object DRPanel7: TDRPanel
         Left = 0
         Top = 257
-        Width = 1125
-        Height = 249
+        Width = 970
+        Height = 238
         Align = alClient
         Caption = 'DRPanel7'
         Font.Charset = DEFAULT_CHARSET
@@ -345,8 +345,8 @@ object Form1: TForm1
         object DRStrGrid_SntFaxTlx: TDRStringGrid
           Left = 1
           Top = 25
-          Width = 1123
-          Height = 223
+          Width = 968
+          Height = 212
           Align = alClient
           Color = clWhite
           ColCount = 13
@@ -517,12 +517,12 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417943553)
+            418214913)
         end
         object DRPanel4: TDRPanel
           Left = 1
           Top = 1
-          Width = 1123
+          Width = 968
           Height = 24
           Align = alTop
           Font.Charset = DEFAULT_CHARSET
@@ -982,7 +982,7 @@ object Form1: TForm1
       object DRPanel8: TDRPanel
         Left = 0
         Top = 0
-        Width = 1125
+        Width = 970
         Height = 257
         Align = alTop
         Caption = 'DRPanel8'
@@ -996,7 +996,7 @@ object Form1: TForm1
         object DRPanel_SndMailTitle: TDRPanel
           Left = 1
           Top = 1
-          Width = 1123
+          Width = 968
           Height = 24
           Align = alTop
           Font.Charset = DEFAULT_CHARSET
@@ -1331,16 +1331,16 @@ object Form1: TForm1
           end
         end
         object DRStrGrid_SndMail_Total: TDRStringGrid
-          Left = 704
+          Left = 1
           Top = 25
-          Width = 265
-          Height = 80
-          Align = alCustom
+          Width = 968
+          Height = 231
+          Align = alClient
           Color = clWhite
           ColCount = 11
           DefaultRowHeight = 18
           FixedCols = 0
-          RowCount = 17
+          RowCount = 7
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -1496,10 +1496,25 @@ object Form1: TForm1
             #48372#44256#49436'2'
             9
             0
-            #49436#48260#51204#49569
+            'No.'
+            9
+            1
+            '1'
+            9
+            2
+            '2'
+            9
+            3
+            '3'
+            9
+            4
+            '4'
             9
             5
-            #13#10
+            '5'
+            9
+            6
+            '6'
             10
             0
             #54200#51665)
@@ -1510,19 +1525,26 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417943553)
+            418214913)
+          FontCol = (
+            9
+            255
+            -21
+            #44404#47548#52404
+            0
+            418215937)
         end
         object DRStringGrid1: TDRStringGrid
-          Left = 1
-          Top = 25
-          Width = 1123
-          Height = 231
-          Align = alClient
+          Left = 0
+          Top = 32
+          Width = 682
+          Height = 129
+          Align = alCustom
           Color = clWhite
           ColCount = 11
           DefaultRowHeight = 18
           FixedCols = 0
-          RowCount = 21
+          RowCount = 30
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -1533,6 +1555,7 @@ object Form1: TForm1
           ParentShowHint = False
           ShowHint = True
           TabOrder = 2
+          Visible = False
           AllowFixedRowClick = True
           TopRow = 1
           LeftCol = 0
@@ -1542,12 +1565,12 @@ object Form1: TForm1
             14
             51
             59
-            109
-            157
+            76
+            139
             54
             104
             175
-            263
+            160
             72
             33)
           AlignCol = {
@@ -1556,6 +1579,9 @@ object Form1: TForm1
           AlignRow = {000002}
           FixedAlignRow = {000002}
           Cells = (
+            0
+            5
+            '>'
             1
             0
             #49324#48264
@@ -1563,14 +1589,17 @@ object Form1: TForm1
             1
             '975001'
             1
-            12
-            '975023'
+            5
+            '975001'
             1
-            13
-            '975023'
+            6
+            '975001'
             1
-            16
-            '123456'
+            7
+            '975001'
+            1
+            8
+            '975023'
             2
             0
             #49373#49457#49884#44036
@@ -1578,56 +1607,35 @@ object Form1: TForm1
             1
             '11:24:00'
             2
-            12
-            '11:27:31'
+            5
+            '11:24:02'
             2
-            13
-            '11:30:24'
+            6
+            '11:24:11'
             2
-            16
-            '12:03:33'
+            7
+            '11:24:25'
+            2
+            8
+            '11:35:57'
             3
             0
             #44228#51340#48264#54840
             3
             1
-            '12345678'
+            '99999999-98'
             3
             8
-            '12345678-12'
-            3
-            10
-            '12345678-12-1234'
-            3
-            12
-            '00000000-00'
-            3
-            13
-            '00000000-00'
-            3
-            16
-            '99999999-99-9999'
+            '99999999-99'
             4
             0
             #44228#51340#47749
             4
             1
-            #45936#51060#53552#47196#46300'_'#44228#51340'_1'
+            #53580#49828#53944#44228#51340'1'
             4
             8
-            #45936#51060#53552#47196#46300'_'#44228#51340'_1_12'
-            4
-            10
-            #45936#51060#53552#47196#46300'_'#44228#51340'_1_12_1234'
-            4
-            12
-            #44221#45224#51008#54665'_'#44228#51340'_1'
-            4
-            13
-            #44221#45224#51008#54665'_'#44228#51340'_1'
-            4
-            16
-            #45936#51060#53552#47196#46300'_'#44592#44288'_1'
+            #53580#49828#53944#44228#51340'2'
             5
             0
             #51204#49569#44396#48516
@@ -1642,124 +1650,88 @@ object Form1: TForm1
             'E-mail'
             5
             8
-            'E-mail'
-            5
-            10
-            'E-mail'
-            5
-            12
-            'E-mail'
-            5
-            13
-            'FAX'
+            'E-mail'#13#10
             6
-            0
-            #49688#49888#52376#47749
-            6
-            1
-            #51064#44592#54596
-            6
-            3
-            #50976#44305#51652
-            6
-            5
-            #51064#44592#54596';'#50976#44305#51652';'
-            6
-            8
-            #51064#44592#54596';'#50976#44305#51652';'
-            6
-            10
-            #51064#44592#54596';'#50976#44305#51652';'
-            6
-            12
-            #51060#51221#49688';'
-            6
-            13
-            #51060#51221#49688
-            7
             0
             #49688#49888#52376
+            6
+            1
+            #45936#51060#53552#47196#46300
+            6
+            3
+            #44592#44288'7'
+            6
+            5
+            #44592#44288'1'
+            6
+            8
+            #44592#44288'3'
+            7
+            0
+            #54057#49828#48264#54840'/'#47700#51068#51228#47785
             7
             1
-            '0000-0000'
-            7
-            3
             '1234-5678'
             7
+            3
+            '2222-3333'
+            7
             5
-            'in@dr.com;yk@dr.com;'
+            #50504#45397#54616#49464#50836'.'
             7
             6
             #13#10
             7
             8
-            'in@dr.com;yk@dr.com;'
-            7
-            10
-            'in@dr.com;yk@dr.com;'
-            7
-            12
-            'js@naver.com;'
-            7
-            13
-            '9999-9999'
+            #48372#44256#49436' '#48372#45253#45768#45796'.'
             8
             0
             #48372#44256#49436#49436#49885
             8
             1
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
+            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
             8
             2
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
+            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
             8
             3
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
+            '['#51077#44552'] MMW'#49888#44508'-'#54869#51064#49436
             8
             4
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
+            '['#52636#44552'] RP-'#49688#51061#44552#44228#49328#49436
             8
             5
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
+            '['#52636#44552'] RP-'#50896#52380#51669#49688#50689#49688#51613
             8
             6
-            #51092#44256#54869#51064#49436
+            '['#52636#44552'] '#51092#44256#51613#47749#49436
             8
             7
-            #50896#52380#51669#49688#50689#49688#51613
+            '['#51092#44256'] '#51092#44256#51613#47749#49436
             8
             8
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            9
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            10
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            11
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            12
-            #51092#44256#51613#47749#49436
-            8
-            13
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            14
-            #51092#44256#54869#51064#49436
-            8
-            15
-            #50896#52380#51669#49688#50689#49688#51613
+            '['#44592#53440'] '#51333#54633#44228#51340#51088#49328#54788#54889
             9
             0
             #49436#48260#51204#49569
             9
             5
             #13#10
+            9
+            6
+            '11:34:27'
+            9
+            7
+            '11:34:27'
+            9
+            8
+            '11:36:41'
             10
             0
-            #54200#51665)
+            #54200#51665
+            10
+            5
+            '*')
           FontCell = (
             0
             0
@@ -1767,7 +1739,7 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417943553)
+            418214913)
         end
       end
     end

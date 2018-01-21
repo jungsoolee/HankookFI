@@ -61,9 +61,6 @@ type
     DRRadioButton5: TDRRadioButton;
     DRRadioButton6: TDRRadioButton;
     DRCheckBox1: TDRCheckBox;
-    DRStrGrid_SndMail_OnlyEmail: TDRStringGrid;
-    DRStrGrid_SndMail_OnlyFax: TDRStringGrid;
-    DRStrGrid_SndMail_NoSend: TDRStringGrid;
     DRStrGrid_SndMail_Total: TDRStringGrid;
     procedure FormCreate(Sender: TObject);
     procedure DRCheckBox1Click(Sender: TObject);
@@ -103,27 +100,20 @@ begin
           TDRStringGrid(DRPanel8.Controls[i]).Visible := False;
       end;
     end;
-
-//    for i:= 0 to DRPanel8.ControlCount-1 do
-//    begin
-//      ShowMessage(DRPanel8.Controls[i].Name);
-//    end;
-
-
   end;
 
 end;
 
 procedure TForm1.DRCheckBox1Click(Sender: TObject);
 begin
-  if (Sender as TDRCheckBox).Checked then
-  begin
-    DRStrGrid_SndMail_Total.Visible := False;
-    DRStrGrid_SndMail_NoSend.Visible := True;
-  end else begin
-    DRStrGrid_SndMail_Total.Visible := True;
-    DRStrGrid_SndMail_NoSend.Visible := False;
-  end;
+//  if (Sender as TDRCheckBox).Checked then
+//  begin
+//    DRStrGrid_SndMail_Total.Visible := False;
+//    DRStrGrid_SndMail_NoSend.Visible := True;
+//  end else begin
+//    DRStrGrid_SndMail_Total.Visible := True;
+//    DRStrGrid_SndMail_NoSend.Visible := False;
+//  end;
 end;
 
 end.
