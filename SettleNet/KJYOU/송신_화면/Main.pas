@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, DRWin32, Grids, DRStringgrid, DRStandard, StdCtrls,
   Mask, DRAdditional, Buttons, DRSpecial, ExtCtrls, DRColorTab,
-  DRCodeControl;
+  DRCodeControl, Math, SCCDllLib;
 
 type
   TForm1 = class(TForm)
@@ -33,17 +33,12 @@ type
     DRStringGrid_Tot_Sent: TDRStringGrid;
     DRPanel4: TDRPanel;
     DRLabel_SntMail: TDRLabel;
-    DRSpeedBtn_SntEmailPrint: TDRSpeedButton;
-    DRSpeedBtn_EmailResend: TDRSpeedButton;
-    DRSpeedBtn_EmailExport: TDRSpeedButton;
-    DRSpeedBtn_SntEmailSelect: TDRSpeedButton;
     DRSpeedBtn_SntMailRefresh: TDRSpeedButton;
     DRSpeedButton_SntMail: TDRSpeedButton;
     DRPanel5: TDRPanel;
     DRRadioBtn_EmailSend: TDRRadioButton;
     DRRadioBtn_EmailError: TDRRadioButton;
     DRRadioBtn_EmailAll: TDRRadioButton;
-    DRCheckBox_EmailTotFreq: TDRCheckBox;
     DRRadioButton1: TDRRadioButton;
     DRRadioButton2: TDRRadioButton;
     DRRadioButton3: TDRRadioButton;
@@ -70,12 +65,13 @@ type
     DRStringGrid7: TDRStringGrid;
     DRStringGrid8: TDRStringGrid;
     DRStringGrid9: TDRStringGrid;
-    DRStringGrid10: TDRStringGrid;
     DRStringGrid11: TDRStringGrid;
     DRSplitter1: TDRSplitter;
     DRBitBtn6: TDRBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure DRStringGrid_Tot_SendDrawCell(Sender: TObject; ACol,
+      ARow: Integer; Rect: TRect; State: TGridDrawState);
+    procedure DRStringGrid_Tot_SentDrawCell(Sender: TObject; ACol,
       ARow: Integer; Rect: TRect; State: TGridDrawState);
   private
     { Private declarations }
@@ -142,7 +138,7 @@ begin
         SetStrGrid(TDRStringGrid(DRPanel8.Controls[i]), TDRStringGrid(DRPanel8.Controls[i]).Tag);
         TDRStringGrid(DRPanel8.Controls[i]).Align := alClient;
         TDRStringGrid(DRPanel8.Controls[i]).Visible := True;
-        if TDRStringGrid(DRPanel8.Controls[i]).Tag <> 1 then
+        if TDRStringGrid(DRPanel8.Controls[i]).Tag <> 0 then
           TDRStringGrid(DRPanel8.Controls[i]).Visible := False
           ;
       end;
@@ -454,7 +450,7 @@ begin
     end;
 
     Cells[1,  1] := '975001';
-    Cells[1,  2] := '975023';
+    Cells[1, 16] := '975023';
 
     Cells[2,  1] := '12345678';
     Cells[2,  7] := '12345678-12';
@@ -611,6 +607,45 @@ begin
     Cells[13, 17] := '-';
     Cells[13, 18] := '-';
 
+    ColWidths[7] := -1;
+  end;
+end;
+
+procedure TForm1.DRStringGrid_Tot_SentDrawCell(Sender: TObject; ACol,
+  ARow: Integer; Rect: TRect; State: TGridDrawState);
+var
+  iTemp: Integer;
+begin
+  if (ACol = 12) then
+  begin
+    if (ARow <> 0) then
+    begin
+      if Pos('F', Trim(TDRStringGrid(Sender).Cells[Acol, ARow])) > 0 then
+      begin
+        iTemp  := (Sender as TDRStringGrid).Canvas.TextWidth(Trim(TDRStringGrid(Sender).Cells[Acol, ARow]));
+        TDRStringGrid(Sender).Canvas.Font.Color := clBlue;
+        TDRStringGrid(Sender).Canvas.FillRect(Rect);
+        TDRStringGrid(Sender).Canvas.TextOut(Rect.Left + Round(iTemp/2), Rect.Top+2, TDRStringGrid(Sender).Cells[ACol, ARow]);
+      end else if Pos('S', Trim(TDRStringGrid(Sender).Cells[Acol, ARow])) > 0 then
+      begin
+        iTemp  := (Sender as TDRStringGrid).Canvas.TextWidth(Trim(TDRStringGrid(Sender).Cells[Acol, ARow]));
+        TDRStringGrid(Sender).Canvas.Font.Color := $3399FF;
+        TDRStringGrid(Sender).Canvas.FillRect(Rect);
+        TDRStringGrid(Sender).Canvas.TextOut(Rect.Left + Round(iTemp/5), Rect.Top+2, TDRStringGrid(Sender).Cells[ACol, ARow]);
+      end else if Pos('W', Trim(TDRStringGrid(Sender).Cells[Acol, ARow])) > 0 then
+      begin
+        iTemp  := (Sender as TDRStringGrid).Canvas.TextWidth(Trim(TDRStringGrid(Sender).Cells[Acol, ARow]));
+        TDRStringGrid(Sender).Canvas.Font.Color := $669900;
+        TDRStringGrid(Sender).Canvas.FillRect(Rect);
+        TDRStringGrid(Sender).Canvas.TextOut(Rect.Left + Round(iTemp/4), Rect.Top+2, TDRStringGrid(Sender).Cells[ACol, ARow]);
+      end else if Pos('E', Trim(TDRStringGrid(Sender).Cells[Acol, ARow])) > 0 then
+      begin
+        iTemp  := (Sender as TDRStringGrid).Canvas.TextWidth(Trim(TDRStringGrid(Sender).Cells[Acol, ARow]));
+        TDRStringGrid(Sender).Canvas.Font.Color := clRed;
+        TDRStringGrid(Sender).Canvas.FillRect(Rect);
+        TDRStringGrid(Sender).Canvas.TextOut(Rect.Left + Round(iTemp/1.5), Rect.Top+2, TDRStringGrid(Sender).Cells[ACol, ARow]);
+      end;
+    end;
   end;
 end;
 

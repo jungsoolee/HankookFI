@@ -1,8 +1,8 @@
 object Form1: TForm1
-  Left = 326
-  Top = 79
-  Width = 1160
-  Height = 978
+  Left = 2675
+  Top = 390
+  Width = 1242
+  Height = 852
   Caption = '[9999] '#44552#50997#49345#54408' '#49569#49888' Manager'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object Form1: TForm1
   object DRPanel1: TDRPanel
     Left = 0
     Top = 0
-    Width = 1152
+    Width = 1234
     Height = 27
     Align = alTop
     BevelInner = bvLowered
@@ -30,7 +30,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 0
     DesignSize = (
-      1152
+      1234
       27)
     object DRPanel3: TDRPanel
       Left = 1
@@ -51,7 +51,7 @@ object Form1: TForm1
       TabOrder = 0
     end
     object DRBitBtn1: TDRBitBtn
-      Left = 1086
+      Left = 1168
       Top = 1
       Width = 65
       Height = 25
@@ -70,7 +70,7 @@ object Form1: TForm1
     end
     object DRBitBtn2: TDRBitBtn
       Tag = 2
-      Left = 1019
+      Left = 1101
       Top = 1
       Width = 67
       Height = 25
@@ -89,7 +89,7 @@ object Form1: TForm1
     end
     object DRBitBtn3: TDRBitBtn
       Tag = 2
-      Left = 952
+      Left = 1034
       Top = 1
       Width = 67
       Height = 25
@@ -108,7 +108,7 @@ object Form1: TForm1
     end
     object DRBitBtn4: TDRBitBtn
       Tag = 2
-      Left = 885
+      Left = 967
       Top = 1
       Width = 67
       Height = 25
@@ -127,7 +127,7 @@ object Form1: TForm1
     end
     object DRBitBtn5: TDRBitBtn
       Tag = 2
-      Left = 768
+      Left = 850
       Top = 1
       Width = 117
       Height = 25
@@ -146,7 +146,7 @@ object Form1: TForm1
     end
     object DRBitBtn6: TDRBitBtn
       Tag = 2
-      Left = 642
+      Left = 724
       Top = 1
       Width = 125
       Height = 25
@@ -166,15 +166,15 @@ object Form1: TForm1
   end
   object MessageBar: TDRMessageBar
     Left = 0
-    Top = 922
-    Width = 1152
+    Top = 800
+    Width = 1234
     Height = 25
     Align = alBottom
   end
   object DRFramePanel_Query: TDRFramePanel
     Left = 0
     Top = 27
-    Width = 1152
+    Width = 1234
     Height = 40
     Align = alTop
     BevelInner = bvRaised
@@ -318,8 +318,8 @@ object Form1: TForm1
   object DRPanel6: TDRPanel
     Left = 0
     Top = 67
-    Width = 1152
-    Height = 855
+    Width = 1234
+    Height = 733
     Align = alClient
     BevelOuter = bvNone
     Font.Charset = DEFAULT_CHARSET
@@ -332,8 +332,8 @@ object Form1: TForm1
     object DRPanel2: TDRPanel
       Left = 0
       Top = 0
-      Width = 1152
-      Height = 855
+      Width = 1234
+      Height = 733
       Align = alClient
       BevelOuter = bvNone
       Font.Charset = DEFAULT_CHARSET
@@ -345,17 +345,17 @@ object Form1: TForm1
       TabOrder = 0
       object DRSplitter1: TDRSplitter
         Left = 0
-        Top = 491
-        Width = 1152
+        Top = 358
+        Width = 1234
         Height = 2
         Cursor = crVSplit
         Align = alBottom
       end
       object DRPanel7: TDRPanel
         Left = 0
-        Top = 493
-        Width = 1152
-        Height = 362
+        Top = 360
+        Width = 1234
+        Height = 373
         Align = alBottom
         Caption = 'DRPanel7'
         Font.Charset = DEFAULT_CHARSET
@@ -368,9 +368,9 @@ object Form1: TForm1
         object DRStringGrid_Tot_Sent: TDRStringGrid
           Left = 1
           Top = 25
-          Width = 1144
-          Height = 280
-          Align = alCustom
+          Width = 1232
+          Height = 347
+          Align = alClient
           Color = clWhite
           ColCount = 14
           DefaultRowHeight = 18
@@ -386,6 +386,7 @@ object Form1: TForm1
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
+          OnDrawCell = DRStringGrid_Tot_SentDrawCell
           AllowFixedRowClick = True
           TopRow = 1
           LeftCol = 0
@@ -400,14 +401,14 @@ object Form1: TForm1
             103
             178
             32
-            145
+            257
             63
             61
-            76
+            53
             69
-            49)
+            47)
           AlignCol = {
-            0000020100020200010300010400020500010600010700020800020900020A00
+            0000020100020200010300010400020500010600010700020800010900020A00
             020B00020C00020D0002}
           FixedAlignRow = {000002}
           Cells = (
@@ -455,7 +456,7 @@ object Form1: TForm1
             'E-mail'
             5
             0
-            #49688#49888#52376
+            #49688#49888#52376#47749
             5
             1
             #45936#51060#53552#47196#46300
@@ -467,7 +468,7 @@ object Form1: TForm1
             #44592#44288'3'
             6
             0
-            #54057#49828#48264#54840'/'#47700#51068#51228#47785
+            #49688#49888#52376
             6
             1
             '1234-5678'
@@ -492,6 +493,9 @@ object Form1: TForm1
             8
             0
             #48372#44256#49436#49436#49885
+            8
+            1
+            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
             9
             0
             #49884#51089#49884#51089
@@ -544,12 +548,12 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337)
+            417933313)
         end
         object DRPanel4: TDRPanel
           Left = 1
           Top = 1
-          Width = 1150
+          Width = 1232
           Height = 24
           Align = alTop
           Font.Charset = DEFAULT_CHARSET
@@ -559,6 +563,9 @@ object Form1: TForm1
           Font.Style = []
           ParentFont = False
           TabOrder = 1
+          DesignSize = (
+            1232
+            24)
           object DRLabel_SntMail: TDRLabel
             Left = 15
             Top = 7
@@ -572,138 +579,14 @@ object Form1: TForm1
             Font.Style = [fsBold]
             ParentFont = False
           end
-          object DRSpeedBtn_SntEmailPrint: TDRSpeedButton
-            Tag = 1
-            Left = 533
-            Top = 3
-            Width = 23
-            Height = 20
-            Hint = #51064#49604
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #44404#47548#52404
-            Font.Style = []
-            Glyph.Data = {
-              76010000424D7601000000000000760000002800000020000000100000000100
-              04000000000000010000130B0000130B00001000000000000000000000000000
-              800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
-              FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00300000000000
-              00033FFFFFFFFFFFFFFF0888888888888880777777777777777F088888888888
-              8880777777777777777F0000000000000000FFFFFFFFFFFFFFFF0F8F8F8F8F8F
-              8F80777777777777777F08F8F8F8F8F8F9F0777777777777777F0F8F8F8F8F8F
-              8F807777777777777F7F0000000000000000777777777777777F3330FFFFFFFF
-              03333337F3FFFF3F7F333330F0000F0F03333337F77773737F333330FFFFFFFF
-              03333337F3FF3FFF7F333330F00F000003333337F773777773333330FFFF0FF0
-              33333337F3FF7F3733333330F08F0F0333333337F7737F7333333330FFFF0033
-              33333337FFFF7733333333300000033333333337777773333333}
-            NumGlyphs = 2
-            ParentFont = False
-            ParentShowHint = False
-            ShowHint = True
-            Visible = False
-          end
-          object DRSpeedBtn_EmailResend: TDRSpeedButton
-            Tag = 2
-            Left = 509
-            Top = 3
-            Width = 23
-            Height = 20
-            Hint = #51116#51204#49569
-            Enabled = False
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #44404#47548#52404
-            Font.Style = []
-            Glyph.Data = {
-              76010000424D7601000000000000760000002800000020000000100000000100
-              04000000000000010000130B0000130B00001000000000000000000000000000
-              800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
-              FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-              3333333333FFFFF3333333333999993333333333F77777FFF333333999999999
-              3333333777333777FF33339993707399933333773337F3777FF3399933000339
-              9933377333777F3377F3399333707333993337733337333337FF993333333333
-              399377F33333F333377F993333303333399377F33337FF333373993333707333
-              333377F333777F333333993333101333333377F333777F3FFFFF993333000399
-              999377FF33777F77777F3993330003399993373FF3777F37777F399933000333
-              99933773FF777F3F777F339993707399999333773F373F77777F333999999999
-              3393333777333777337333333999993333333333377777333333}
-            NumGlyphs = 2
-            ParentFont = False
-            ParentShowHint = False
-            ShowHint = True
-            Visible = False
-          end
-          object DRSpeedBtn_EmailExport: TDRSpeedButton
-            Tag = 1
-            Left = 557
-            Top = 3
-            Width = 23
-            Height = 20
-            Hint = 'Export'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #44404#47548#52404
-            Font.Style = []
-            Glyph.Data = {
-              76010000424D7601000000000000760000002800000020000000100000000100
-              04000000000000010000130B0000130B00001000000000000000000000000000
-              800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
-              FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333303
-              333333333333337FF3333333333333903333333333333377FF33333333333399
-              03333FFFFFFFFF777FF3000000999999903377777777777777FF0FFFF0999999
-              99037F3337777777777F0FFFF099999999907F3FF777777777770F00F0999999
-              99037F773777777777730FFFF099999990337F3FF777777777330F00FFFFF099
-              03337F773333377773330FFFFFFFF09033337F3FF3FFF77733330F00F0000003
-              33337F773777777333330FFFF0FF033333337F3FF7F3733333330F08F0F03333
-              33337F7737F7333333330FFFF003333333337FFFF77333333333000000333333
-              3333777777333333333333333333333333333333333333333333}
-            NumGlyphs = 2
-            ParentFont = False
-            ParentShowHint = False
-            ShowHint = True
-            Visible = False
-          end
-          object DRSpeedBtn_SntEmailSelect: TDRSpeedButton
-            Tag = 1
-            Left = 485
-            Top = 3
-            Width = 23
-            Height = 20
-            Hint = #44228#51340#48324' '#49440#53469
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #44404#47548#52404
-            Font.Style = []
-            Glyph.Data = {
-              76010000424D7601000000000000760000002800000020000000100000000100
-              04000000000000010000120B0000120B00001000000000000000000000000000
-              800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
-              FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00555555555555
-              555555555555555555555555555555555555555555FF55555555555559055555
-              55555555577FF5555555555599905555555555557777F5555555555599905555
-              555555557777FF5555555559999905555555555777777F555555559999990555
-              5555557777777FF5555557990599905555555777757777F55555790555599055
-              55557775555777FF5555555555599905555555555557777F5555555555559905
-              555555555555777FF5555555555559905555555555555777FF55555555555579
-              05555555555555777FF5555555555557905555555555555777FF555555555555
-              5990555555555555577755555555555555555555555555555555}
-            NumGlyphs = 2
-            ParentFont = False
-            ParentShowHint = False
-            ShowHint = True
-            Visible = False
-          end
           object DRSpeedBtn_SntMailRefresh: TDRSpeedButton
             Tag = 1
-            Left = 855
+            Left = 1166
             Top = 2
             Width = 23
             Height = 20
             Hint = #44081#49888
+            Anchors = [akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -752,11 +635,12 @@ object Form1: TForm1
           end
           object DRSpeedButton_SntMail: TDRSpeedButton
             Tag = 1
-            Left = 878
+            Left = 1189
             Top = 2
             Width = 23
             Height = 20
             Hint = 'Grid'#51064#49604
+            Anchors = [akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -819,7 +703,7 @@ object Form1: TForm1
             ShowHint = True
           end
           object DRPanel5: TDRPanel
-            Left = 597
+            Left = 625
             Top = 7
             Width = 170
             Height = 14
@@ -832,7 +716,7 @@ object Form1: TForm1
             ParentFont = False
             TabOrder = 0
             object DRRadioBtn_EmailSend: TDRRadioButton
-              Left = 5
+              Left = 61
               Top = 1
               Width = 59
               Height = 12
@@ -846,7 +730,7 @@ object Form1: TForm1
               TabOrder = 0
             end
             object DRRadioBtn_EmailError: TDRRadioButton
-              Left = 68
+              Left = 124
               Top = 1
               Width = 43
               Height = 12
@@ -860,7 +744,7 @@ object Form1: TForm1
               TabOrder = 1
             end
             object DRRadioBtn_EmailAll: TDRRadioButton
-              Left = 119
+              Left = 12
               Top = 1
               Width = 45
               Height = 12
@@ -876,22 +760,8 @@ object Form1: TForm1
               TabStop = True
             end
           end
-          object DRCheckBox_EmailTotFreq: TDRCheckBox
-            Left = 772
-            Top = 7
-            Width = 80
-            Height = 15
-            Caption = #51204#54924#52264#48372#44592
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -12
-            Font.Name = #44404#47548#52404
-            Font.Style = []
-            ParentFont = False
-            TabOrder = 1
-          end
           object DRRadioButton1: TDRRadioButton
-            Left = 364
+            Left = 346
             Top = 5
             Width = 41
             Height = 17
@@ -902,10 +772,10 @@ object Form1: TForm1
             Font.Name = #44404#47548#52404
             Font.Style = []
             ParentFont = False
-            TabOrder = 2
+            TabOrder = 1
           end
           object DRRadioButton2: TDRRadioButton
-            Left = 416
+            Left = 398
             Top = 5
             Width = 57
             Height = 17
@@ -916,10 +786,10 @@ object Form1: TForm1
             Font.Name = #44404#47548#52404
             Font.Style = []
             ParentFont = False
-            TabOrder = 3
+            TabOrder = 2
           end
           object DRRadioButton3: TDRRadioButton
-            Left = 309
+            Left = 291
             Top = 5
             Width = 41
             Height = 17
@@ -931,198 +801,16 @@ object Form1: TForm1
             Font.Name = #44404#47548#52404
             Font.Style = []
             ParentFont = False
-            TabOrder = 4
+            TabOrder = 3
             TabStop = True
           end
-        end
-        object DRStringGrid10: TDRStringGrid
-          Tag = 1
-          Left = 625
-          Top = 185
-          Width = 288
-          Height = 96
-          Align = alCustom
-          Color = clWhite
-          ColCount = 14
-          DefaultRowHeight = 18
-          FixedCols = 0
-          RowCount = 15
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = #44404#47548#52404
-          Font.Style = []
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking]
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 2
-          AllowFixedRowClick = True
-          TopRow = 1
-          LeftCol = 0
-          SelectedCellColor = 16047570
-          SelectedFontColor = clBlack
-          ColWidths = (
-            14
-            50
-            76
-            138
-            56
-            103
-            178
-            32
-            145
-            63
-            61
-            76
-            69
-            49)
-          AlignCol = {
-            0000020100020200010300010400020500010600010700020800020900020A00
-            020B00020C00020D0002}
-          FixedAlignRow = {000002}
-          Cells = (
-            1
-            0
-            #49324#48264
-            1
-            1
-            '975001'
-            1
-            2
-            '975001'
-            1
-            3
-            '975023'
-            2
-            0
-            #44228#51340#48264#54840
-            2
-            1
-            '99999999-98'
-            2
-            3
-            '99999999-99'
-            3
-            0
-            #44228#51340#47749
-            3
-            1
-            #53580#49828#53944#44228#51340'1'
-            3
-            3
-            #53580#49828#53944#44228#51340'2'
-            4
-            0
-            #51204#49569#44396#48516
-            4
-            1
-            'FAX'
-            4
-            2
-            'E-mail'
-            4
-            3
-            'E-mail'
-            5
-            0
-            #49688#49888#52376
-            5
-            1
-            #45936#51060#53552#47196#46300
-            5
-            2
-            #44592#44288'1'
-            5
-            3
-            #44592#44288'3'
-            6
-            0
-            #54057#49828#48264#54840'/'#47700#51068#51228#47785
-            6
-            1
-            '1234-5678'
-            6
-            2
-            #50504#45397#54616#49464#50836'.'
-            6
-            3
-            #48372#44256#49436' '#48372#45253#45768#45796'.'
-            7
-            0
-            #54924#52264
-            7
-            1
-            '1'#13#10
-            7
-            2
-            '2'
-            7
-            3
-            '1'
-            8
-            0
-            #48372#44256#49436#49436#49885
-            9
-            0
-            #49884#51089#49884#51089
-            9
-            1
-            '11:32:11'#13#10
-            9
-            2
-            '11:34:27'
-            9
-            3
-            '11:36:41'
-            10
-            0
-            #50756#47308#49884#44036
-            10
-            1
-            '11:33:02'
-            10
-            2
-            '11:34:27'
-            10
-            3
-            '11:36:41'
-            11
-            0
-            #51116#51204#49569
-            12
-            0
-            'Process'
-            12
-            1
-            'Sending..'
-            12
-            2
-            'FINISH'
-            12
-            3
-            'FINISH'#13#10
-            13
-            0
-            'Page'
-            13
-            1
-            '1/2')
-          FontCell = (
-            0
-            0
-            -2147483640
-            -12
-            #44404#47548#52404
-            0
-            434062337)
         end
       end
       object DRPanel8: TDRPanel
         Left = 0
         Top = 0
-        Width = 1152
-        Height = 491
+        Width = 1234
+        Height = 358
         Align = alClient
         Caption = 'DRPanel8'
         Font.Charset = DEFAULT_CHARSET
@@ -1135,7 +823,7 @@ object Form1: TForm1
         object DRPanel_SndMailTitle: TDRPanel
           Left = 1
           Top = 1
-          Width = 1150
+          Width = 1232
           Height = 24
           Align = alTop
           Font.Charset = DEFAULT_CHARSET
@@ -1145,6 +833,9 @@ object Form1: TForm1
           Font.Style = []
           ParentFont = False
           TabOrder = 0
+          DesignSize = (
+            1232
+            24)
           object DRLabel_SndMail: TDRLabel
             Left = 15
             Top = 7
@@ -1160,11 +851,12 @@ object Form1: TForm1
           end
           object DRSpeedBtn_SndMailDir: TDRSpeedButton
             Tag = 1
-            Left = 808
+            Left = 1120
             Top = 2
             Width = 23
             Height = 20
             Hint = 'Directory '#49440#53469
+            Anchors = [akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -1190,11 +882,12 @@ object Form1: TForm1
           end
           object DRSpeedBtn_Export: TDRSpeedButton
             Tag = 1
-            Left = 831
+            Left = 1143
             Top = 2
             Width = 23
             Height = 20
             Hint = 'Export'
+            Anchors = [akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -1220,11 +913,12 @@ object Form1: TForm1
           end
           object DRSpeedBtn_SndMailRefresh: TDRSpeedButton
             Tag = 1
-            Left = 854
+            Left = 1166
             Top = 2
             Width = 23
             Height = 20
             Hint = #44081#49888
+            Anchors = [akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -1273,11 +967,12 @@ object Form1: TForm1
           end
           object DRSpeedButton_SndMail: TDRSpeedButton
             Tag = 1
-            Left = 877
+            Left = 1189
             Top = 2
             Width = 23
             Height = 20
             Hint = 'Grid'#51064#49604
+            Anchors = [akTop, akRight]
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -1340,7 +1035,7 @@ object Form1: TForm1
             ShowHint = True
           end
           object DRRadioButton4: TDRRadioButton
-            Left = 309
+            Left = 291
             Top = 5
             Width = 41
             Height = 17
@@ -1356,7 +1051,7 @@ object Form1: TForm1
             TabStop = True
           end
           object DRRadioButton5: TDRRadioButton
-            Left = 364
+            Left = 346
             Top = 5
             Width = 41
             Height = 17
@@ -1370,7 +1065,7 @@ object Form1: TForm1
             TabOrder = 1
           end
           object DRRadioButton6: TDRRadioButton
-            Left = 416
+            Left = 398
             Top = 5
             Width = 57
             Height = 17
@@ -1398,7 +1093,7 @@ object Form1: TForm1
             TabOrder = 3
           end
           object DRRadioButton7: TDRRadioButton
-            Left = 480
+            Left = 462
             Top = 5
             Width = 57
             Height = 17
@@ -1413,13 +1108,13 @@ object Form1: TForm1
           end
         end
         object DRStringGrid_Tot_Send: TDRStringGrid
-          Left = 8
-          Top = 33
-          Width = 265
-          Height = 88
-          Align = alCustom
+          Left = 1
+          Top = 25
+          Width = 1232
+          Height = 332
+          Align = alClient
           Color = clWhite
-          ColCount = 10
+          ColCount = 11
           DefaultRowHeight = 18
           FixedCols = 0
           RowCount = 37
@@ -1447,10 +1142,13 @@ object Form1: TForm1
             157
             54
             104
-            175
-            288
-            72)
-          AlignCol = {000002010002020002030001040001050002060001070001080001090002}
+            256
+            259
+            72
+            64)
+          AlignCol = {
+            0000020100020200020300010400010500020600010700010800010900020A00
+            02}
           AlignRow = {000002}
           FixedAlignRow = {000002}
           Cells = (
@@ -1744,7 +1442,10 @@ object Form1: TForm1
             #49436#48260#51204#49569
             9
             5
-            #13#10)
+            #13#10
+            10
+            0
+            #51204#49569#51228#50808)
           FontCell = (
             0
             0
@@ -1752,28 +1453,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid1: TDRStringGrid
           Tag = 1
@@ -2116,28 +1817,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid2: TDRStringGrid
           Tag = 2
@@ -2480,28 +2181,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid3: TDRStringGrid
           Tag = 3
@@ -2844,28 +2545,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid4: TDRStringGrid
           Tag = 4
@@ -3208,28 +2909,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid5: TDRStringGrid
           Tag = 5
@@ -3572,28 +3273,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid6: TDRStringGrid
           Tag = 6
@@ -3936,28 +3637,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid7: TDRStringGrid
           Tag = 7
@@ -4300,28 +4001,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid8: TDRStringGrid
           Tag = 8
@@ -4664,28 +4365,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid9: TDRStringGrid
           Tag = 9
@@ -5028,28 +4729,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
         object DRStringGrid11: TDRStringGrid
           Tag = 9
@@ -5392,28 +5093,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            434062337
+            417933313
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336
+            417933312
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            434062336)
+            417933312)
         end
       end
     end
