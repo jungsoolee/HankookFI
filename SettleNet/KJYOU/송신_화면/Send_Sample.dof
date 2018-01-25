@@ -134,6 +134,12 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+[Excluded Packages]
+c:\program files (x86)\borland\delphi7\Projects\Bpl\TntUnicodeVcl_D70_DATASNAP.bpl=Tnt Unicode Controls
+c:\program files (x86)\borland\delphi7\Bin\dclmcn70.bpl=Borland DataSnap Connection Components
+c:\program files (x86)\borland\delphi7\Bin\dcldbx70.bpl=Borland dbExpress Components
+c:\program files (x86)\borland\delphi7\Bin\dcldbxcds70.bpl=Borland SimpleDataset Component (DBX)
+c:\program files (x86)\borland\delphi7\Bin\dclact70.bpl=Borland ActionBar Components
 [HistoryLists\hlDebugSourcePath]
 Count=2
 Item0=..\Common

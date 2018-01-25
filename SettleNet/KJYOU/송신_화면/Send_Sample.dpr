@@ -2,7 +2,8 @@ program Send_Sample;
 
 uses
   Forms,
-  Main in 'Main.pas' {Form1};
+  Main in 'Main.pas' {Form1},
+  EditEmailMeassge in 'EditEmailMeassge.pas' {EditMail_Form};
 
 {$R *.res}
 

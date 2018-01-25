@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, DRWin32, Grids, DRStringgrid, DRStandard, StdCtrls,
   Mask, DRAdditional, Buttons, DRSpecial, ExtCtrls, DRColorTab,
-  DRCodeControl, Math, SCCDllLib;
+  DRCodeControl, Math, SCCDllLib, SCCLib, Menus;
 
 type
   TForm1 = class(TForm)
@@ -68,11 +68,67 @@ type
     DRStringGrid11: TDRStringGrid;
     DRSplitter1: TDRSplitter;
     DRBitBtn6: TDRBitBtn;
+    DRPopupMenu1: TDRPopupMenu;
+    N1: TMenuItem;
+    N2: TMenuItem;
+    N3: TMenuItem;
+    PS1: TMenuItem;
+    PS2: TMenuItem;
+    N4: TMenuItem;
+    N5: TMenuItem;
+    N6: TMenuItem;
+    Export1: TMenuItem;
+    N7: TMenuItem;
+    N8: TMenuItem;
+    DRPopupMenu2: TDRPopupMenu;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
+    MenuItem10: TMenuItem;
+    MenuItem11: TMenuItem;
+    N9: TMenuItem;
+    N10: TMenuItem;
+    N11: TMenuItem;
+    DRPopupMenu3: TDRPopupMenu;
+    MenuItem21: TMenuItem;
+    MenuItem22: TMenuItem;
+    MenuItem23: TMenuItem;
+    DRImage1: TDRImage;
+    DRImage2: TDRImage;
+    DRPopupMenu4: TDRPopupMenu;
+    MenuItem12: TMenuItem;
+    MenuItem13: TMenuItem;
+    MenuItem14: TMenuItem;
+    MenuItem16: TMenuItem;
+    N12: TMenuItem;
+    DRPopupMenu5: TDRPopupMenu;
+    MenuItem17: TMenuItem;
+    MenuItem18: TMenuItem;
+    MenuItem19: TMenuItem;
+    N13: TMenuItem;
+    N14: TMenuItem;
+    N15: TMenuItem;
+    N16: TMenuItem;
+    N17: TMenuItem;
+    N18: TMenuItem;
+    N19: TMenuItem;
+    N20: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure DRStringGrid_Tot_SendDrawCell(Sender: TObject; ACol,
       ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure DRStringGrid_Tot_SentDrawCell(Sender: TObject; ACol,
       ARow: Integer; Rect: TRect; State: TGridDrawState);
+    procedure DRStringGrid_Tot_SendMouseUp(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure N9Click(Sender: TObject);
+    procedure DRStringGrid_Tot_SentMouseUp(Sender: TObject;
+      Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   private
     { Private declarations }
     procedure InitSendStrGrid(pDRStrGrid: TDRStringGrid);
@@ -92,6 +148,8 @@ var
 
 implementation
 
+uses EditEmailMeassge;
+
 {$R *.dfm}
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -102,7 +160,7 @@ begin
   begin
     DRUserDblCodeCombo1.AddItem('전체', '전체');
     DRUserDblCodeCombo1.AddItem('975001', '이재성');
-    DRUserDblCodeCombo1.AddItem('975023', '환선아');
+    DRUserDblCodeCombo1.AddItem('975023', '황선아');
     DRUserDblCodeCombo1.AddItem('000000', '이순애');
     DRUserDblCodeCombo1.AddItem('123456', '조성은');
 
@@ -161,6 +219,8 @@ begin
     end;
   end;
 
+
+
 end;
 
 procedure TForm1.InitSendStrGrid(pDRStrGrid: TDRStringGrid);
@@ -173,6 +233,13 @@ begin
     begin
       Rows[i].Clear;
     end;
+
+    Cells[0, 1]  := '>';
+    Cells[0, 2]  := '>';
+    Cells[0, 3]  := '>';
+    Cells[0, 5]  := '>';
+    Cells[0, 6]  := '>';
+    Cells[0, 9]  := '>';
 
     Cells[1, 1]  := '975001';
     Cells[1, 16] := '975023';
@@ -645,6 +712,86 @@ begin
         TDRStringGrid(Sender).Canvas.FillRect(Rect);
         TDRStringGrid(Sender).Canvas.TextOut(Rect.Left + Round(iTemp/1.5), Rect.Top+2, TDRStringGrid(Sender).Cells[ACol, ARow]);
       end;
+    end;
+  end;
+end;
+
+procedure TForm1.DRStringGrid_Tot_SendMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  ACol, ARow : Integer;
+  ScreenP : TPoint;
+  SelectRect: TRect;
+begin
+  DRStringGrid_Tot_Send.MouseToCell(X, Y, ACol, ARow);
+  if (ARow <= 0) or (ACol < 0) then Exit;
+
+  if (ARow > DRStringGrid_Tot_Send.RowCount - 1) or (ARow < DRStringGrid_Tot_Send.FixedRows) then // StringGrid영역밖의 RowIndex인 경우
+    Exit;
+  DRStringGrid_Tot_Send.Row := ARow;
+  SelectRect.Left := DRStringGrid_Tot_Send.FixedCols;
+  SelectRect.Top := ARow;
+  SelectRect.Right := DRStringGrid_Tot_Send.ColCount - 1;
+  SelectRect.Bottom := ARow;
+  DRStringGrid_Tot_Send.Selection := TGridRect(SelectRect);
+  DRStringGrid_Tot_Send.Repaint;
+
+
+  if Button = mbRight then
+  begin
+    if Trim(DRStringGrid_Tot_Send.Cells[5, ARow]) = 'FAX' then
+    begin
+      GetCursorPos(ScreenP);
+      DRPopupMenu1.Popup(ScreenP.X, ScreenP.Y)
+    end else if Trim(DRStringGrid_Tot_Send.Cells[5, ARow]) = 'E-mail' then
+    begin
+      GetCursorPos(ScreenP);
+      DRPopupMenu2.Popup(ScreenP.X, ScreenP.Y)
+    end else if Trim(DRStringGrid_Tot_Send.Cells[5, ARow]) = '미등록' then
+    begin
+      GetCursorPos(ScreenP);
+      DRPopupMenu3.Popup(ScreenP.X, ScreenP.Y)
+    end
+  end;
+end;
+
+procedure TForm1.N9Click(Sender: TObject);
+begin
+  Application.CreateForm(TEditMail_Form, EditMail_Form);
+  EditMail_Form.ShowModal;
+end;
+
+procedure TForm1.DRStringGrid_Tot_SentMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  ACol, ARow : Integer;
+  ScreenP : TPoint;
+  SelectRect: TRect;
+begin
+  DRStringGrid_Tot_Sent.MouseToCell(X, Y, ACol, ARow);
+  if (ARow <= 0) or (ACol < 0) then Exit;
+
+  if (ARow > DRStringGrid_Tot_Sent.RowCount - 1) or (ARow < DRStringGrid_Tot_Sent.FixedRows) then // StringGrid영역밖의 RowIndex인 경우
+    Exit;
+  DRStringGrid_Tot_Sent.Row := ARow;
+  SelectRect.Left := DRStringGrid_Tot_Sent.FixedCols;
+  SelectRect.Top := ARow;
+  SelectRect.Right := DRStringGrid_Tot_Sent.ColCount - 1;
+  SelectRect.Bottom := ARow;
+  DRStringGrid_Tot_Sent.Selection := TGridRect(SelectRect);
+  DRStringGrid_Tot_Sent.Repaint;
+
+
+  if Button = mbRight then
+  begin
+    if Trim(DRStringGrid_Tot_Sent.Cells[4, ARow]) = 'FAX' then
+    begin
+      GetCursorPos(ScreenP);
+      DRPopupMenu4.Popup(ScreenP.X, ScreenP.Y)
+    end else if Trim(DRStringGrid_Tot_Sent.Cells[4, ARow]) = 'E-mail' then
+    begin
+      GetCursorPos(ScreenP);
+      DRPopupMenu5.Popup(ScreenP.X, ScreenP.Y)
     end;
   end;
 end;
