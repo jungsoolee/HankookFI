@@ -1,31 +1,19 @@
 [Closed Files]
-File_0=SourceModule,'c:\SettleNet7\Client\Component\Source\DRStandard.pas',0,1,442,35,471,0,0
-File_1=SourceModule,'C:\SettleNet7\Client\Common\SCCGlobalType.pas',0,1,62,34,84,0,0
-File_2=SourceModule,'C:\SettleNet7\Client\SourceBroker\SCFB2831_SND.pas',0,1,2509,31,2530,0,0
-File_3=SourceModule,'C:\SettleNet7\Client\Common\SCCLib.pas',0,1,5549,68,5584,0,0
-File_4=SourceModule,'c:\program files (x86)\borland\delphi7\source\rtl\common\Math.pas',0,1,875,1,904,0,0
-File_5=SourceModule,'c:\program files (x86)\borland\delphi7\source\rtl\Sys\system.pas',0,1,1,1,10,0,0
-File_6=SourceModule,'C:\SettleNet7\Client\Common\SCCDllLib.pas',0,1,921,52,950,0,0
-File_7=SourceModule,'c:\program files (x86)\borland\delphi7\source\vcl\Graphics.pas',0,1,2287,1,2316,0,0
-File_8=SourceModule,'c:\SettleNet7\Client\Component\Source\DRStringGrid.pas',0,1,3469,53,3504,0,0
-File_9=SourceModule,'C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main - 복사본 (2).pas',0,1,1,64,40,1,0
+File_0=SourceModule,'C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas',0,1,4,114,18,1,1
+File_1=SourceModule,'C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\EditEmailMeassge.pas',0,1,93,61,129,0,0
+File_2=SourceModule,'C:\SettleNet\SITEEmail\KTB\dll\E1I0414.dpr',0,1,1,33,8,0,0
+File_3=SourceModule,'C:\SettleNet\SITEEmail\맥쿼리\dll_5\E1B0311.dpr',0,1,859,59,868,0,0
+File_4=SourceModule,'C:\SettleNet\SITEEmail\미래대우국제\dll\E1B0490.dpr',0,1,665,98,661,0,0
+File_5=SourceModule,'c:\SettleNet7\Client\Component\Source\DRStandard.pas',0,1,442,35,471,0,0
+File_6=SourceModule,'C:\SettleNet7\Client\Common\SCCGlobalType.pas',0,1,62,34,84,0,0
+File_7=SourceModule,'C:\SettleNet7\Client\SourceBroker\SCFB2831_SND.pas',0,1,2509,31,2530,0,0
+File_8=SourceModule,'C:\SettleNet7\Client\Common\SCCLib.pas',0,1,5549,68,5584,0,0
+File_9=SourceModule,'c:\program files (x86)\borland\delphi7\source\rtl\common\Math.pas',0,1,875,1,904,0,0
 
 [Modules]
-Module0=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas
-Module1=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\EditEmailMeassge.pas
-Module2=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr
-Count=3
+Module0=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr
+Count=1
 EditWindowCount=1
-
-[C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas]
-ModuleType=SourceModule
-FormState=1
-FormOnTop=0
-
-[C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\EditEmailMeassge.pas]
-ModuleType=SourceModule
-FormState=1
-FormOnTop=0
 
 [C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr]
 ModuleType=SourceModule
@@ -37,18 +25,16 @@ FormState=0
 FormOnTop=0
 
 [EditWindow0]
-ViewCount=3
-CurrentView=1
+ViewCount=1
+CurrentView=0
 View0=0
-View1=1
-View2=2
 CodeExplorer=CodeExplorer@EditWindow0
 MessageView=MessageView@EditWindow0
 Create=1
 Visible=1
 State=0
-Left=9
-Top=158
+Left=392
+Top=159
 Width=1736
 Height=909
 MaxLeft=-1
@@ -59,28 +45,14 @@ LeftPanelSize=0
 LeftPanelClients=CodeExplorer@EditWindow0
 LeftPanelData=00000400010000000C000000436F64654578706C6F72657200000000000000000000000000000000000100000000000000000C000000436F64654578706C6F726572FFFFFFFF
 RightPanelSize=0
-BottomPanelSize=85
+BottomPanelSize=0
 BottomPanelClients=MessageView@EditWindow0
-BottomPanelData=000004000000000000000000000000000000000000000000000100000000000000000B0000004D65737361676556696577FFFFFFFF
+BottomPanelData=00000400010000000B0000004D657373616765566965770000000000000000000000000000000000FFFFFFFF
 
 [View0]
 Module=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr
-CursorX=5
+CursorX=60
 CursorY=14
-TopLine=1
-LeftCol=1
-
-[View1]
-Module=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas
-CursorX=41
-CursorY=9
-TopLine=1
-LeftCol=1
-
-[View2]
-Module=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\EditEmailMeassge.pas
-CursorX=116
-CursorY=35
 TopLine=1
 LeftCol=1
 
@@ -122,9 +94,9 @@ Height=140
 MaxLeft=-1
 MaxTop=-1
 MaxWidth=1928
-MaxHeight=125
+MaxHeight=140
 ClientWidth=1920
-ClientHeight=98
+ClientHeight=113
 
 [ProjectManager]
 Create=1
@@ -162,8 +134,8 @@ Dockable=1
 Create=1
 Visible=0
 State=0
-Left=2563
-Top=361
+Left=3
+Top=1
 Width=1022
 Height=666
 MaxLeft=-1
@@ -192,20 +164,20 @@ ClientHeight=60
 Create=1
 Visible=1
 State=0
-Left=2022
-Top=301
+Left=2603
+Top=452
 Width=339
-Height=1069
+Height=941
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=331
-ClientHeight=1045
+ClientHeight=917
 TBDockHeight=492
 LRDockWidth=190
 Dockable=1
 SplitPos=119
 ArrangeBy=Name
-SelectedItem=Name
+SelectedItem=
 ExpandedItems=
 HiddenCategories=
 
@@ -443,15 +415,15 @@ Dockable=1
 
 [MessageView@EditWindow0]
 Create=1
-Visible=1
+Visible=0
 State=0
-Left=12
-Top=0
-Width=1260
+Left=-198
+Top=-957
+Width=443
 Height=85
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1260
+ClientWidth=443
 ClientHeight=85
 TBDockHeight=85
 LRDockWidth=443
