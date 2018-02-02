@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 1280
-  Top = 135
-  Width = 1242
+  Left = 2817
+  Top = 467
+  Width = 1323
   Height = 852
   Caption = '[9999] '#44552#50997#49345#54408' '#49569#49888' Manager'
   Color = clBtnFace
@@ -17,7 +17,7 @@ object Form1: TForm1
   object DRPanel1: TDRPanel
     Left = 0
     Top = 0
-    Width = 1234
+    Width = 1315
     Height = 27
     Align = alTop
     BevelInner = bvLowered
@@ -30,7 +30,7 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 0
     DesignSize = (
-      1234
+      1315
       27)
     object DRPanel3: TDRPanel
       Left = 1
@@ -51,7 +51,7 @@ object Form1: TForm1
       TabOrder = 0
     end
     object DRBitBtn1: TDRBitBtn
-      Left = 1168
+      Left = 1249
       Top = 1
       Width = 65
       Height = 25
@@ -70,7 +70,7 @@ object Form1: TForm1
     end
     object DRBitBtn2: TDRBitBtn
       Tag = 2
-      Left = 1101
+      Left = 1182
       Top = 1
       Width = 67
       Height = 25
@@ -89,7 +89,7 @@ object Form1: TForm1
     end
     object DRBitBtn3: TDRBitBtn
       Tag = 2
-      Left = 1034
+      Left = 1115
       Top = 1
       Width = 67
       Height = 25
@@ -108,7 +108,7 @@ object Form1: TForm1
     end
     object DRBitBtn4: TDRBitBtn
       Tag = 2
-      Left = 967
+      Left = 1048
       Top = 1
       Width = 67
       Height = 25
@@ -127,7 +127,7 @@ object Form1: TForm1
     end
     object DRBitBtn5: TDRBitBtn
       Tag = 2
-      Left = 840
+      Left = 921
       Top = 1
       Width = 127
       Height = 25
@@ -146,7 +146,7 @@ object Form1: TForm1
     end
     object DRBitBtn6: TDRBitBtn
       Tag = 2
-      Left = 715
+      Left = 796
       Top = 1
       Width = 125
       Height = 25
@@ -167,14 +167,14 @@ object Form1: TForm1
   object MessageBar: TDRMessageBar
     Left = 0
     Top = 800
-    Width = 1234
+    Width = 1315
     Height = 25
     Align = alBottom
   end
   object DRFramePanel_Query: TDRFramePanel
     Left = 0
     Top = 27
-    Width = 1234
+    Width = 1315
     Height = 40
     Align = alTop
     BevelInner = bvRaised
@@ -318,7 +318,7 @@ object Form1: TForm1
   object DRPanel6: TDRPanel
     Left = 0
     Top = 67
-    Width = 1234
+    Width = 1315
     Height = 733
     Align = alClient
     BevelOuter = bvNone
@@ -332,7 +332,7 @@ object Form1: TForm1
     object DRPanel2: TDRPanel
       Left = 0
       Top = 0
-      Width = 1234
+      Width = 1315
       Height = 733
       Align = alClient
       BevelOuter = bvNone
@@ -346,7 +346,7 @@ object Form1: TForm1
       object DRSplitter1: TDRSplitter
         Left = 0
         Top = 358
-        Width = 1234
+        Width = 1315
         Height = 2
         Cursor = crVSplit
         Align = alBottom
@@ -354,7 +354,7 @@ object Form1: TForm1
       object DRPanel7: TDRPanel
         Left = 0
         Top = 360
-        Width = 1234
+        Width = 1315
         Height = 373
         Align = alBottom
         Caption = 'DRPanel7'
@@ -368,7 +368,7 @@ object Form1: TForm1
         object DRStringGrid_Tot_Sent: TDRStringGrid
           Left = 1
           Top = 25
-          Width = 1232
+          Width = 1313
           Height = 347
           Align = alClient
           Color = clWhite
@@ -549,12 +549,12 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313)
+            418214913)
         end
         object DRPanel4: TDRPanel
           Left = 1
           Top = 1
-          Width = 1232
+          Width = 1313
           Height = 24
           Align = alTop
           Font.Charset = DEFAULT_CHARSET
@@ -565,7 +565,7 @@ object Form1: TForm1
           ParentFont = False
           TabOrder = 1
           DesignSize = (
-            1232
+            1313
             24)
           object DRLabel_SntMail: TDRLabel
             Left = 15
@@ -582,7 +582,7 @@ object Form1: TForm1
           end
           object DRSpeedBtn_SntMailRefresh: TDRSpeedButton
             Tag = 1
-            Left = 1166
+            Left = 1247
             Top = 2
             Width = 23
             Height = 20
@@ -636,7 +636,7 @@ object Form1: TForm1
           end
           object DRSpeedButton_SntMail: TDRSpeedButton
             Tag = 1
-            Left = 1189
+            Left = 1270
             Top = 2
             Width = 23
             Height = 20
@@ -810,7 +810,7 @@ object Form1: TForm1
       object DRPanel8: TDRPanel
         Left = 0
         Top = 0
-        Width = 1234
+        Width = 1315
         Height = 358
         Align = alClient
         Caption = 'DRPanel8'
@@ -836,7 +836,7 @@ object Form1: TForm1
         object DRPanel_SndMailTitle: TDRPanel
           Left = 1
           Top = 1
-          Width = 1232
+          Width = 1313
           Height = 24
           Align = alTop
           Font.Charset = DEFAULT_CHARSET
@@ -847,7 +847,7 @@ object Form1: TForm1
           ParentFont = False
           TabOrder = 0
           DesignSize = (
-            1232
+            1313
             24)
           object DRLabel_SndMail: TDRLabel
             Left = 15
@@ -864,7 +864,7 @@ object Form1: TForm1
           end
           object DRSpeedBtn_SndMailDir: TDRSpeedButton
             Tag = 1
-            Left = 1120
+            Left = 1201
             Top = 2
             Width = 23
             Height = 20
@@ -895,7 +895,7 @@ object Form1: TForm1
           end
           object DRSpeedBtn_Export: TDRSpeedButton
             Tag = 1
-            Left = 1143
+            Left = 1224
             Top = 2
             Width = 23
             Height = 20
@@ -926,7 +926,7 @@ object Form1: TForm1
           end
           object DRSpeedBtn_SndMailRefresh: TDRSpeedButton
             Tag = 1
-            Left = 1166
+            Left = 1247
             Top = 2
             Width = 23
             Height = 20
@@ -980,7 +980,7 @@ object Form1: TForm1
           end
           object DRSpeedButton_SndMail: TDRSpeedButton
             Tag = 1
-            Left = 1189
+            Left = 1270
             Top = 2
             Width = 23
             Height = 20
@@ -1461,28 +1461,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid2: TDRStringGrid
           Tag = 2
@@ -1825,28 +1825,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid3: TDRStringGrid
           Tag = 3
@@ -2189,28 +2189,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid4: TDRStringGrid
           Tag = 4
@@ -2553,28 +2553,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid5: TDRStringGrid
           Tag = 5
@@ -2917,28 +2917,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid6: TDRStringGrid
           Tag = 6
@@ -3281,28 +3281,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid7: TDRStringGrid
           Tag = 7
@@ -3645,28 +3645,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid8: TDRStringGrid
           Tag = 8
@@ -4009,28 +4009,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid9: TDRStringGrid
           Tag = 9
@@ -4373,28 +4373,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid11: TDRStringGrid
           Tag = 9
@@ -4737,37 +4737,37 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
         object DRStringGrid_Tot_Send: TDRStringGrid
           Left = 1
           Top = 25
-          Width = 1232
+          Width = 1313
           Height = 332
           Align = alClient
           Color = clWhite
-          ColCount = 11
+          ColCount = 12
           DefaultRowHeight = 18
           FixedCols = 0
           RowCount = 37
@@ -4784,7 +4784,7 @@ object Form1: TForm1
           OnDrawCell = DRStringGrid_Tot_SendDrawCell
           OnMouseUp = DRStringGrid_Tot_SendMouseUp
           AllowFixedRowClick = True
-          TopRow = 15
+          TopRow = 1
           LeftCol = 0
           SelectedCellColor = 16047570
           SelectedFontColor = clBlack
@@ -4798,11 +4798,12 @@ object Form1: TForm1
             104
             256
             259
-            72
+            66
+            64
             64)
           AlignCol = {
             0000020100020200020300010400010500020600010700010800010900020A00
-            02}
+            020B0002}
           AlignRow = {000002}
           FixedAlignRow = {000002}
           Cells = (
@@ -5093,13 +5094,25 @@ object Form1: TForm1
             #50896#52380#51669#49688#50689#49688#51613
             9
             0
-            #49436#48260#51204#49569
+            #50836#52397#49884#44036
+            9
+            1
+            '00:00:00'
             9
             5
             #13#10
             10
             0
-            #51204#49569#51228#50808)
+            #50756#47308#49884#44036
+            10
+            1
+            '00:00:00'
+            11
+            0
+            #51204#49569#51228#50808
+            11
+            1
+            'Y')
           FontCell = (
             0
             0
@@ -5107,28 +5120,28 @@ object Form1: TForm1
             -12
             #44404#47548#52404
             0
-            417933313
+            418214913
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            418214912
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            418214912)
         end
       end
     end

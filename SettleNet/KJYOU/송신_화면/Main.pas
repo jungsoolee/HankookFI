@@ -155,7 +155,17 @@ uses EditEmailMeassge;
 procedure TForm1.FormCreate(Sender: TObject);
 var
   i: Integer;
+  sTemp: String;
 begin
+
+  for i:= 0 to 14 do
+  begin
+    sTemp:= sTemp + IntToStr(i) + ' / ' + IntToStr(DRStringGrid_Tot_Sent.ColWidths[i]) + #13#10;
+
+  end;
+  ShowMessage(sTemp);
+
+
   // 사번
   begin
     DRUserDblCodeCombo1.AddItem('전체', '전체');

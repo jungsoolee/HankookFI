@@ -1,19 +1,24 @@
 [Closed Files]
-File_0=SourceModule,'C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas',0,1,4,114,18,1,1
-File_1=SourceModule,'C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\EditEmailMeassge.pas',0,1,93,61,129,0,0
-File_2=SourceModule,'C:\SettleNet\SITEEmail\KTB\dll\E1I0414.dpr',0,1,1,33,8,0,0
-File_3=SourceModule,'C:\SettleNet\SITEEmail\맥쿼리\dll_5\E1B0311.dpr',0,1,859,59,868,0,0
-File_4=SourceModule,'C:\SettleNet\SITEEmail\미래대우국제\dll\E1B0490.dpr',0,1,665,98,661,0,0
-File_5=SourceModule,'c:\SettleNet7\Client\Component\Source\DRStandard.pas',0,1,442,35,471,0,0
-File_6=SourceModule,'C:\SettleNet7\Client\Common\SCCGlobalType.pas',0,1,62,34,84,0,0
-File_7=SourceModule,'C:\SettleNet7\Client\SourceBroker\SCFB2831_SND.pas',0,1,2509,31,2530,0,0
-File_8=SourceModule,'C:\SettleNet7\Client\Common\SCCLib.pas',0,1,5549,68,5584,0,0
-File_9=SourceModule,'c:\program files (x86)\borland\delphi7\source\rtl\common\Math.pas',0,1,875,1,904,0,0
+File_0=SourceModule,'C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\EditEmailMeassge.pas',0,1,93,61,129,0,0
+File_1=SourceModule,'C:\SettleNet\SITEEmail\KTB\dll\E1I0414.dpr',0,1,1,33,8,0,0
+File_2=SourceModule,'C:\SettleNet\SITEEmail\맥쿼리\dll_5\E1B0311.dpr',0,1,859,59,868,0,0
+File_3=SourceModule,'C:\SettleNet\SITEEmail\미래대우국제\dll\E1B0490.dpr',0,1,665,98,661,0,0
+File_4=SourceModule,'c:\SettleNet7\Client\Component\Source\DRStandard.pas',0,1,442,35,471,0,0
+File_5=SourceModule,'C:\SettleNet7\Client\Common\SCCGlobalType.pas',0,1,62,34,84,0,0
+File_6=SourceModule,'C:\SettleNet7\Client\SourceBroker\SCFB2831_SND.pas',0,1,2509,31,2530,0,0
+File_7=SourceModule,'C:\SettleNet7\Client\Common\SCCLib.pas',0,1,5549,68,5584,0,0
+File_8=SourceModule,'c:\program files (x86)\borland\delphi7\source\rtl\common\Math.pas',0,1,875,1,904,0,0
 
 [Modules]
-Module0=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr
-Count=1
+Module0=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas
+Module1=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr
+Count=2
 EditWindowCount=1
+
+[C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas]
+ModuleType=SourceModule
+FormState=1
+FormOnTop=1
 
 [C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr]
 ModuleType=SourceModule
@@ -25,25 +30,26 @@ FormState=0
 FormOnTop=0
 
 [EditWindow0]
-ViewCount=1
-CurrentView=0
+ViewCount=2
+CurrentView=1
 View0=0
+View1=1
 CodeExplorer=CodeExplorer@EditWindow0
 MessageView=MessageView@EditWindow0
 Create=1
 Visible=1
-State=0
-Left=392
-Top=159
+State=1
+Left=394
+Top=158
 Width=1736
 Height=909
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=1272
-ClientHeight=1329
+ClientWidth=1728
+ClientHeight=882
 LeftPanelSize=0
 LeftPanelClients=CodeExplorer@EditWindow0
-LeftPanelData=00000400010000000C000000436F64654578706C6F72657200000000000000000000000000000000000100000000000000000C000000436F64654578706C6F726572FFFFFFFF
+LeftPanelData=00000400010000000C000000436F64654578706C6F726572000000000000000000000000000000000001000000000000000000000000FFFFFFFF
 RightPanelSize=0
 BottomPanelSize=0
 BottomPanelClients=MessageView@EditWindow0
@@ -51,9 +57,16 @@ BottomPanelData=00000400010000000B0000004D65737361676556696577000000000000000000
 
 [View0]
 Module=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Send_Sample.dpr
-CursorX=60
-CursorY=14
+CursorX=28
+CursorY=12
 TopLine=1
+LeftCol=1
+
+[View1]
+Module=C:\SettleNetTF\WorkingFI\HankookFI\SettleNet\KJYOU\송신_화면\Main.pas
+CursorX=46
+CursorY=31
+TopLine=4
 LeftCol=1
 
 [Watches]
@@ -89,14 +102,14 @@ Visible=1
 State=2
 Left=2560
 Top=360
-Width=1920
+Width=0
 Height=140
 MaxLeft=-1
 MaxTop=-1
-MaxWidth=1928
-MaxHeight=140
-ClientWidth=1920
-ClientHeight=113
+MaxWidth=2568
+MaxHeight=110
+ClientWidth=2560
+ClientHeight=83
 
 [ProjectManager]
 Create=1
@@ -177,7 +190,7 @@ LRDockWidth=190
 Dockable=1
 SplitPos=119
 ArrangeBy=Name
-SelectedItem=
+SelectedItem=Name
 ExpandedItems=
 HiddenCategories=
 
