@@ -1,7 +1,7 @@
 inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
   Tag = 2801
-  Left = 2926
-  Top = 539
+  Left = 3032
+  Top = 475
   Caption = 'Form_SCFH8801_SND'
   ClientHeight = 785
   ClientWidth = 1305
