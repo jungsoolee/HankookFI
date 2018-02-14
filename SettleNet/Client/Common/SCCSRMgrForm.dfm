@@ -1,6 +1,6 @@
 object Form_SRMgrForm: TForm_SRMgrForm
-  Left = 188
-  Top = 132
+  Left = 141
+  Top = 99
   Align = alClient
   BorderStyle = bsNone
   ClientHeight = 593

@@ -1,7 +1,7 @@
 object DataModule_SettleNet: TDataModule_SettleNet
   OldCreateOrder = True
-  Left = 384
-  Top = 520
+  Left = 288
+  Top = 390
   Height = 529
   Width = 800
   object ADOConnection_Main: TADOConnection

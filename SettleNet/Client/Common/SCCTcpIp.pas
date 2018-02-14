@@ -22,12 +22,14 @@ function  fnServerSendData(iSlen:integer;cpSbuff:PChar):Integer;
 function  fnMQDataSend(pSndFormat : pMSMQSendFormat; var iTotSeqNo : Integer) : Boolean;
 function  fnFAXDataSend(pFaxSndFormat : pFAXTLXSendFormat;
                         tReportList  : TList; var StartTime : String) : Boolean;
+function  fnFAXDataSend_TFFI(pFaxSndFormat : pFAXTLXSendFormat;
+                        tReportList  : TList; var StartTime : String) : Boolean;
 function  fnFAXDataReSend(iTotSeqNo : Integer) : Boolean; OverLoad;
 function  fnFAXDataReSend(iTotSeqNo : Integer; sOprTime:String) : Boolean; OverLoad;
 function  fnFAXDataCancel(iTotSeqNo , Tag : Integer; MessageBar: TDRMessageBar) : Boolean;
 function  fnEMailDataSend(pEMailFormat : pEMailSendFormat;
                           tEMailAttList: TList; var StartTime : String) : Boolean;
-function  fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData;
+function  fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData_TFFI;
                                tEMailAttList: TList; var StartTime : String) : Boolean;
 function  fnEMailDataCancel(iTotSeqNo : Integer) : Boolean;
 
@@ -1571,6 +1573,356 @@ begin
 end;
 
 //=======================================================================
+// 한투 금상 FAX Data Send Function : L.J.S
+//=======================================================================
+function fnFAXDataSend_TFFI(pFaxSndFormat : pFAXTLXSendFormat;
+                       tReportList : TList; var StartTime : String) : Boolean;
+var
+  cpSbuff : array [0..gcMAX_COMM_BUFF_SIZE] of char;
+  iSlen   : Integer;
+  CliSvrHead : CliSvrHead_R;
+  sTemp    : String;
+  iIndex   : Integer;
+  iSndTotSeqNo, iCurTotSeqNo, iIdxSeqNo : Integer;
+  pReportInfo    : pTFaxReportList_TFFI;
+begin
+  Result := False;
+
+  if tReportList.Count <= 0 then
+  begin
+    gvErrorNo := 9005; // 데이터 오류
+    gvExtMsg := 'Report 정보 없음';
+    Exit;
+  end;
+
+  with DataModule_SettleNet do
+  begin
+    //--------------------
+    gf_BeginTransaction;
+    //--------------------
+
+    //--- 채번 (SND_SEQ_NO: 동시 전송 Group 처리)
+    with ADOSP_SP0103 do
+    begin
+      try
+        Parameters.ParamByName('@in_date').Value := gvCurDate;
+        Parameters.ParamByName('@in_dept_code').Value := gcDEPT_CODE_COMMON;
+        Parameters.ParamByName('@in_sec_type').Value  := gcSEC_COMMONFAX;
+        Parameters.ParamByName('@in_send_mtd').Value  := gcSND_MTD_FAX_IDX;
+        Parameters.ParamByName('@in_biz_type').Value  := '01';
+        Parameters.ParamByName('@in_get_flag').Value  := '2';
+        Execute;
+      except
+        on E : Exception do
+        begin
+          gf_RollbackTransaction;
+          gvErrorNo := 9002; // Stored Procedure 실행 오류
+          gvExtMsg := E.Message;
+          Exit;
+        end;
+      end;
+
+      sTemp := Parameters.ParamByName('@out_rtc').Value;
+      if sTemp <> '0000' then
+      begin
+        gf_RollbackTransaction;
+        gvErrorNo := 9002; // Stored Procedure 실행 오류
+        gvExtMsg := Trim(Parameters.ParamByName('@out_kor_msg').Value);
+        Exit;
+      end;
+      iSndTotSeqNo := Parameters.ParamByName('@out_snd_no').Value;
+    end;  // end of with
+
+    for iIndex := 0 to tReportList.Count -1 do
+    begin
+      pReportInfo := tReportList.Items[iIndex];
+
+      if pReportInfo.iIdxSeqNo > 0 then  // 이전에 저장된 Image
+      begin
+        iIdxSeqNo := pReportInfo.iIdxSeqNo;
+
+        // 해당 Image Index에 대한 Report 관련 정보를 다시 넘겨줌 (송수신 Mgr에서 편하게 처리하기 위해)
+        with ADOQuery_Main do
+        begin
+          Close;
+          SQL.Clear;
+          SQL.Add(' Select SEC_TYPE, TRADE_DATE, REPORT_TYPE,   ' +
+                  '        REPORT_ID, DIRECTION, LOGO_PAGE_NO,  ' +
+                  '        TXT_UNIT_INFO, TOTAL_PAGES           ' +
+                  ' From SCFAXIMG_TBL                           ' +
+                  ' Where SND_DATE = ''' + pFaxSndFormat.sCurDate + ''' ' +
+                  ' and TRADE_DATE = ''' + pReportInfo.sTradeDate + ''' ' +
+                  ' and IDX_SEQ_NO = '   + IntToStr(iIdxSeqNo) );
+
+          Try
+            gf_ADOQueryOpen(ADOQuery_Main);
+          Except
+            on E : Exception do
+            begin
+              gf_RollbackTransaction;
+              gvErrorNo := 9001; // DB오류
+              gvExtMsg := E.Message;
+              Exit;
+            end;
+          End;
+          pReportInfo.sSecCode      := Trim(FieldByName('SEC_TYPE').asString);
+          pReportInfo.sTradeDate    := Trim(FieldByName('TRADE_DATE').AsString);
+          pReportInfo.sReportType   := Trim(FieldByName('REPORT_TYPE').asString);
+          pReportInfo.sReportId     := Trim(FieldByName('REPORT_ID').asString);
+          pReportInfo.sDirection    := Trim(FieldByName('DIRECTION').asString);
+          pReportInfo.iTotalPageCnt := FieldByName('TOTAL_PAGES').asInteger;
+        end;  // end of if
+      end
+      else  // 신규 Image 저장
+      begin
+        if not FileExists(pReportInfo.sFileName) then
+        begin
+          gf_RollbackTransaction;
+          gvErrorNo := 1027; // 해당 파일이 존재하지 않습니다.
+          gvExtMsg := '';
+          Exit;
+        end;
+
+        //--- 채번 (IDX_SEQ_NO - SCFAXIMG_TBL에서 사용할 자료)
+        with ADOSP_SP0103 do
+        begin
+          try
+            Parameters.ParamByName('@in_date').Value := gvCurDate;
+            Parameters.ParamByName('@in_dept_code').Value := gcDEPT_CODE_COMMON;
+            Parameters.ParamByName('@in_sec_type').Value  := gcSEC_COMMONFAX;
+            Parameters.ParamByName('@in_send_mtd').Value  := gcSND_MTD_IMG_IDX;
+            Parameters.ParamByName('@in_biz_type').Value  := '01';
+            Parameters.ParamByName('@in_get_flag').Value  := '2';
+            Execute;
+          except
+            on E : Exception do
+            begin
+              gf_RollbackTransaction;
+              gvErrorNo := 9002; // Stored Procedure 실행 오류
+              gvExtMsg := E.Message;
+              Exit;
+            end;
+          end;
+
+          sTemp := Parameters.ParamByName('@out_rtc').Value;
+          if sTemp <> '0000' then
+          begin
+            gf_RollbackTransaction;
+            gvErrorNo := 9002; // Stored Procedure 실행 오류
+            gvExtMsg := Trim(Parameters.ParamByName('@out_kor_msg').Value);
+            Exit;
+          end;
+          iIdxSeqNo := Parameters.ParamByName('@out_snd_no').Value;
+        end;  // end of with
+
+        //------------------------------------------------------------------------
+        // INSERT TABLE: SCFAXIMG_TBL & EXTERNAL INFORMATION TABLE
+        //------------------------------------------------------------------------
+        with ADOCommand_Main do
+        begin
+          CommandType := cmdText;
+
+          //--- SCFAXIMG_TBL INSERT
+          CommandText :=
+                 'INSERT SCFAXIMG_TBL                           ' +
+                 '(SND_DATE,     DEPT_CODE,      IDX_SEQ_NO,    ' +
+                 ' SEC_TYPE,     REPORT_TYPE,    REPORT_ID,     ' +
+                 ' DIRECTION,    LOGO_PAGE_NO,   TXT_UNIT_INFO, ' +
+                 ' TOTAL_PAGES,  MAIN_DATA,      TRADE_DATE,    ' +
+                 ' FILE_TYPE) ' +
+                 'VALUES                                        ' +
+                 '(:pSndDate,     :pDeptCode,    :pIdxSeqNo,    ' +
+                 ' :pSecType,     :pReportType,  :pReportID,    ' +
+                 ' :pDirection,   :pLogoPageNo,  :pTxtUnitInfo, ' +
+                 ' :pTotalPages,  :pMainData,    :pTradeDate,   ' +
+                 ' :pFileType)  ';
+          Try
+            Parameters.ParamByName('pSndDate').Value     := pFaxSndFormat.sCurDate;
+            Parameters.ParamByName('pDeptCode').Value    := gvDeptCode;
+            Parameters.ParamByName('pIdxSeqNo').Value    := iIdxSeqNo;
+            Parameters.ParamByName('pSecType').Value     := pReportInfo.sSecCode;
+            Parameters.ParamByName('pReportType').Value  := pReportInfo.sReportType;
+            Parameters.ParamByName('pReportID').Value    := pReportInfo.sReportId;
+            Parameters.ParamByName('pDirection').Value   := pReportInfo.sDirection;
+            Parameters.ParamByName('pLogoPageNo').Value  := '';
+            Parameters.ParamByName('pTxtUnitInfo').Value := '';
+            Parameters.ParamByName('pTotalPages').Value  := pReportInfo.iTotalPageCnt;
+            Parameters.ParamByName('pMainData').LoadFromFile(pReportInfo.sFileName,ftBlob);
+            Parameters.ParamByName('pTradeDate').Value   := pReportInfo.sTradeDate;
+            // PDF 엔진만 사용
+            Parameters.ParamByName('pFileType').Value := gcFILE_TYPE_PDF;
+            
+            Execute;
+          Except
+            on E : Exception do
+            begin
+              gf_RollbackTransaction;
+              gvErrorNo := 9001; // DB오류
+              gvExtMsg := E.Message;
+              Exit;
+            end;
+          End;
+        end; // end of with
+      end;  // end of else
+
+      //--- 채번 (CUR_TOT_SEQ_NO : SCFAXSND_TBL에서 사용할 자료)
+      with ADOSP_SP0103 do
+      begin
+        Try
+          Parameters.ParamByName('@in_date').Value := gvCurDate;
+          Parameters.ParamByName('@in_dept_code').Value := gcDEPT_CODE_COMMON;
+          Parameters.ParamByName('@in_sec_type').Value := gcSEC_COMMONFAX;
+          Parameters.ParamByName('@in_send_mtd').Value := gcSND_MTD_FAX;
+          Parameters.ParamByName('@in_biz_type').Value := '01';
+          Parameters.ParamByName('@in_get_flag').Value := '2';
+          Execute;
+        Except
+          on E : Exception do
+          begin
+            gf_RollbackTransaction;
+            gvErrorNo := 9002; // Stored Procedure 실행 오류
+            gvExtMsg := E.Message;
+            Exit;
+          end;
+        end;
+
+        sTemp := Parameters.ParamByName('@out_rtc').Value;
+        if sTemp <> '0000' then
+        begin
+          gf_RollbackTransaction;
+          gvErrorNo := 9002; // Stored Procedure 실행 오류
+          gvExtMsg := Trim(Parameters.ParamByName('@out_kor_msg').Value);
+          Exit;
+        end;
+        iCurTotSeqNo := Parameters.ParamByName('@out_snd_no').Value;
+      end;  // end of with
+
+      with ADOCommand_Main do
+      begin
+        CommandType := cmdText;
+
+        StartTime := gf_GetCurTime;
+
+        //--- SCFAXSND_TBL INSERT
+        CommandText :=
+                'INSERT SCFAXSND_TBL                            ' +
+                '( SND_DATE,       DEPT_CODE,  CUR_TOT_SEQ_NO,  ' +
+                '  SND_TOT_SEQ_NO, IDX_SEQ_NO, STRT_TIME,       ' +
+                '  FROM_PARTY_ID,  MEDIA_NO,   INTTEL_YN,       ' +
+                '  FAX_TLX_GBN,    NAT_CODE,   RCV_COMP_KOR,    ' +
+                '  SEND_PAGE,      RSP_FLAG,   SEND_TIME,       ' +
+                '  SENT_TIME,      DIFF_TIME,  BUSY_RESND_CNT,  ' +
+                '  RESND_CNT,      ERR_CODE,   EXT_MSG,         ' +
+                '  OPR_ID,         OPR_TIME,   TRADE_DATE)      ' +
+                'VALUES                                         ' +
+                '( :pSndDate,      :pDeptCode, :pCurTotSeqNo,   ' +
+                '  :pSndTotSeqNo,  :pIdxSeqNo, :pStrpTime,      ' +
+                '  :pFromPartyId,  :pMediaNo,  :pIntTelYn,      ' +
+                '  :pFaxTlxGbn,    :pNatCode,  :pRcvCompKor,    ' +
+                '  :pSendPage,     :pRspFlag,  :pSendTime,      ' +
+                '  :pSentTime,     :pDiffTime, :pBusyResndCnt,  ' +
+                '  :pResndCnt,     :pErrCode,  :pExtMsg,        ' +
+                '  :pOprId,        :pOprTime,  :pTradeDate )    ';
+        Parameters.ParamByName('pSndDate').Value     := Trim(pFaxSndFormat.sCurDate);
+        Parameters.ParamByName('pDeptCode').Value    := gvDeptCode;
+        Parameters.ParamByName('pCurTotSeqNo').Value := iCurTotSeqNo;
+        Parameters.ParamByName('pSndTotSeqNo').Value := iSndTotSeqNo;
+        Parameters.ParamByName('pIdxSeqNo').Value    := iIdxSeqNo;
+        Parameters.ParamByName('pStrpTime').Value    := StartTime;
+        Parameters.ParamByName('pFromPartyId').Value := pFaxSndFormat.sFromPartyID;
+        Parameters.ParamByName('pMediaNo').Value     := Trim(pFaxSndFormat.sMediaNo);
+        Parameters.ParamByName('pIntTelYn').Value    := Trim(pFaxSndFormat.sIntTelYn);
+        Parameters.ParamByName('pFaxTlxGbn').Value   := Trim(pFaxSndFormat.sFaxTlxGbn);
+        Parameters.ParamByName('pNatCode').Value     := Trim(pFaxSndFormat.sNatCode);
+        Parameters.ParamByName('pRcvCompKor').Value  := Trim(pFaxSndFormat.sRcvCompKor);
+        Parameters.ParamByName('pSendPage').Value    := 0;
+        Parameters.ParamByName('pRspFlag').Value     := gcFAXTLX_RSPF_WAIT;
+        Parameters.ParamByName('pSendTime').Value    := '';
+        Parameters.ParamByName('pSentTime').Value    := '';
+        Parameters.ParamByName('pDiffTime').Value    := 0;
+        Parameters.ParamByName('pBusyResndCnt').Value:= 0;
+        Parameters.ParamByName('pResndCnt').Value    := 0;
+        Parameters.ParamByName('pErrCode').Value     := '';
+        Parameters.ParamByName('pExtMsg').Value      := '';
+        Parameters.ParamByName('pOprId').Value       := gvOprUsrNo;
+        Parameters.ParamByName('pTradeDate').Value   := pReportInfo.sTradeDate;
+        Try
+          Parameters.ParamByName('pOprTime').Value   := gf_GetCurTime;
+          Execute;
+        Except
+          on E : Exception do
+          begin
+            gf_RollbackTransaction;
+            gvErrorNo := 9001; // DB오류
+            gvExtMsg := E.Message;
+            Exit;
+          end;
+        end; // end Except
+
+        //----------------------------------------------------------------------
+        // SZFAXSNT_INS INSERT - [L.J.S] 한투 금상 테이블
+        //----------------------------------------------------------------------
+        CommandText :=
+              'INSERT SZFAXSNT_INS                                           '+
+              '(DEPT_CODE,  JOB_DATE,  JOB_SEQ,  SND_DATE,   CUR_TOT_SEQ_NO) '+
+              'VALUES                                                        '+
+              '(:pDeptCode, :pJobDate, :pJobSeq, :pSendDate, :pCurTotSeqNo)  ';
+
+        Parameters.ParamByName('pDeptCode').Value      := gvDeptCode;
+        Parameters.ParamByName('pJobDate').Value       := pReportInfo.sJobDate;
+        Parameters.ParamByName('pJobSeq').Value        := pReportInfo.iJobSeq;
+        Parameters.ParamByName('pSendDate').Value      := Trim(pFaxSndFormat.sCurDate);
+        Parameters.ParamByName('pCurTotSeqNo').Value   := iCurTotSeqNo;
+
+        try
+
+          Execute;
+        Except
+          on E : Exception do
+          begin
+            gf_RollbackTransaction;
+            gvErrorNo := 9001; // DB오류
+            gvExtMsg := E.Message;
+            Exit;
+          end;
+        End; // end Except
+      end; //end ADOQuery_Main
+
+      //--- Return 변수
+      pReportInfo.iCurTotSeqNo := iCurTotSeqNo;
+      pReportInfo.iIdxSeqNo    := iIdxSeqNo;
+    end;  // end of for
+
+    //--------------------
+    gf_CommitTransaction;
+    //--------------------
+  end;  // end of with
+
+  //----------------------------------------------------------------------------
+  // FAX SEND Request Send
+  //----------------------------------------------------------------------------
+  fnCharSet(@clisvrhead, ' ', sizeof(CliSvrHead_R));
+  MoveDataChar(clisvrhead.TrGbn, gcSTYPE_FAX, SizeOf(clisvrhead.TrGbn));
+  MoveDataChar(clisvrhead.TrCode, '', SizeOf(clisvrhead.TrCode));
+  MoveDataChar(clisvrhead.TermNo, gvTermNo, sizeof(clisvrhead.TermNo));
+  MoveDataChar(clisvrhead.LoginID, gvOprUsrNo, Sizeof(clisvrhead.LoginID));
+  MoveDataChar(clisvrhead.WinHandle,'',sizeof(clisvrhead.WinHandle));
+
+  CharCharCpy(cpSbuff,@clisvrhead,sizeof(CliSvrHead_R));
+  iSlen := sizeof(CliSvrHead_R);
+
+  // FAX자료 전송 Request Send
+  if fnServerSendData(iSlen, cpSbuff) < 0 then
+  begin
+    gf_Log('한투 금상 Fax전송 Error -> fnServerSendData');
+    Result := False;
+    Exit;
+  end;
+
+  Result := True;
+end;
+
+//=======================================================================
 // Fax Data ReSend Function
 //=======================================================================
 function fnFAXDataReSend(iTotSeqNo : Integer) : Boolean;
@@ -2339,7 +2691,7 @@ end;
 //=======================================================================
 // 한투 금상 EMail Data Send Function : L.J.S
 //=======================================================================
-function fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData;
+function fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData_TFFI;
                               tEMailAttList: TList; var StartTime : String) : Boolean;
 var
   cpSbuff : array [0..gcMAX_COMM_BUFF_SIZE] of char;
@@ -2468,10 +2820,10 @@ begin
       // SZMELSNT_INS INSERT - [L.J.S] 한투 금상 테이블
       //----------------------------------------------------------------------
       CommandText :=
-              'INSERT SZMELSNT_INS                                        '+
-              '(DEPT_CODE,  JOB_DATE, JOB_SEQ, SND_DATE,  CUR_TOT_SEQ_NO) '+
-              'VALUES                                                     '+
-              '(:pDeptCode, pJobDate, pJobSeq, pSendDate, pCurTotSeqNo)   ';
+              'INSERT SZMELSNT_INS                                           '+
+              '(DEPT_CODE,  JOB_DATE,  JOB_SEQ,  SND_DATE,   CUR_TOT_SEQ_NO) '+
+              'VALUES                                                        '+
+              '(:pDeptCode, :pJobDate, :pJobSeq, :pSendDate, :pCurTotSeqNo)  ';
               
       try
         Parameters.ParamByName('pDeptCode').Value      := gvDeptCode;
@@ -2561,7 +2913,7 @@ begin
   // EMAIL자료 전송 Request Send
   if fnServerSendData(iSlen, cpSbuff) < 0 then
   begin
-    gf_Log('E-mail 전송 Error -> fnServerSendData');
+    gf_Log('한투 금상 E-mail 전송 Error -> fnServerSendData');
     Result := False;
     Exit;
   end;

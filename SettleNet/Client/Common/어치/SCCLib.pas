@@ -750,16 +750,6 @@ procedure gf_FaxErrMaxCntErrMsg(pADOQuery : TADOQuery; pLabel : TDRLabel);
 procedure gf_EmailErrMsg(pADOQuery : TADOQuery; pLabel : TDRLabel);
 
 
-//------------------------------------------------------------------------------
-// 종합계좌번호, 상품코드, 잔고번호 formatting 00000000-00-0000
-//------------------------------------------------------------------------------
-function gf_FormatAccNo_FI(pAccNo, pPrdNo, pBlcNo: string): string;
-
-//------------------------------------------------------------------------------
-// 금융상품 첨부파일명 변환
-//------------------------------------------------------------------------------
-function gf_ConvertText_FI(pOldText, pFileNameInfo, pAccNo, pPrdNo, pBlcNo,
-  pCreDate: String): String;
 
 
 implementation
@@ -4837,7 +4827,7 @@ end;
 
 function gf_CreateMailFile(SndItem: pTFSndMail; CallFlag: boolean; JobDate: string): string;
 var
-  sPathName, sDirName, sFileName, sTmpStr: string;
+  sPathName, sDirName, sFileName, sFileName1, sTmpStr: string;
   iCnt: integer;
   SR: TSearchRec;
   SearchRec: boolean;
@@ -4862,7 +4852,7 @@ begin
     else
       sDirName := gvDirUserData + SndItem.AccList.Strings[0] + '\';
 
-   // 파일 이름만 Return
+    // 파일 이름만 Return
     if gf_CreateEMailFile(SndItem.MailFormId, gvDirTemp, gvDeptCode, JobDate,
       SndITem.AccGrpName, SndITem.AccList, sFileName, False) then
     begin
@@ -4877,6 +4867,7 @@ begin
     while True do
     begin //UserData에 있는지 판단
       sFileName := ExtractFileName(fnGetTokenStr(sPathName, gcSPLIT_MAILADDR, iCnt));
+
       if Trim(sFileName) = '' then Break;
       if FindFirst(sDirName + sFileName, faAnyFile, SR) = 0 then
         repeat
@@ -4894,11 +4885,13 @@ begin
       Result := '';
       exit;
     end;
+
    //UserData에 없으면.
     if not SearchRec then
     begin
       if CallFlag then // Email Send시
       begin
+ShowMessage('true');
          // MailFile 생성
         if gf_CreateEMailFile(SndItem.MailFormID, gvDirTemp, gvDeptCode, JobDate,
           SndITem.AccGrpName, SndItem.AccList, sFileName, True) then
@@ -4910,7 +4903,10 @@ begin
           Exit;
         end;
       end else //Query시
+      begin
+        ShowMessage('False');
         Result := sPathName;
+      end;
     end; // end of else
 
   finally
@@ -11328,57 +11324,6 @@ begin
   end;
 end;
 
-//------------------------------------------------------------------------------
-// 종합계좌번호, 상품코드, 잔고번호 formatting 00000000-00-0000
-//------------------------------------------------------------------------------
-function gf_FormatAccNo_FI(pAccNo, pPrdNo, pBlcNo: string): string;
-begin
-  Result := '';
-
-  // 종합계좌 + 상품코드 + 잔고번호
-  if (Trim(pAccNo) <> '') and (Trim(pPrdNo) <> '') and (Trim(pBlcNo) <> '') then
-  begin
-    Result := Trim(pAccNo) + '-' + Trim(pPrdNo) + '-' + Trim(pBlcNo);
-  end else
-  // 종합계좌 + 상품코드
-  if (Trim(pAccNo) <> '') and (Trim(pPrdNo) <> '') then
-  begin
-    Result := Trim(pAccNo) + '-' + Trim(pPrdNo);
-  end else
-  // 종합계좌
-  if (Trim(pAccNo) <> '') then
-  begin
-    Result := Trim(pAccNo);
-  end;
-end;
-
-//------------------------------------------------------------------------------
-// 금융상품 첨부파일명 변환
-//------------------------------------------------------------------------------
-function gf_ConvertText_FI(pOldText, pFileNameInfo, pAccNo, pPrdNo, pBlcNo,
-  pCreDate: String): String;
-const
-  STR_FILENAME = '{출력화일명}';
-  STR_ACC_NO   = '{계좌번호}';
-  STR_CRE_DATE = '{생성일자}';
-var
-  sBuff: string;
-begin
-  Result := pOldText;
-
-  if (pOldText = '') then Exit;
-
-  sBuff := pOldText;
-
-  // 출력화일명 변환
-  sBuff := StringReplace(sBuff, STR_FILENAME, pFileNameInfo, [rfReplaceAll]);
-  // 계좌번호 변환
-  sBuff := StringReplace(sBuff, STR_FILENAME, gf_FormatAccNo_FI(pAccNo, pPrdNo, pBlcNo), [rfReplaceAll]);
-  // 출력화일명 변환
-  sBuff := StringReplace(sBuff, STR_FILENAME, pCreDate, [rfReplaceAll]);
-
-  Result := sBuff;
-end;
 
 end.
 

@@ -29,7 +29,7 @@ function  fnFAXDataReSend(iTotSeqNo : Integer; sOprTime:String) : Boolean; OverL
 function  fnFAXDataCancel(iTotSeqNo , Tag : Integer; MessageBar: TDRMessageBar) : Boolean;
 function  fnEMailDataSend(pEMailFormat : pEMailSendFormat;
                           tEMailAttList: TList; var StartTime : String) : Boolean;
-function  fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData_TFFI;
+function  fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData;
                                tEMailAttList: TList; var StartTime : String) : Boolean;
 function  fnEMailDataCancel(iTotSeqNo : Integer) : Boolean;
 
@@ -1584,7 +1584,11 @@ var
   sTemp    : String;
   iIndex   : Integer;
   iSndTotSeqNo, iCurTotSeqNo, iIdxSeqNo : Integer;
-  pReportInfo    : pTFaxReportList_TFFI;
+  pReportInfo    : pTReportList;
+  pTmpTBACTrade  : pTBACTrade;
+  pTmpTBGPTrade  : pTBGPTrade;
+  pTmpTBACNormal : pTBACNormal;
+  pTmpTBGPNormal : pTBGPNormal;
 begin
   Result := False;
 
@@ -1670,6 +1674,8 @@ begin
           pReportInfo.sReportType   := Trim(FieldByName('REPORT_TYPE').asString);
           pReportInfo.sReportId     := Trim(FieldByName('REPORT_ID').asString);
           pReportInfo.sDirection    := Trim(FieldByName('DIRECTION').asString);
+          pReportInfo.sLogoPageNo   := Trim(FieldByName('LOGO_PAGE_NO').asString);
+          pReportInfo.sTxtUnitInfo  := Trim(FieldByName('TXT_UNIT_INFO').asString);
           pReportInfo.iTotalPageCnt := FieldByName('TOTAL_PAGES').asInteger;
         end;  // end of if
       end
@@ -1744,14 +1750,15 @@ begin
             Parameters.ParamByName('pReportType').Value  := pReportInfo.sReportType;
             Parameters.ParamByName('pReportID').Value    := pReportInfo.sReportId;
             Parameters.ParamByName('pDirection').Value   := pReportInfo.sDirection;
-            Parameters.ParamByName('pLogoPageNo').Value  := '';
-            Parameters.ParamByName('pTxtUnitInfo').Value := '';
+            Parameters.ParamByName('pLogoPageNo').Value  := pReportInfo.sLogoPageNo;
+            Parameters.ParamByName('pTxtUnitInfo').Value := pReportInfo.sTxtUnitInfo;
             Parameters.ParamByName('pTotalPages').Value  := pReportInfo.iTotalPageCnt;
             Parameters.ParamByName('pMainData').LoadFromFile(pReportInfo.sFileName,ftBlob);
             Parameters.ParamByName('pTradeDate').Value   := pReportInfo.sTradeDate;
-            // PDF 엔진만 사용
-            Parameters.ParamByName('pFileType').Value := gcFILE_TYPE_PDF;
-            
+            if (gvPDFEngineUseYn <> 'Y') then
+              Parameters.ParamByName('pFileType').Value := gcFILE_TYPE_RPT
+            else
+              Parameters.ParamByName('pFileType').Value := gcFILE_TYPE_PDF;
             Execute;
           Except
             on E : Exception do
@@ -1858,34 +1865,6 @@ begin
             Exit;
           end;
         end; // end Except
-
-        //----------------------------------------------------------------------
-        // SZFAXSNT_INS INSERT - [L.J.S] 한투 금상 테이블
-        //----------------------------------------------------------------------
-        CommandText :=
-              'INSERT SZFAXSNT_INS                                           '+
-              '(DEPT_CODE,  JOB_DATE,  JOB_SEQ,  SND_DATE,   CUR_TOT_SEQ_NO) '+
-              'VALUES                                                        '+
-              '(:pDeptCode, :pJobDate, :pJobSeq, :pSendDate, :pCurTotSeqNo)  ';
-
-        Parameters.ParamByName('pDeptCode').Value      := gvDeptCode;
-        Parameters.ParamByName('pJobDate').Value       := pReportInfo.sJobDate;
-        Parameters.ParamByName('pJobSeq').Value        := pReportInfo.iJobSeq;
-        Parameters.ParamByName('pSendDate').Value      := Trim(pFaxSndFormat.sCurDate);
-        Parameters.ParamByName('pCurTotSeqNo').Value   := iCurTotSeqNo;
-
-        try
-
-          Execute;
-        Except
-          on E : Exception do
-          begin
-            gf_RollbackTransaction;
-            gvErrorNo := 9001; // DB오류
-            gvExtMsg := E.Message;
-            Exit;
-          end;
-        End; // end Except
       end; //end ADOQuery_Main
 
       //--- Return 변수
@@ -1914,9 +1893,11 @@ begin
   // FAX자료 전송 Request Send
   if fnServerSendData(iSlen, cpSbuff) < 0 then
   begin
-    gf_Log('Fax전송 Error -> fnServerSendData');
-    Result := False;
-    Exit;
+{
+   gf_Log('Fax전송 Error -> fnServerSendData');
+   Result := False;
+   Exit;
+}
   end;
 
   Result := True;
@@ -2691,7 +2672,7 @@ end;
 //=======================================================================
 // 한투 금상 EMail Data Send Function : L.J.S
 //=======================================================================
-function fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData_TFFI;
+function fnEMailDataSend_TFFI(pEMailFormat : pTSndMailData;
                               tEMailAttList: TList; var StartTime : String) : Boolean;
 var
   cpSbuff : array [0..gcMAX_COMM_BUFF_SIZE] of char;
@@ -2820,10 +2801,10 @@ begin
       // SZMELSNT_INS INSERT - [L.J.S] 한투 금상 테이블
       //----------------------------------------------------------------------
       CommandText :=
-              'INSERT SZMELSNT_INS                                           '+
-              '(DEPT_CODE,  JOB_DATE,  JOB_SEQ,  SND_DATE,   CUR_TOT_SEQ_NO) '+
-              'VALUES                                                        '+
-              '(:pDeptCode, :pJobDate, :pJobSeq, :pSendDate, :pCurTotSeqNo)  ';
+              'INSERT SZMELSNT_INS                                        '+
+              '(DEPT_CODE,  JOB_DATE, JOB_SEQ, SND_DATE,  CUR_TOT_SEQ_NO) '+
+              'VALUES                                                     '+
+              '(:pDeptCode, pJobDate, pJobSeq, pSendDate, pCurTotSeqNo)   ';
               
       try
         Parameters.ParamByName('pDeptCode').Value      := gvDeptCode;
@@ -2913,7 +2894,7 @@ begin
   // EMAIL자료 전송 Request Send
   if fnServerSendData(iSlen, cpSbuff) < 0 then
   begin
-    gf_Log('한투 금상 E-mail 전송 Error -> fnServerSendData');
+    gf_Log('E-mail 전송 Error -> fnServerSendData');
     Result := False;
     Exit;
   end;

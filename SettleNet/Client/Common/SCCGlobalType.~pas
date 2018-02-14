@@ -567,6 +567,22 @@ type
   end;
   pTReportList = ^TReportList;
 
+  // [L.J.S] - 한투 금상 FAX Report 포멧 구조체 
+  TFaxReportList_TFFI = record
+    sSecCode      : string[1];
+    sTradeDate    : string[8];
+    sReportType   : string[1];
+    sReportId     : string[7];
+    sDirection    : string[1];
+    sJobDate      : string[8];
+    iJobSeq       : Integer;
+    iTotalPageCnt : Integer;
+    sFileName     : string;
+    iCurTotSeqNo  : Integer;
+    iIdxSeqNo     : Integer;
+  end;
+  pTFaxReportList_TFFI = ^TFaxReportList_TFFI;
+
   //=== Fax/Telex 전송 관련 Data
   TBACTrade = record              // Broker - A/C Trade Data
     sAccNo        : string[20];
@@ -674,7 +690,7 @@ type
   pEMailSendFormat = ^TEMailSendFormat;
 
   // [L.J.S] - 한투 금상 E-mail 전송 포멧 구조체 
-  TSndMailData = record
+  TSndMailData_TFFI = record
     CurDate        : string[8];     // 전송일
     JobDate        : string[8];     // 작업일
     JobSeq         : Integer;       // 작업 Sequence
@@ -691,7 +707,7 @@ type
     ReportID       : string[7];     // MAIN FORM ID
     CurTotSeqNo    : Integer;       // Return변수
   end;
-  pTSndMailData = ^TSndMailData;
+  pTSndMailData_TFFI = ^TSndMailData_TFFI;
 
   // EMail Send Attach File Format
   TEMailSendAttach = record

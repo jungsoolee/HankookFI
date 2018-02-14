@@ -1,56 +1,56 @@
 inherited Form_SCFH8104: TForm_SCFH8104
   Tag = 8104
-  Left = 468
-  Top = 583
-  Width = 974
-  Height = 517
+  Left = 238
+  Top = 483
+  Width = 979
+  Height = 523
   Caption = '[8104] '#48372#44256#49436' '#44288#47532
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 13
   inherited DRPanel_Top: TDRPanel
-    Width = 966
+    Width = 971
     inherited DRPanel_Title: TDRPanel
       Caption = #48372#44256#49436' '#44288#47532
     end
     inherited DRBitBtn1: TDRBitBtn
-      Left = 899
+      Left = 904
     end
     inherited DRBitBtn2: TDRBitBtn
-      Left = 833
+      Left = 838
       Caption = #51064#49604
       OnClick = DRBitBtn2Click
     end
     inherited DRBitBtn3: TDRBitBtn
       Tag = 2
-      Left = 767
+      Left = 772
       Caption = #51200#51109'(F5)'
       OnClick = DRBitBtn3Click
     end
     inherited DRBitBtn4: TDRBitBtn
-      Left = 701
+      Left = 706
       Caption = #51312#54924
       TabStop = False
       OnClick = DRBitBtn4Click
     end
     inherited DRBitBtn5: TDRBitBtn
-      Left = 635
+      Left = 640
       Visible = False
     end
     inherited DRBitBtn6: TDRBitBtn
-      Left = 569
+      Left = 574
       Visible = False
     end
   end
   inherited MessageBar: TDRMessageBar
-    Top = 461
-    Width = 966
+    Top = 467
+    Width = 971
   end
   object DRPanel1: TDRPanel [4]
     Left = 0
     Top = 27
-    Width = 966
-    Height = 434
+    Width = 971
+    Height = 440
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -63,7 +63,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       Left = 1
       Top = 1
       Width = 464
-      Height = 432
+      Height = 438
       Align = alLeft
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -76,13 +76,13 @@ inherited Form_SCFH8104: TForm_SCFH8104
         Left = 1
         Top = 1
         Width = 462
-        Height = 430
+        Height = 436
         Align = alClient
         Color = clWhite
         ColCount = 2
         DefaultRowHeight = 18
         FixedCols = 0
-        RowCount = 20
+        RowCount = 30
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -122,8 +122,8 @@ inherited Form_SCFH8104: TForm_SCFH8104
     object DRPanel3: TDRPanel
       Left = 465
       Top = 1
-      Width = 500
-      Height = 432
+      Width = 505
+      Height = 438
       Align = alClient
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -133,8 +133,8 @@ inherited Form_SCFH8104: TForm_SCFH8104
       ParentFont = False
       TabOrder = 1
       DesignSize = (
-        500
-        432)
+        505
+        438)
       object DRLabel1: TDRLabel
         Left = 16
         Top = 20
@@ -242,7 +242,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DREdit_MgrOprTime: TDREdit
         Left = 331
         Top = 17
-        Width = 137
+        Width = 142
         Height = 20
         TabStop = False
         Anchors = [akLeft, akTop, akRight]
@@ -297,7 +297,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DREdit_ReportName: TDREdit
         Left = 104
         Top = 46
-        Width = 364
+        Width = 369
         Height = 20
         Anchors = [akLeft, akTop, akRight]
         Color = clBtnFace
@@ -315,7 +315,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DREdit_ViewFileName: TDREdit
         Left = 104
         Top = 77
-        Width = 364
+        Width = 369
         Height = 20
         Anchors = [akLeft, akTop, akRight]
         Font.Charset = DEFAULT_CHARSET
@@ -332,7 +332,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DREdit_AddFileName: TDREdit
         Left = 104
         Top = 137
-        Width = 364
+        Width = 369
         Height = 20
         Anchors = [akLeft, akTop, akRight]
         Font.Charset = DEFAULT_CHARSET
@@ -349,7 +349,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DREdit_SubjectData: TDREdit
         Left = 104
         Top = 167
-        Width = 364
+        Width = 369
         Height = 20
         Anchors = [akLeft, akTop, akRight]
         Font.Charset = DEFAULT_CHARSET
@@ -366,7 +366,7 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DREdit_FileNameInfo: TDREdit
         Left = 104
         Top = 107
-        Width = 364
+        Width = 369
         Height = 20
         Anchors = [akLeft, akTop, akRight]
         Font.Charset = DEFAULT_CHARSET
@@ -383,8 +383,8 @@ inherited Form_SCFH8104: TForm_SCFH8104
       object DRMemo_MailBodyData: TDRMemo
         Left = 104
         Top = 197
-        Width = 364
-        Height = 220
+        Width = 369
+        Height = 226
         Anchors = [akLeft, akTop, akRight, akBottom]
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText

@@ -285,6 +285,8 @@ begin
     end;
 
   end;
+
+  Result := true;
 end;
 
 //==============================================================================
@@ -392,7 +394,7 @@ begin
   // 화면출력명
   if Trim(DREdit_ViewFileName.Text) = '' then
   begin
-    gf_ShowMessage(MessageBar, mtError, 1012, ''); //입력 오류
+    gf_ShowMessage(MessageBar, mtError, 1012, '화면출력명'); //입력 오류
     DREdit_ViewFileName.SetFocus;
     Exit;
   end;
@@ -400,7 +402,7 @@ begin
   // 출력파일명
   if Trim(DREdit_FileNameInfo.Text) = '' then
   begin
-    gf_ShowMessage(MessageBar, mtError, 1012, ''); //입력 오류
+    gf_ShowMessage(MessageBar, mtError, 1012, '출력파일명'); //입력 오류
     DREdit_FileNameInfo.SetFocus;
     Exit;
   end;
@@ -408,7 +410,7 @@ begin
   // 첨부파일명
   if Trim(DREdit_AddFileName.Text) = '' then
   begin
-    gf_ShowMessage(MessageBar, mtError, 1012, ''); //입력 오류
+    gf_ShowMessage(MessageBar, mtError, 1012, '첨부파일명'); //입력 오류
     DREdit_AddFileName.SetFocus;
     Exit;
   end;
@@ -416,7 +418,7 @@ begin
   // 메일제목
   if Trim(DREdit_SubjectData.Text) = '' then
   begin
-    gf_ShowMessage(MessageBar, mtError, 1012, ''); //입력 오류
+    gf_ShowMessage(MessageBar, mtError, 1012, '메일제목'); //입력 오류
     DREdit_SubjectData.SetFocus;
     Exit;
   end;

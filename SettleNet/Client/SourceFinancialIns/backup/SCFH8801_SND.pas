@@ -69,9 +69,9 @@ type
   // [L.J.S] - 전송대상 구조체(FAX, E-mail, 미등록)
   TSnd = record
     SendType       : string;      // 전송구분 - FAX: F, E-mail: E, 미등록: N
-    JobSeq         : double;     // 보고서 Job Sequence
+    JobSeq         : Integer;      // 보고서 Job Sequence
     JobDate        : string;      // 보고서 생성 일
-    EmpNo          : string;      // 사번
+    EmpID          : string;      // 사번
     EmpName        : string;      // 사명
     JobTime        : string;      // 생성시간
     FullAccNo      : string;      // 계좌번호 - 상품코드 - 잔고번호
@@ -113,7 +113,7 @@ type
   TSnt = record
     SendType         : string;        // FAX or E-mail                           
     JobSeq           : Integer;       // 보고서 시퀀스                           
-    EmpNo            : string;        // 사번                                    
+    EmpID            : string;        // 사번                                    
     EmpName          : string;        // 사명                                    
     FullAccNo        : string;        // 계좌번호 - 상품코드 - 잔고번호          
     AccNo            : string;        // 계좌번호                                
@@ -152,7 +152,7 @@ type
     OprTime          : string;        // 조작 시간                               
   end;
   pTSnt = ^TSnt;
-
+  
   //=== Fax/Tlx 전송 위한 데이터
   TESndFaxTlx = record
     AccGrpType   : string;       // 그룹별/계좌별 구분
@@ -376,6 +376,10 @@ type
     DRRadioButton_SntType_ALL: TDRRadioButton;
     DRComboBox_SndColOrder: TDRComboBox;
     DRLabel1: TDRLabel;
+    DRPopupMenu_SndNone: TDRPopupMenu;
+    MenuItem13: TMenuItem;
+    MenuItem14: TMenuItem;
+    MenuItem15: TMenuItem;
     procedure ClearScreen;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -383,7 +387,7 @@ type
     procedure DRBitBtn3Click(Sender: TObject);
     procedure DRBitBtn2Click(Sender: TObject);
     procedure ProcPanel_BitBtn_ConfirmClick(Sender: TObject);
-
+//----------------------------------------------------------------------------//
     // [L.J.S] 한투 금상 함수 정의
     procedure DefSetSndStrGrid;
     procedure DefSetSntStrGrid;
@@ -405,13 +409,26 @@ type
     procedure ChangeViewType(pViewType: Integer; pTotPanel, pSndPanel, pSntPanel: TPanel;
                                  pSplitter: TSplitter);
 
-    function fn_CreateMailFile(SndItem: pTSnd; CallFlag: boolean; JobDate: string): string;
-    function fn_CreateEMailFile(pEMailFormId, pDirName, pDeptCode, pTradeDate: string;
-                                  pGrpName: string; var FileName: string; CreateFlag: boolean): boolean;
+    function fn_ChkMailRptFile(pSndItem: pTSnd; CallFlag: boolean; pJobDate: string): string;
+    function fn_CreateMailRptFile(pDirName, pDeptCode, pJobDate, pRptGbn, pReportCode: string; pJobSeq: Integer;
+                                  pFileName: string; CreateFlag: boolean): boolean;
+    function fn_MakeRptFileName(pDirName, pRptCode, pFullAccNo: string): string;
+
 
     function fn_GetSndListIdx(pGridRowIdx: Integer): Integer;
+    function fn_GetSntListIdx(pGridRowIdx: Integer): Integer;
     procedure SetColOpt;
 
+    procedure RefreshListNGrid(pRefreshSnd, pRefreshSnt: boolean);
+    function GetSndListIdx(pGridRowIdx: Integer): Integer;
+
+    function fn_SendEMail(SndItemIdxList: TStringList): boolean;
+    function fn_BuildMailStrList(SndItem: TStringList):string;
+
+    procedure AddSntMailList(SndItem: pTSnd);
+
+    function fn_SendFax(SndItemIdxList: TStringList): boolean;
+//----------------------------------------------------------------------------//
 
 
     //=== Send Fax/Tlx
@@ -425,14 +442,12 @@ type
     //=== Sent Fax/Tlx
     function  RetrySendFaxTlx(SntItem: pTESntFaxTlx; FreqItem: pTEFreqFaxTlx): boolean;
     function  GetSntFaxTlxListIdx(pGridRowIdx: Integer; var pSntIdx, pFreqIdx: Integer): boolean;
-    procedure ClearSntFaxList;
     procedure DisplayFreqFaxTlxItem(SntItem: pTESntFaxTlx; FreqItem: pTEFreqFaxTlx);
     procedure DisplaySntFaxTlxList(DefSelectFlag: boolean);
 
     //=== Send EMail
-    function  SendEMail(SndItemIdxList: TStringList): boolean;
+
     function  GetSndMailListIdx(pGridRowIdx: Integer): Integer;
-    procedure AddSntMailList(SndItem: pTFSndMail);
     procedure PopupSndMailClick(Sender: TObject);
     procedure PopupSndMailSubClick(Sender: TObject);
 
@@ -441,13 +456,12 @@ type
     procedure ClearSntMailList;
     procedure DisplaySntMailList;
     procedure DisplayFreqMailItem(SntItem: pTSntMail; FreqItem: pTFreqMail);
-    function  BuildMailStrList(SndItem: TStringList):string;
+
     function  GetSntMailListIdx(pGridRowIdx: Integer; var pSntIdx, pFreqIdx: Integer): boolean;
     procedure PopupSntMailClick(Sender: TObject);
     procedure PopupSntMailSubClick(Sender: TObject);
 
     procedure DRStrGrid_SndFaxTlxDblClick(Sender: TObject);
-    procedure DRStrGrid_SndFaxTlxFiexedRowClick(Sender: TObject; ACol: Integer);
     procedure DRStrGrid_SndFaxTlxMouseUp(Sender: TObject;Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure DRStrGrid_SntFaxTlxFiexedRowClick(Sender: TObject;ACol: Integer);
     procedure DRStrGrid_SntFaxTlxMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -456,13 +470,12 @@ type
     procedure DRSpeedBtn_FaxTlxResendClick(Sender: TObject);
     procedure DRSpeedBtn_SntFaxTlxPrintClick(Sender: TObject);
     procedure DRSpeedBtn_FaxTlxExportClick(Sender: TObject);
-    procedure PopupSndFaxTlxClick(Sender: TObject);
+    procedure PopupSndClick(Sender: TObject);
     procedure PopupSntFaxTlxClick(Sender: TObject);
     procedure DRCheckBox_FaxTlxTotFreqClick(Sender: TObject);
     procedure DRStrGrid_SntFaxTlxDblClick(Sender: TObject);
     procedure DRCheckBox_ViewClick(Sender: TObject);
     procedure DRSpeedBtn_SndMailDirClick(Sender: TObject);
-    procedure DRStrGrid_SndMailFiexedRowClick(Sender: TObject; ACol: Integer);
     procedure DRStrGrid_SndMailMouseUp(Sender: TObject;Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure DRSpeedBtn_SndFaxTlxSelectClick(Sender: TObject);
     procedure DRSpeedBtn_SntFaxTlxSelectClick(Sender: TObject);
@@ -472,7 +485,7 @@ type
     procedure DRStrGrid_SntMailDblClick(Sender: TObject);
     procedure DRSpeedBtn_ExportClick(Sender: TObject);
     procedure DRSpeedBtn_SndFaxTlxRefreshClick(Sender: TObject);
-    procedure RefreshListNGrid(pRefreshSnd, pRefreshSnt: boolean);
+
     procedure DRSpeedBtn_SntFaxTlxRefreshClick(Sender: TObject);
     procedure DRSpeedBtn_SndFaxTlxExportClick(Sender: TObject);
     procedure OnRcvFaxTlxResult(var msg: TMessage); message WM_USER_FAX_RESULT;
@@ -492,10 +505,16 @@ type
     procedure DRPanel_SndTitleDblClick(Sender: TObject);
     procedure DRPanel_SntTitleDblClick(Sender: TObject);
     procedure DRComboBox_SndColOrderChange(Sender: TObject);
+    procedure DRRadioButton_SndType_Click(Sender: TObject);
+    procedure DRStrGrid_SndFiexedRowClick(Sender: TObject; ACol: Integer);
+    procedure DRStrGrid_SndMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
 
   private
     procedure OnRcvChangeJobDate(var msg: TMessage); message WM_USER_CHANGE_JOBDATE;
     procedure DataExistDateJump(sSeparation: String);
+
+    // [L.J.S]
     function  EmailManyFileCheck(pSndItemIdxList: TStringList): boolean; // 이메일 보고서 전송 전 파일 갯수 체크.
 
   public
@@ -538,45 +557,56 @@ uses
    SCCDataModule, SCCSRMgrForm, SCFH2304, DateUtils;
 
 const
-   NL = #13#10;
+  NL = #13#10;
 
-   SELECT_IDX    = 0;           // DRStrGrid_의 Select Column Index
+  SELECT_IDX    = 0;           // DRStrGrid_의 Select Column Index
 
-   // [L.J.S]
-   WORD_NONE = '미등록';
-   
-   SND_COL_COUNT = 12;
-   SNT_COL_COUNT = 13;
 
-   SND_NO1_IDX  = 1;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
-   SND_NO2_IDX  = 2;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
-   SND_NO3_IDX  = 3;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
-   SND_NO4_IDX  = 4;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
-   SND_TYPE_IDX      = 5;    // DRStrGrid_Snd 전송구분 Col Index
-   SND_DEST_NAME_IDX = 6;    // DRStrGrid_Snd 수신처명 Col Index
-   SND_DEST_IDX      = 7;    // DRStrGrid_Snd 수신처 Col Index
-   SND_RPT_IDX       = 8;    // DRStrGrid_Snd 보고서 서식 Col Index
-   SND_REQ_TIME_IDX  = 9;    // DRStrGrid_Snd 전송 요청 시간 Col Index
-   SND_FIN_TIME_IDX  = 10;   // DRStrGrid_Snd 전송 완료 시간 Col Index
-   SND_EXP_IDX       = 11;   // DRStrGrid_Snd 전송제외 Col Index
+//----------------------------------------------------------------------------//
+  // [L.J.S]
+  WORD_NONE = '미등록';
 
-   SNT_EMP_IDX       = 1;    // DRStrGrid_Snt 사번 Col Index
-   SNT_ACC_NO_IDX    = 2;    // DRStrGrid_Snt 계좌번호 Col Index
-   SNT_ACC_NAME_IDX  = 3;    // DRStrGrid_Snt 계좌명 Col Index
-   SNT_TYPE_IDX      = 4;    // DRStrGrid_Snt 전송구분 Col Index
-   SNT_DEST_NAME_IDX = 5;    // DRStrGrid_Snt 수신처명 Col Index
-   SNT_DEST_IDX      = 6;    // DRStrGrid_Snt 수신처 Col Index
-   SNT_RPT_IDX       = 7;    // DRStrGrid_Snt 보고서 서식 Col Index
-   SNT_REQ_TIME_IDX  = 8;    // DRStrGrid_Snt 전송 시작 시간 Col Index
-   SNT_FIN_TIME_IDX  = 9;    // DRStrGrid_Snt 전송 완료 시간 Col Index
-   SNT_RESEND_IDX    = 10;   // DRStrGrid_Snt 재전송 Col Index
-   SNT_PRC_IDX       = 11;   // DRStrGrid_Snt Process Col Index
-   SNT_PAGE_IDX      = 12;   // DRStrGrid_Snt Page Col Index
+  SND_COL_COUNT = 12;
+  SNT_COL_COUNT = 13;
 
-   SND_TYPE_FAX      = 'FAX';  // 전송대상 전송 구분 - FAX
-   SND_TYPE_MAIL     = 'E-mail';  // 전송대상 전송 구분 - E-mail
-   SND_TYPE_NONE     = 'NONE';  // 전송대상 전송 구분 - 미등록
+  SND_COL1_IDX  = 1;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
+  SND_COL2_IDX  = 2;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
+  SND_COL3_IDX  = 3;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
+  SND_COL4_IDX  = 4;    // 컬럼 순서가 달라질 수 있는 필드들 (사번, 생성시간, 계좌번호, 계좌명(계좌번호 COL_IDX + 1)
+  SND_TYPE_IDX      = 5;    // DRStrGrid_Snd 전송구분 Col Index
+  SND_DEST_NAME_IDX = 6;    // DRStrGrid_Snd 수신처명 Col Index
+  SND_DEST_IDX      = 7;    // DRStrGrid_Snd 수신처 Col Index
+  SND_RPT_IDX       = 8;    // DRStrGrid_Snd 보고서 서식 Col Index
+  SND_REQ_TIME_IDX  = 9;    // DRStrGrid_Snd 전송 요청 시간 Col Index
+  SND_FIN_TIME_IDX  = 10;   // DRStrGrid_Snd 전송 완료 시간 Col Index
+  SND_EXP_IDX       = 11;   // DRStrGrid_Snd 전송제외 Col Index
 
+  SNT_EMP_IDX       = 1;    // DRStrGrid_Snt 사번 Col Index
+  SNT_ACC_NO_IDX    = 2;    // DRStrGrid_Snt 계좌번호 Col Index
+  SNT_ACC_NAME_IDX  = 3;    // DRStrGrid_Snt 계좌명 Col Index
+  SNT_TYPE_IDX      = 4;    // DRStrGrid_Snt 전송구분 Col Index
+  SNT_DEST_NAME_IDX = 5;    // DRStrGrid_Snt 수신처명 Col Index
+  SNT_DEST_IDX      = 6;    // DRStrGrid_Snt 수신처 Col Index
+  SNT_RPT_IDX       = 7;    // DRStrGrid_Snt 보고서 서식 Col Index
+  SNT_REQ_TIME_IDX  = 8;    // DRStrGrid_Snt 전송 시작 시간 Col Index
+  SNT_FIN_TIME_IDX  = 9;    // DRStrGrid_Snt 전송 완료 시간 Col Index
+  SNT_RESEND_IDX    = 10;   // DRStrGrid_Snt 재전송 Col Index
+  SNT_PRC_IDX       = 11;   // DRStrGrid_Snt Process Col Index
+  SNT_PAGE_IDX      = 12;   // DRStrGrid_Snt Page Col Index
+
+  SND_TYPE_FAX      = 'FAX';  // 전송대상 전송 구분 - FAX
+  SND_TYPE_MAIL     = 'E-mail';  // 전송대상 전송 구분 - E-mail
+  SND_TYPE_NONE     = 'NONE';  // 전송대상 전송 구분 - 미등록
+
+  // 당일송신확인 Result
+  SNT_PRC_WAIT  = 0;   // Waiting
+  SNT_PRC_SEND  = 1;   // Sending
+  SNT_PRC_BUSY  = 2;   // Busy
+  SNT_PRC_CANC  = 3;   // Cancel
+  SNT_PRC_SENT  = 8;   // 한국통신까지 Send된 상태
+  SNT_PRC_FIN   = 9;   // Finish
+
+//----------------------------------------------------------------------------//
 
 
    SND_FAXTLX_ACCNO_IDX  = 1;   // DRStrGrid_SndFaxTlx의 계좌번호 Column Index
@@ -631,24 +661,23 @@ var
 
 
 
-   SndFaxTlxList, SntFaxTlxList : TList;             // Fax/Tlx 전송, 송신확인 List
+  SndFaxTlxList, SntFaxTlxList : TList;
    SndFaxTlxColIdx, SndFaxTlxRowIdx : Integer;       // DRGrid_SndFaxTlx의 Select된 Col Index, Row Index
    SntFaxTlxColIdx, SntFaxTlxRowIdx : Integer;       // DRGrid_SntFaxTlx의 Select된 Col Index, Row Index
    SndFaxTlxSelected, SntFaxTlxSelected : boolean;   // Fax/Tlx 전체 선택 여부
    SndFaxTlxSortIdx, SntFaxTlxSortIdx : Integer;     // SndFaxTlxList, SndFaxTlxList Sort Index
-   SndFaxTlxSortFlag : Array [0..11] of boolean;      // Column별 Sort Status
    SntFaxTlxSortFlag : Array [0..11] of boolean;     // Column별 Sort Status
    FaxTlxTotFreqChecked: string;                     // 진행내역 조회후 전회차보기 체크박스 원상복구시 사용
 
-
    //Email
    SndMailList, SntMailList : TList;                 // EMail 전송,전송내역 List
-   SndMailSelected, SntMailSelected : boolean;       // Mail 전체선택 여부
    SndMailColIdx, SndMailRowIdx : Integer;           // DRGrid_SndMail의 Selecte된 Col Index, Row Index
+   SndMailSelected, SntMailSelected : boolean;       // Mail 전체선택 여부
    SntMailColIdx, SntMailRowIdx : Integer;           // DRGrid_SntMail의 Selecte된 Col Index, Row Index
-   SndMailSortIdx, SntMailSortIdx : Integer;         // SndMailList, SndMailList Sort Index
-   SndMailSortFlag : Array [0..6] of boolean;        // Column별 Sort Status
+   SntMailSortIdx : Integer;         // SndMailList, SndMailList Sort Index
    SntMailSortFlag : Array [0..7] of boolean;       // Column별 Sort Status
+
+
 
    RealThread : T2TRealThread;
    tMyFAXResult : TFAXResult;
@@ -1101,7 +1130,7 @@ begin
       try
          if Form_SCFH8801_SND.DRPageControl_Main.ActivePage.PageIndex = gcPAGE_IDX_FAXTLX then
          begin
-            if not Assigned(SntFaxTlxList) then continue;
+            if not Assigned(SndList) then continue;
             RealPushGajjaFax;
          end
          else if Form_SCFH8801_SND.DRPageControl_Main.ActivePage.PageIndex = gcPAGE_IDX_EMAIL then
@@ -1129,143 +1158,41 @@ end;
 //------------------------------------------------------------------------------
 //  SndFaxTlxList Sorting
 //------------------------------------------------------------------------------
-function SndFaxTlxListCompare(Item1, Item2: Pointer): Integer;
+function SndListCompare(Item1, Item2: Pointer): Integer;
 var
    TmpStr1, TmpStr2: string;
    StdStr1, StdStr2: string;
    sCompareStr1, sCompareStr2: string;
 begin
-   if not Form_SCFH8801_SND.DRCheckBox_View.Checked then  // AccNo Only
-   begin
-      StdStr1 := pTESndFaxTlx(Item1).AccGrpType +
-                 MoveDataStr(pTESndFaxTlx(Item1).AccNo, 21) +
-                 MoveDataStr(pTESndFaxTlx(Item1).SubAccNo, 5) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item1).AccName, 61)) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item1).RcvCompKor, 61)) +
-                 pTESndFaxTlx(Item1).NatCode + pTESndFaxTlx(Item1).MediaNo;
+  case iSndColOpt of
+    0: begin
+      StdStr1 := pTSnd(Item1).EmpID +
+                 pTSnd(Item1).JobTime +
+                 MoveDataStr(pTSnd(Item1).FullAccNo, 16) +
+                 UpperCase(MoveDataStr(pTSnd(Item1).MediaNo + pTSnd(Item1).FullMailAddr, 464)) +
+                 UpperCase(MoveDataStr(pTSnd(Item1).ReportName, 200));
 
-      StdStr2 := pTESndFaxTlx(Item2).AccGrpType +
-                 MoveDataStr(pTESndFaxTlx(Item2).AccNo, 21) +
-                 MoveDataStr(pTESndFaxTlx(Item2).SubAccNo, 5) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item2).AccName, 61)) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item2).RcvCompKor, 61)) +
-                 pTESndFaxTlx(Item2).NatCode + pTESndFaxTlx(Item2).MediaNo;
-   end  else  // Acc Identification + AccNo
-   begin
-      StdStr1 := pTESndFaxTlx(Item1).AccGrpType +
-                 MoveDataStr(pTESndFaxTlx(Item1).AccId, 6) +
-                 MoveDataStr(pTESndFaxTlx(Item1).AccNo, 21) +
-                 MoveDataStr(pTESndFaxTlx(Item1).SubAccNo, 5) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item1).AccName, 61)) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item1).RcvCompKor, 61)) +
-                 pTESndFaxTlx(Item1).NatCode + pTESndFaxTlx(Item1).MediaNo;
+      StdStr2 := pTSnd(Item2).EmpID +
+                 pTSnd(Item2).JobTime +
+                 MoveDataStr(pTSnd(Item2).FullAccNo, 16) +
+                 UpperCase(MoveDataStr(pTSnd(Item2).MediaNo + pTSnd(Item2).FullMailAddr, 464)) +
+                 UpperCase(MoveDataStr(pTSnd(Item2).ReportName, 200));
+    end;
 
-      StdStr2 := pTESndFaxTlx(Item2).AccGrpType +
-                 MoveDataStr(pTESndFaxTlx(Item2).AccId, 6) +
-                 MoveDataStr(pTESndFaxTlx(Item2).AccNo, 21) +
-                 MoveDataStr(pTESndFaxTlx(Item2).SubAccNo, 5) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item2).AccName, 61)) +
-                 UpperCase(MoveDataStr(pTESndFaxTlx(Item2).RcvCompKor, 61)) +
-                 pTESndFaxTlx(Item2).NatCode + pTESndFaxTlx(Item2).MediaNo;
-   end;
+    1: begin
 
+    end;
 
-   case SndFaxTlxSortIdx of
-      // 계좌번호
-      1:
-      begin
-        sCompareStr1 := '';
-        sCompareStr2 := '';
-      end;
+    2: begin
 
-      // 계좌명
-      2:
-      begin
-        sCompareStr1 := UpperCase(pTESndFaxTlx(Item1).AccName);
-        sCompareStr2 := UpperCase(pTESndFaxTlx(Item2).AccName);
-      end;
-      // 수신처
-      3:
-      begin
-        sCompareStr1 := UpperCase(pTESndFaxTlx(Item1).RcvCompKor);
-        sCompareStr2 := UpperCase(pTESndFaxTlx(Item2).RcvCompKor);
-      end;
-      // 번호
-      4:
-      begin
-        sCompareStr1 := MoveDataStr(pTESndFaxTlx(Item1).NatCode, 3)
-                      + MoveDataStr(pTESndFaxTlx(Item1).MediaNo, 65);
-        sCompareStr2 := MoveDataStr(pTESndFaxTlx(Item2).NatCode, 3)
-                      + MoveDataStr(pTESndFaxTlx(Item2).MediaNo, 65);
-      end;
-      // Report 서식
-      5:
-      begin
-        sCompareStr1 := pTESndFaxTlx(Item1).ReportName;
-        sCompareStr2 := pTESndFaxTlx(Item1).ReportName;
-      end;
-      6: // 서버전송확인
-      begin
-         TmpStr1 := '';
-         if pTESndFaxTlx(Item1).SendFlag then
-         begin
-            if pTESndFaxTlx(Item1).CancFlag then TmpStr1 := gwRSPCancel
-            else if Trim(pTESndFaxTlx(Item1).ErrMsg) <> '' then TmpStr1 := gwRSPError
-            else TmpStr1 := gwRSPOK;
-         end;
-         TmpStr2 := '';
-         if pTESndFaxTlx(Item2).SendFlag then
-         begin
-            if pTESndFaxTlx(Item2).CancFlag then TmpStr2 := gwRSPCancel
-            else if Trim(pTESndFaxTlx(Item2).ErrMsg) <> '' then TmpStr2 := gwRSPError
-            else TmpStr2 := gwRSPOK;
-         end;
+    end;
 
-         sCompareStr1 := TmpStr1;
-         sCompareStr2 := TmpStr2;
-      end;
-      7: // P.S
-      begin
-         TmpStr1 := '';
-         if pTESndFaxTlx(Item1).PSList.PSStringList.Count > 0 then TmpStr1:= gcUSER_DEF_MARK;
-         TmpStr2 := '';
-         if pTESndFaxTlx(Item2).PSList.PSStringList.Count > 0 then TmpStr2:= gcUSER_DEF_MARK;
+  end;
 
-         sCompareStr1 := TmpStr1;
-         sCompareStr2 := TmpStr2;
-      end;
-      8: // Edit
-      begin
-         TmpStr1 := '';
-         if Trim(pTESndFaxTlx(Item1).EditFileName) <> '' then TmpStr1 := gcUSER_DEF_MARK;
-         TmpStr2 := '';
-         if Trim(pTESndFaxTlx(Item2).EditFileName) <> '' then TmpStr2 := gcUSER_DEF_MARK;
+  ComporeStrLenSame(sCompareStr1, sCompareStr2);
 
-         sCompareStr1 := TmpStr1;
-         sCompareStr2 := TmpStr2;
-      end;
-      9: // Amend
-      begin
-         TmpStr1 := '';
-         if pTESndFaxTlx(Item1).InsertAmd then TmpStr1 := gcUSER_DEF_MARK;
-         TmpStr2 := '';
-         if pTESndFaxTlx(Item2).InsertAmd then TmpStr2 := gcUSER_DEF_MARK;
-
-         sCompareStr1 := TmpStr1;
-         sCompareStr2 := TmpStr2;
-      end
-      else
-      begin
-         Result := 0;
-         Exit;
-      end;
-   end;  // end of case
-
-   ComporeStrLenSame(sCompareStr1, sCompareStr2);
-
-   Result := gf_ReturnStrComp(sCompareStr1 + StdStr1, sCompareStr2 + StdStr2,
-                              SndFaxTlxSortFlag[SndFaxTlxSortIdx]);
-
+  Result := gf_ReturnStrComp(sCompareStr1 + StdStr1, sCompareStr2 + StdStr2,
+                              arrSndSortFlag[iSndSortIdx]);
 end;
 
 //------------------------------------------------------------------------------
@@ -1361,102 +1288,6 @@ begin
                                 pTEFreqFaxTlx(Item2).FreqNo, False);
 end;
 
-
-//------------------------------------------------------------------------------
-//  SndMailList Sorting
-//------------------------------------------------------------------------------
-function SndMailListCompare(Item1, Item2: Pointer): Integer;
-var
-   TmpStr1, TmpStr2: string;
-   StdStr1, StdStr2: string;
-   sCompareStr1, sCompareStr2: string;
-   i : integer;
-begin
-   StdStr1 := pTFSndMail(Item1).AccGrpType
-            + UpperCase(MoveDataStr(pTFSndMail(Item1).AccGrpName, 61))
-            + UpperCase(MoveDataStr(pTFSndMail(Item1).MailFormName, 61));
-
-   StdStr2 := pTFSndMail(Item2).AccGrpType
-            + UpperCase(MoveDataStr(pTFSndMail(Item2).AccGrpName, 61))
-            + UpperCase(MoveDataStr(pTFSndMail(Item2).MailFormName, 61));
-
-   case SndMailSortIdx of
-      // 그룹명/계좌명
-      1: begin
-           sCompareStr1 := '';
-           sCompareStr2 := '';
-         end;
-      // 수신처
-      2: begin
-            TmpStr1 := '';
-            for i := 0 to pTFSndMail(Item1).MailRcv.Count -1 do
-            begin
-               TmpStr1 := TmpStr1 + pTFSndMail(Item1).MailRcv.Strings[i];
-            end;
-            TmpStr2 := '';
-            for i := 0 to pTFSndMail(Item2).MailRcv.Count -1 do
-            begin
-               TmpStr2 := TmpStr2 + pTFSndMail(Item2).MailRcv.Strings[i];
-            end;
-
-            sCompareStr1 := TmpStr1;
-            sCompareStr2 := TmpStr2;
-         end;
-      // 제목
-      3: begin
-            sCompareStr1 := UpperCase(pTFSndMail(Item1).SubjectData);
-            sCompareStr2 := UpperCase(pTFSndMail(Item2).SubjectData);
-         end;
-      // 메일서식
-      4: begin
-            sCompareStr1 := UpperCase(pTFSndMail(Item1).MailFormName);
-            sCompareStr2 := UpperCase(pTFSndMail(Item2).MailFormName);
-         end;
-       // 서버전송확인
-      5: begin
-            TmpStr1 := '';
-            if pTFSndMail(Item1).SendFlag then
-            begin
-               if pTFSndMail(Item1).CancFlag then TmpStr1 := gwRSPCancel
-               else if Trim(pTFSndMail(Item1).ErrMsg) <> '' then TmpStr1 := gwRSPError
-               else TmpStr1 := gwRSPOK;
-            end;
-            TmpStr2 := '';
-            if pTFSndMail(Item2).SendFlag then
-            begin
-               if pTFSndMail(Item2).CancFlag then TmpStr2 := gwRSPCancel
-               else if Trim(pTFSndMail(Item2).ErrMsg) <> '' then TmpStr2 := gwRSPError
-               else TmpStr2 := gwRSPOK;
-            end;
-
-            sCompareStr1 := TmpStr1;
-            sCompareStr2 := TmpStr2;
-         end;
-
-      6:  // Edit
-      begin
-         TmpStr1 := '';
-         if pTFSndMail(Item1).EditFlag then TmpStr1 := gcUSER_DEF_MARK;
-         TmpStr2 := '';
-         if pTFSndMail(Item2).EditFlag then TmpStr2 := gcUSER_DEF_MARK;
-
-         sCompareStr1 := TmpStr1;
-         sCompareStr2 := TmpStr2;
-      end
-      else
-      begin
-         Result := 0;
-         Exit;
-      end;
-   end;  // end of case
-
-   ComporeStrLenSame(sCompareStr1, sCompareStr2);
-
-   Result := gf_ReturnStrComp(sCompareStr1 + StdStr1, sCompareStr2 + StdStr2,
-                              SndMailSortFlag[SndMailSortIdx]);
-
-end;
-
 //------------------------------------------------------------------------------
 //  SntMailLists Sorting
 //------------------------------------------------------------------------------
@@ -1471,42 +1302,8 @@ begin
       // 그룹명/계좌명
       1: Result := gf_ReturnStrComp(StdStr1, StdStr2,
                                     SntMailSortFlag[SntMailSortIdx]);
-      // 수신처
-{
-      3: begin
-            TmpStr1 := '';
-            for i := 0 to pTSntMail(item1).FreqList.Count -1 do
-            begin
-               TmpStr1  := TmpStr1 + pTFreqMail(item1).RcvMailName;
-            end;
-            TmpStr2 := '';
-            for i := 0 to pTSntMail(item2).FreqList.Count -1 do
-            begin
-               TmpStr2  := TmpStr2 + pTFreqMail(item2).RcvMailName;
-            end;
-            gf_ReturnStrComp(TmpStr1 + StdStr1,
-                             TmpStr2 + StdStr2,
-                             SndMailSortFlag[SndMailSortIdx]);
-         end;
-
-      // 제목
-      4: begin
-            TmpStr1 := '';
-            for j := 0 to pTSntMail(Item1).FreqList.Count -1 do
-            begin
-               TmpStr1 := TmpStr1 + pTSntMail(Item1).
-            end;
-            TmpStr2 := '';
-            for i := 0 to pTFSndMail(Item2).MailRcv.Count -1 do
-            begin
-               TmpStr2 := TmpStr2 + pTFSndMail(Item2).MailRcv.Strings[i];
-            end;
-            gf_ReturnStrComp(TmpStr1 + StdStr1,
-                             TmpStr2 + StdStr2,
-                             SndMailSortFlag[SndMailSortIdx]);
-         end;
-}        else
-         Result := 0;
+  else
+      Result := 0;
    end;  // end of case
 end;
 
@@ -1733,27 +1530,17 @@ begin
      Close;
      Exit;
   end;
-  
-//   Fax
-//  SndFaxTlxSortIdx := SND_FAXTLX_ACCNO_IDX;     // 계좌번호순 Sorting
-//  SndFaxTlxSortFlag[SndFaxTlxSortIdx] := true;  // Ascending
+
+  // SndList Sorting
+  iSndSortIdx := iSndEmpIdx;     // 계좌번호순 Sorting
+  arrSndSortFlag[iSndSortIdx] := true;  // Ascending
 //  SntFaxTlxSortIdx := SNT_FAXTLX_ACCNO_IDX;     // 계좌번호순 Sorting
 //  SntFaxTlxSortFlag[SntFaxTlxSortIdx] := true;  // Ascending
-//  SndFaxTlxSelected := True;
-//  DRStrGrid_SndFaxTlx.Cells[SELECT_IDX, 0] := gcSEND_MARK;
+  SndFaxTlxSelected := True;
+  DRStrGrid_Snd.Cells[SELECT_IDX, 0] := gcSEND_MARK;
 //  SntFaxTlxSelected := True;
 //  DRStrGrid_SntFaxTlx.Cells[SELECT_IDX, 0] := gcSEND_MARK;
-//  FaxTlxTotFreqChecked := '';
-//
-//  --- EMail
-//  SndMailSortIdx := SND_MAIL_ACCGRP_IDX;     // 그룹명순 Sorting
-//  SndMailSortFlag[SndMailSortIdx] := true;   // Desc : 그룹이 먼저 나와야 함
-//  SntMailSortIdx := SNT_MAIL_ACCGRP_IDX;     // 계좌명순 Sorting
-//  SntMailSortFlag[SntMailSortIdx] := true;   // Desc : 그룹이 먼저 나와야 함
-//  SndMailSelected := True;
-//  DRStrGrid_SndMail.Cells[SELECT_IDX, 0] := gcSEND_MARK;
-//  SntMailSelected := True;
-//  DRStrGrid_SntMail.Cells[SELECT_IDX, 0] := gcSEND_MARK;
+
 
   //RealThread Sleep 초... Defalut 5초
   iRealThreadSleepSeconds := StrToInt( gf_GetSystemOptionValue('S03','5') );
@@ -1791,30 +1578,19 @@ var
 begin
   inherited;
 
-   if sRealThreadUseYN = 'Y' then fnThreadKilled(RealThread,True); //@@
+  if sRealThreadUseYN = 'Y' then fnThreadKilled(RealThread,True); //@@
 
-   //=== Clear List
-   ClearSntFaxList;
-   ClearSntMailList;
+  ClearSndList;
+  ClearSnTList;
 
-//   ClearSndNoneList;
-   ClearSndList;
-   ClearSnTList;
+  //=== Free List
 
-   //=== Free List
-   if Assigned(SndFaxTlxList) then SndFaxTlxList.Free;
-   if Assigned(SntFaxTlxList) then SntFaxTlxList.Free;
-   if Assigned(SndMailList)   then SndMailList.Free;
-   if Assigned(SntMailList)   then SntMailList.Free;
-//   if Assigned(SndNoneList)   then SndNoneList.Free;
+  if Assigned(SndList)   then SndList.Free;
+  if Assigned(SntList)   then SntList.Free;
 
-   if Assigned(SndList)   then SndList.Free;
-   if Assigned(SntList)   then SntList.Free;
+  FreeAndNil(EnvSetupInfo);
 
-   FreeAndNil(EnvSetupInfo);
-
-   Form_SCFH8801_SND := nil;
-
+  Form_SCFH8801_SND := nil;
 end;
 
 //------------------------------------------------------------------------------
@@ -1826,7 +1602,7 @@ begin
    ClearSndList;
    ClearSnTList;
 
-   case DRPageControl_Main.ActivePage.PageIndex of
+ {  case DRPageControl_Main.ActivePage.PageIndex of
       gcPAGE_IDX_FAXTLX:  // Fax/Tlx
       begin
          if gvDeptCode <> gcDEPT_CODE_CORP then
@@ -1840,7 +1616,7 @@ begin
       gcPAGE_IDX_EMAIL: // EMail
       begin
       end;
-   end; // end of case
+   end; // end of case    }
 end;
 
 //------------------------------------------------------------------------------
@@ -2035,7 +1811,7 @@ begin
             Inc(iProcessCnt, SndItemIdxList.Count);
             IncProcessPanel(iProcessCnt, SndItemIdxList.Count);
 //            if gvRealLogYN = 'Y' then gf_Log('전송FAXALL>> ' + IntToStr(I) + '/' + IntToStr(iProcessCnt) + '전송전');
-            if not SendFaxTlx(SndItemIdxList) then
+            if not fn_SendFax(SndItemIdxList) then
             begin
 //               if gvRealLogYN = 'Y' then gf_Log('전송FAXALL>> 전송오류 ErrorProcessPanel전' + gf_ReturnMsg(gvErrorNo));
                ErrorProcessPanel(gf_ReturnMsg(gvErrorNo) , False);
@@ -2133,7 +1909,7 @@ begin
             Inc(iProcessCnt);
             IncProcessPanel(iProcessCnt, SndItemIdxList.Count);
 
-            if not SendEMail(SndItemIdxList) then
+            if not fn_SendEMail(SndItemIdxList) then
             begin
 //               ErrorProcessPanel(gf_ReturnMsg(gvErrorNo) , False);
                Inc(iErrorCnt, SndItemIdxList.Count);
@@ -2537,7 +2313,7 @@ begin
                iSndIdx := StrToInt(SndItemIdxList.Strings[J]);
                SndITem := SndFaxTlxList.Items[iSndIdx];
                SndITem.ErrMsg := sErrMsg;
-               //DisplaySndFaxTlxItem(SndItem);
+               //DisplaySndItem(SndItem);
             end; // end of for
 
             if Assigned(ReportList) then gf_FreeReportList(ReportList);
@@ -2625,7 +2401,7 @@ begin
       SndItem.ErrMsg       := sErrMsg;
       SndItem.StartTime    := Starttime;
       SndItem.RIdxSeqNo    := ReportItem.iIdxSeqNo;
-      //DisplaySndFaxTlxItem(SndItem);  // 화면 Display
+      //DisplaySndItem(SndItem);  // 화면 Display
 
       // 송신 확인 내역 추가
       if Result = True then
@@ -2706,7 +2482,7 @@ begin
                   DesItem.EditFileName := SrcItem.EditFileName;
 
             // Display
-//            DisplaySndFaxTlxItem(DesItem);
+//            DisplaySndItem(DesItem);
          end;  // end of if
 
       end else
@@ -2721,7 +2497,7 @@ begin
                   DesItem.EditFileName := SrcItem.EditFileName;
 
             // Display
-//            DisplaySndFaxTlxItem(DesItem);
+//            DisplaySndItem(DesItem);
          end;  // end of if
 
       end;
@@ -2795,33 +2571,6 @@ begin
          end;  // end of if
       end;  // end of for K
    end;  // end of for I
-end;
-
-//------------------------------------------------------------------------------
-//  Clear SntFaxTlxList
-//------------------------------------------------------------------------------
-procedure TForm_SCFH8801_SND.ClearSntFaxList;
-var
-   I, K : Integer;
-   SntItem  : pTESntFaxTlx;
-   FreqItem : pTEFreqFaxTlx;
-begin
-   if not Assigned(SntFaxTlxList) then Exit;
-   for I := 0 to SntFaxTlxList.Count -1 do
-   begin
-      SntItem := SntFaxTlxList.Items[I];
-      if Assigned(SntItem.FreqList) then
-      begin
-         for K := 0 to SntItem.FreqList.Count -1 do
-         begin
-            FreqItem := SntItem.FreqList.Items[K];
-            Dispose(FreqItem);
-         end;  // end of for
-         SntItem.FreqList.Free;
-      end; // end of if
-      Dispose(SntItem);
-   end; // end of for K
-   SntFaxTlxList.Clear;
 end;
 
 //------------------------------------------------------------------------------
@@ -3092,102 +2841,12 @@ begin
 
 end;
 
-//------------------------------------------------------------------------------
-//  Fixed Row Click - 전체 선택 여부, Sorting
-//------------------------------------------------------------------------------
-procedure TForm_SCFH8801_SND.DRStrGrid_SndFaxTlxFiexedRowClick(
-  Sender: TObject; ACol: Integer);
-var //@@
-   i,iSndIdx : integer;
-   SelectedRect: TGridRect;
-   SndItem : pTESndFaxTlx;
-begin
-  inherited;
-   if ACol = SELECT_IDX then
-   begin
-      SndFaxTlxSelected := not (SndFaxTlxSelected);  // toggle
-      if SndFaxTlxSelected then
-         DRStrGrid_SndFaxTlx.Cells[SELECT_IDX, 0] := gcSEND_MARK
-      else
-         DRStrGrid_SndFaxTlx.Cells[SELECT_IDX, 0] := '';
-
-//@@ start
-      SelectedRect := DRStrGrid_SndFaxTlx.Selection; //@@
-      if SelectedRect.Bottom - SelectedRect.Top + 1 > 1 then //1개이상 multi 선택시
-      begin
-         for i := SelectedRect.Top to SelectedRect.Bottom do
-         begin
-            iSndIdx := GetSndFaxTlxListIdx(i);
-            if iSndIdx < 0 then continue;
-            SndItem := SndFaxTlxList.Items[iSndIdx];
-            SndItem.Selected := SndFaxTlxSelected;
-//            DisplaySndFaxTlxItem(SndItem);
-         end;
-      end
-      else //1개만 선택시
-//         DisplaySndFaxTlxList(True); //@@ end
-
-   end
-   else  // Sorting
-   begin
-      Screen.Cursor := crHourGlass;
-      SndFaxTlxSortIdx := ACol;
-      SndFaxTlxSortFlag[ACol] := not SndFaxTlxSortFlag[ACol];
-      SndFaxTlxList.Sort(SndFaxTlxListCompare);
-//      DisplaySndFaxTlxList(False);
-      Screen.Cursor := crDefault;
-   end;
-end;
-
 procedure TForm_SCFH8801_SND.DRStrGrid_SndFaxTlxMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var
-   ACol, ARow : Integer;
-   ScreenP : TPoint;
-   iSndIdx : Integer;
-   SndItem : pTESndFaxTlx;
+
 begin
    inherited;
-   DRStrGrid_SndFaxTlx.MouseToCell(X, Y, ACol, ARow);
-   if (ARow <= 0) or (ACol < 0) then Exit;
 
-   SndFaxTlxColIdx := ACol;
-   SndFaxTlxRowIdx := ARow;
-
-   if Trim(DRStrGrid_SndFaxTlx.Cells[SND_FAXTLX_RCVCMP_IDX, ARow]) = '' then
-      Exit;  // Data 없는 경우
-
-   if ((Button = mbLeft) and (ssCtrl in Shift))
-      or ((Button = mbLeft) and (ACol = SELECT_IDX)) then  // 전송 선택 클릭
-   begin
-      iSndIdx := GetSndFaxTlxListIdx(ARow);
-      if iSndIdx < 0 then
-      begin
-         gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
-         Exit;
-      end;
-      SndItem := SndFaxTlxList.Items[iSndIdx];
-      SndItem.Selected := not SndItem.Selected;
-
-      // Display SndFaxTlxItem
-//      DisplaySndFaxTlxItem(SndItem);
-   end
-   else if Button = mbRight then
-   begin
-      gf_SelectStrGridRow(DRStrGrid_SndFaxTlx, SndFaxTlxRowIdx);
-
-      // Popup Menu 처리
-      iSndIdx := GetSndFaxTlxListIdx(ARow);
-      if iSndIdx < 0 then
-      begin
-         gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
-         Exit;
-      end;
-      SndItem := SndFaxTlxList.Items[iSndIdx];
-
-      GetCursorPos(ScreenP);
-      DRPopupMenu_SndFax.Popup(ScreenP.X, ScreenP.Y);
-   end;
 end;
 
 //------------------------------------------------------------------------------
@@ -3861,492 +3520,169 @@ begin
 end;
 
 //------------------------------------------------------------------------------
-//  Fax/Tlx 자료전송 팝업 메뉴 처리
+//  전송대상 팝업 메뉴 처리
 //------------------------------------------------------------------------------
-procedure TForm_SCFH8801_SND.PopupSndFaxTlxClick(Sender: TObject);
+procedure TForm_SCFH8801_SND.PopupSndClick(Sender: TObject);
 var
    iSndIdx, i : Integer;
-   SndItem : pTESndFaxTlx;
+   SndItem : pTSnd;
    SndItemIdxList : TStringList;
    iPrnType, iTotPageCnt : Integer;
    sRptType, sPrnFileName, sTmpFileName, sSaveFileName, sExpFileName, sExpFileNameBody, sFileName : string;
    sLogoPageNo, sTxtUnitInfo : string;
+
+   //
+   bChkSend: Boolean;
 begin
   inherited;
-   gf_ClearMessage(MessageBar);
-   // 동일 레포트 Index Clear
-   for I := 0 to SndFaxTlxList.Count -1 do
-   begin
-      SndItem := SndFaxTlxList.Items[I];
-      SndItem.ReportIdx := -1;
-      SndItem.RIdxSeqNo := -1;
-   end;
+  gf_ClearMessage(MessageBar);
+  
+  // FAX 동일 레포트 Index Clear
+  for I := 0 to SndList.Count -1 do
+  begin
+    SndItem := SndList.Items[I];
+    SndItem.ReportIdx := -1;
+    SndItem.RIdxSeqNo := -1;
+  end;
 
-   iSndIdx := GetSndFaxTlxListIdx(SndFaxTlxRowIdx);
-   if iSndIdx < 0 then
-   begin
-      gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
-      Exit;
-   end;
-   SndItem  := SndFaxTlxList.Items[iSndIdx];
+  iSndIdx := GetSndListIdx(iSndRowIdx);
+  if iSndIdx < 0 then
+  begin
+    gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
+    Exit;
+  end;
+  SndItem  := SndList.Items[iSndIdx];
 
-   case (Sender as TMenuItem).Tag of
-      1: // 전송
+  case (Sender as TMenuItem).Tag of
+    1: // 전송(묶음)
+    begin
+
+    end;
+
+    2: // 전송(개별)
+    begin
+      bChkSend := False;
+      
+//      if EnvSetupInfo.ReadString(IntToStr(Self.Tag), 'TradeTodayCheck', 'N') = 'Y' then
+//      begin
+//        if gvCurDate <> ParentForm.JobDate then
+//        begin
+//          if gf_ShowDlgMessage(Self.Tag, mtConfirmation, 0, '당일 매매내역이 아닙니다. 전송하시겠습니까?', mbOKCancel, 0) = idCancel then
+//          begin
+//            gf_ShowMessage(MessageBar, mtInformation, 1082, ''); // 작업이 취소되었습니다.
+//            Exit;
+//          end;
+//        end;
+//      end;
+
+      gf_ShowMessage(MessageBar, mtInformation, 1072, ''); // 전송 중입니다.
+
+      SndItemIdxList := TStringList.Create;
+      if not Assigned(SndItemIdxList) then
       begin
-
-         if EnvSetupInfo.ReadString(IntToStr(Self.Tag), 'TradeTodayCheck', 'N') = 'Y' then
-         begin
-           if gvCurDate <> ParentForm.JobDate then //
-             if gf_ShowDlgMessage(Self.Tag, mtConfirmation, 0, '당일 매매내역이 아닙니다. 전송하시겠습니까?', mbOKCancel, 0) = idCancel then
-             begin
-               gf_ShowMessage(MessageBar, mtInformation, 1082, ''); // 작업이 취소되었습니다.
-               Exit;
-             end;
-         end;
-
-         gf_ShowMessage(MessageBar, mtInformation, 1072, ''); // 전송 중입니다.
-
-         SndItemIdxList := TStringList.Create;
-         if not Assigned(SndItemIdxList) then
-         begin
-            gf_ShowErrDlgMessage(Self.Tag, 9004, '', 0); //List 생성 오류
-            Exit;
-         end;
-
-         DisableForm;
-         gf_DisableSRMgrFrame(ParentForm);
-         ShowProcessPanel(gwSendMsg, 1, False, True);
-         IncProcessPanel(1, 1);
-
-         ///////////////////////////////////////////////////////////////////////
-         //  2014.11.04  psh 전송전 계좌 체크 해서 메시지 띄우기
-         ///////////////////////////////////////////////////////////////////////
-
-         SndItemIdxList.Add(IntToStr(iSndIdx));  // 전송 처리될 Index
-         FThreadHoldFlag := true;
-         if SendFaxTlx(SndItemIdxList) then
-         begin
-            gf_ShowMessage(MessageBar, mtInformation, 1013, ''); //전송 완료
-            HideProcessPanel;
-            gf_EnableSRMgrFrame(ParentForm);
-            EnableForm;
-         end  else
-         begin
-            gf_ShowMessage(MessageBar, mtError, 1073, '');    // 전송 중 오류 발생
-            ErrorProcessPanel(gwSendErrMsg + ' ' + gwClickOkMsg, True);
-         end;
-         FThreadHoldFlag := false;
-         if Assigned(SndItemIdxList) then SndItemIdxList.Free;
+         gf_ShowErrDlgMessage(Self.Tag, 9004, '', 0); //List 생성 오류
+         Exit;
       end;
 
-      2:  // 전송 취소
+      DisableForm;
+      gf_DisableSRMgrFrame(ParentForm);
+      ShowProcessPanel(gwSendMsg, 1, False, True);
+      IncProcessPanel(1, 1);
+
+      SndItemIdxList.Add(IntToStr(iSndIdx));  // 전송 처리될 Index
+
+      if SndItem.SendType = SND_TYPE_FAX then
       begin
-         gf_ShowMessage(MessageBar, mtInformation, 1096, ''); //전송 취소 중입니다.
-
-         if not fnFAXDataCancel(SndItem.CurTotSeqNo, self.Tag, MessageBar) then
-         begin
-            gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg); // 오류 발생
-            Exit;
-         end;
-
-         // 전송 취소 완료
-         //SndItem.CancFlag := True;
-         //SndItem.ErrMsg   := '';
-
-         // Display SndFaxTlxItem
-         //DisplaySndFaxTlxItem(SndItem);
-
-         // SntFaxTlxList Update & 송신 확인 Display
-         SetSntFaxTlxListCanc(SndItem.CurTotSeqNo);
-
-         gf_ShowMessage(MessageBar, mtInformation, 1016, ''); //처리 완료
-      end;
-
-      31:  // P.S 입력
+        bChkSend := fn_SendFax(SndItemIdxList);
+      end else if SndItem.SendType = SND_TYPE_MAIL  then
       begin
-      {
-         if (SndItem.PSList.PSStringList.Count   = 0) and   // 입력된 PS가 없는 경우
-            (SndItem.PSList.L_PSStringList.Count = 0) and
-            (SndItem.PSList.R_PSStringList.Count = 0) then
-             SetDefaultPSStringList(SndItem);               // 동일계좌의 PSList Setting
-       }
-         if SndItem.AccGrpType = gcRGROUP_ACC then // 계좌별
-         begin
-            gf_ShowPSInputBox(SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList,
-                              SndItem.PSList.R_PSStringList, gvDeptCode, ParentForm.JobDate,
-                              SndItem.AccNo, SndItem.SubAccNo, SndItem.MediaNo,
-                              SndItem.ReportID, 'A',
-                              gf_GetReportType(SndItem.ReportID),
-                              gf_GetReportDirection(SndItem.ReportID));
-         end else                                 // 그룹별
-         begin
-            gf_ShowPSInputBox(SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList,
-                              SndItem.PSList.R_PSStringList, gvDeptCode, ParentForm.JobDate,
-                              SndItem.AccName, '', SndItem.MediaNo,
-                              SndItem.ReportID, 'G',
-                              gf_GetReportType(SndItem.ReportID),
-                              gf_GetReportDirection(SndItem.ReportID));
-         end;
-         // Display SndFaxTlxItem
-//         DisplaySndFaxTlxItem(SndItem);
-      end;
-
-      32:  // P.S 취소
-      begin
-         if SndItem.AccGrpType = gcRGROUP_ACC then // 계좌별
-         begin
-            gf_ShowPSInputBox(SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList,
-                              SndItem.PSList.R_PSStringList, gvDeptCode, ParentForm.JobDate,
-                              SndItem.AccNo, SndItem.SubAccNo, SndItem.MediaNo,
-                              SndItem.ReportID, 'A',
-                              gf_GetReportType(SndItem.ReportID),
-                              gf_GetReportDirection(SndItem.ReportID),'D');
-         end else                                 // 그룹별
-         begin
-            gf_ShowPSInputBox(SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList,
-                              SndItem.PSList.R_PSStringList, gvDeptCode, ParentForm.JobDate,
-                              SndItem.AccName, '', SndItem.MediaNo,
-                              SndItem.ReportID, 'G',
-                              gf_GetReportType(SndItem.ReportID),
-                              gf_GetReportDirection(SndItem.ReportID),'D');
-         end;
-
-         SndItem.PSList.PSStringList.Clear;
-         SndItem.PSList.L_PSStringList.Clear;
-         SndItem.PSList.R_PSStringList.Clear;
-
-         // Displau SndFaxTlxItem
-//         DisplaySndFaxTlxItem(SndItem);
-      end;
-
-      33: // Edit 취소
-      begin
-         if (gf_GetReportType(SndItem.ReportID) = gcRTYPE_TEXT) and
-            (Trim(SndItem.EditFileName) <> '') then
-         begin
-            DeleteFile(SndItem.EditFileName);  // Delete Edit File
-            SndItem.EditFileName := '';
-
-            // Displau SndFaxTlxItem
-//            DisplaySndFaxTlxItem(SndItem);
-
-            // 동일 계좌 Setting
-            SameAccCopyEditData(SndItem);
-         end;
-      end;
-
-      34: //AMEND 추가 or 취소
-      begin
-         SndItem.InsertAmd := not SndItem.InsertAmd;
-
-//         DisplaySndFaxTlxItem(SndItem);
-      end;
-
-      35: //종목제외 입력
-      begin
-         if SndItem.AccGrpType = gcRGROUP_GRP then  //그룹별
-         begin
-            gvB2301Data.sTradeDate := ParentForm.JobDate;
-            gvB2301Data.sAccNo     := '';
-            gvB2301Data.sGrpName   := SndItem.AccName;
-
-            Application.CreateForm(TForm_SCFH2304, Form_SCFH2304);
-            Form_SCFH2304.ShowModal;
-         end else
-         begin
-            gvB2301Data.sTradeDate := ParentForm.JobDate;
-            gvB2301Data.sAccNo     := gf_FormatAccNo(SndItem.AccNo, SndItem.SubAccNo);
-            gvB2301Data.sGrpName   := SndItem.AccName;
-
-            Application.CreateForm(TForm_SCFH2304, Form_SCFH2304);
-            Form_SCFH2304.ShowModal;
-         end;
-
-         SetIssueExceptStat;
-//         DisplaySndFaxTlxList(True);
-      end;
-
-      4, 5, 8: // 미리보기, 인쇄, Export
-      begin
-         if (Sender as TMenuItem).Tag = 5 then
-            gf_ShowMessage(MessageBar, mtInformation, 1100, ''); // 인쇄 중입니다.
-         if (Sender as TMenuItem).Tag = 8 then
-            gf_ShowMessage(MessageBar, mtInformation, 1131, ''); // Export 중입니다.
-
-         sRptType := gf_GetReportType(SndItem.ReportID);
-         if sRptType = gcRTYPE_CRPT then  // Rpt Type Report의 경우
-         begin
-            if (Sender as TMenuItem).Tag = 4 then  //미리보기
-               iPrnType := gcPTYPE_PREVIEW
-            else if (Sender as TMenuItem).Tag = 5 then  // 인쇄
-               iPrnType := gcPTYPE_PRINT
-            else // Export
-            begin
-
-               //*******************P.H.S 2006.08.08*********************************************************************//
-               // PDF파일명 : ExportDir + YYYYMMDD_계좌번호(ID)_FaxNumber_서식명
-               //*******************************************************************************************************//
-
-               sFileName := DREdit_SndMailDir.Text//gvDirExport
-                            + ParentForm.JobDate + '_';
-
-               if SndItem.AccGrpType = gcRGROUP_ACC then
-                  sFileName := sFileName + SndItem.AccNo
-               else
-                  sFileName := sFileName + SndItem.AccName;
-
-               if Trim(SndItem.AccId) <> '' then
-                  sFileName := sFileName + '(' + SndItem.AccId + ')';
-
-               sFileName := sFileName + '_' + SndItem.MediaNo
-                                      + '_' + SndItem.ReportName;
-
-               if sRptType = gcRTYPE_CRPT then//Rpt File
-               begin
-                  gvExportPDF  := 'Y';
-
-                  sFileName := sFileName + '.pdf';
-                  // Report Export  계좌별& 그룹별
-                  if not gf_Export_CRB_EI1_1(SndItem.ReportID, SndItem.RcvCompKor, SndItem.MediaNo, sFileName, ParentForm.JobDate,
-                     SndItem.AccName, SndItem.AccGrpType, SndItem.ClientMgrName, SndItem.ClientTelNo, SndItem.ClientFaxNo,
-                     SndItem.AccNoList, SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList, SndItem.PSList.R_PSStringList,
-                     SndItem.InsertAmd, gvStampSignFlag, iTotPageCnt) then
-                  begin
-                     gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);
-                     gvExportPDF := 'N';
-                     Exit;
-                  end;
-               end;
-
-               gf_ShowMessage(MessageBar, mtInformation, 1133, ''); // Export 완료
-               gvExportPDF  := 'N';
-               Exit;
-            end;
-
-            //ReportLib Call 계좌별& 그룹별
-            if not gf_Print_CRB_EI1_1(SndItem.ReportID, SndItem.RcvCompKor, SndItem.MediaNo, iPrnType, ParentForm.JobDate,
-                  SndItem.AccName, SndItem.AccGrpType, SndItem.ClientMgrName, SndItem.ClientTelNo, SndItem.ClientFaxNo,
-                  SndItem.AccNoList, SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList, SndItem.PSList.R_PSStringList,
-                  SndItem.InsertAmd, gvStampSignFlag) then
-            begin
-               gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);  // Error 발생
-               Exit;
-            end;
-            
-            if (Sender as TMenuItem).Tag = 5 then
-              gf_ShowMessage(MessageBar, mtInformation, 1101, ''); // 인쇄완료.
-         end
-         else // if SRptType = gcRTYPE_TEXT then
-         begin
-            if Trim(SndItem.EditFileName) = '' then // Edit File이 존재하지 않는 경우
-            begin
-               sTmpFileName := gvDirTemp + Self.Name + '.tmp'; //@@
-
-               // Report Export  계좌별 & 그룹별
-               if not gf_Export_CRB_EI1_1(SndItem.ReportID, SndItem.RcvCompKor, SndItem.MediaNo, sTmpFileName, ParentForm.JobDate,
-                  SndItem.AccName, SndItem.AccGrpType, SndItem.ClientMgrName, SndItem.ClientTelNo, SndItem.ClientFaxNo,
-                  SndItem.AccNoList, SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList, SndItem.PSList.R_PSStringList,
-                  SndItem.InsertAmd, gvStampSignFlag, iTotPageCnt) then
-               begin
-                   gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);  // Error 발생
-                   Exit;
-               end;
-
-            end
-            else  // Edit File이 존재하는 경우
-               sTmpFileName := SndItem.EditFileName;
-
-            if (Sender as TMenuItem).Tag = 4 then  // 미리보기
-            begin
-               //*******************P.H.S 2006.08.25*********************************************************************//
-               // PDF파일명 : ExportDir + YYYYMMDD_계좌번호(ID)_FaxNumber_서식명
-               //*******************************************************************************************************//
-
-               sExpFileNameBody := DREdit_SndMailDir.Text//gvDirExport
-                            + gvCurDate + '_';
-
-               if SndItem.AccGrpType = gcRGROUP_ACC then
-                  sExpFileNameBody := sExpFileNameBody + SndItem.AccNo
-               else
-                  sExpFileNameBody := sExpFileNameBody + SndItem.AccName;
-
-               if Trim(SndItem.AccId) <> '' then
-                  sExpFileNameBody := sExpFileNameBody + '(' + SndItem.AccId + ')';
-
-               sExpFileNameBody := sExpFileNameBody + '_' + SndItem.MediaNo
-                                  + '_' + SndItem.ReportName;
-
-                //*******************************************************************************************************//
-               //*******************************************************************************************************//
-
-               if SndItem.AccGrpType = gcRGROUP_ACC then // 계좌별
-               begin
-                  sSaveFileName := gf_FormatEditFileName(ParentForm.JobDate, SndItem.ReportID,
-                                   SndItem.AccNo, SndItem.SubAccNo, SndItem.MediaNo );
-               end else                                 // 그룹별
-               begin
-                  sSaveFileName := gf_FormatEditFileName(ParentForm.JobDate, SndItem.ReportID,
-                                   SndItem.AccName, SndItem.SubAccNo, SndItem.MediaNo);
-               end;
-
-
-               gvSRMgrEdited := False;
-
-               if not gf_PreviewEditor(sTmpFileName, sSaveFileName,
-                      gf_GetReportDirection(SndItem.ReportID), sExpFileNameBody, SndItem.PSList.PSStringList) then
-               begin
-                  gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);  // Error 발생
-                  Exit;
-               end;
-               if gvSRMgrEdited then  // Save Edit 내용
-               begin
-                  SndItem.EditFileName := sSaveFileName;
-                  // Displau Snd FaxTlxItem
-//                  DisplaySndFaxTlxItem(SndItem);
-                  // 동일 계좌 Setting
-                  SameAccCopyEditData(SndItem);
-               end;
-            end
-            else if (Sender as TMenuItem).Tag = 5 then  // 인쇄
-            begin
-               sPrnFileName := gvDirTemp + 'PRN' + gf_GetCurTime + '.tmp';//@@
-               if not gf_ConvertPageText(sTmpFileName, sPrnFileName,   // Conversion to Page Text
-                  SndItem.PSList.PSStringList,iTotPageCnt, sLogoPageNo, sTxtUnitInfo) then
-               begin
-                  gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);
-                  Exit;
-               end;
-               if not gf_PrintTextFile(sPrnFileName,
-                                       gf_GetReportDirection(SndItem.ReportID),
-                                       gcRTYPE_TEXT_MAX_LINE) then
-               begin
-                  gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);
-                  Exit;
-               end;
-
-               gf_ShowMessage(MessageBar, mtInformation, 1101, ''); // 인쇄 완료
-               DeleteFile(sPrnFileName);
-            end
-            else //Export
-            begin
-               //*******************P.H.S 2006.08.08*********************************************************************//
-               // PDF파일명 : ExportDir + YYYYMMDD_계좌번호(ID)_FaxNumber_서식명
-               //*******************************************************************************************************//
-
-               sFileName := DREdit_SndMailDir.Text//gvDirExport
-                            + ParentForm.JobDate + '_';
-
-               if SndItem.AccGrpType = gcRGROUP_ACC then
-                  sFileName := sFileName + SndItem.AccNo
-               else
-                  sFileName := sFileName + SndItem.AccName;
-
-               if Trim(SndItem.AccId) <> '' then
-                  sFileName := sFileName + '(' + SndItem.AccId + ')';
-
-               sFileName := sFileName + '_' + SndItem.MediaNo
-                                      + '_' + SndItem.ReportName;
-
-               //*******************************************************************************************************//
-               //*******************************************************************************************************//
-
-               sExpFileName := gvDirTemp + 'EXP' + gf_GetCurTime + '.tmp'; //@@
-               if not gf_ConvertPageText(sTmpFileName, sExpFileName,   // Conversion to Page Text
-                  SndItem.PSList.PSStringList,iTotPageCnt, sLogoPageNo, sTxtUnitInfo) then
-               begin
-                  gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg);
-                  Exit;
-               end;
-
-               if not gf_SplitTextFile(sExpFileName, sFileName, sTxtUnitInfo) then
-               begin
-                  gf_ShowMessage(MessageBar, mtError, gvErrorNo, gvExtMsg); // Error 발생
-                  Exit;
-               end;
-
-               gf_ShowMessage(MessageBar, mtInformation, 1133, ''); // Export 완료
-               DeleteFile(sExpFileName);
-
-            end;  // end of else
-
-            if sTmpFileName <> SndItem.EditFileName then
-               DeleteFile(sTmpFileName);
-         end;
-
-      end;
-
-      6: // 수신처 정보 조회
-      begin
-         gvB2102Data.sGrpName := SndITem.AccName;
-         gvB2102Data.sSecType  := gcSEC_EQUITY;
-         if SndItem.AccGrpType = gcRGROUP_ACC then
-         begin
-            gvB2102Data.sGrpName := '';
-            gvB2102Data.sAccNo := SndItem.AccNo;
-            gvB2102Data.sSubAccNo := SndItem.SubAccNo;
-         end;
-         gvB2102Data.sSendMtd  := SndItem.SendMtd;
-         gvB2102Data.sNatCode  := SndItem.NatCode;
-         gvB2102Data.sMediaNo  := SndItem.MediaNo;
-         gvB2102Data.sIntTelYn := SndItem.IntTelYn;
-         gf_CreateForm(2102);
-      end;
-
-      9: // 계좌 정보 조회
-      begin
-         gvB2101Data.sAccGrp := SndITem.AccName;
-         if SndItem.AccGrpType = gcRGROUP_ACC then
-         begin
-            gvB2101Data.sAccGrp := '';
-            gvB2101Data.sAccNo  := SndItem.AccNo;
-            gvB2101Data.sUserSubAccNo := '';//필요없음
-            if SndItem.AccAttr = 'A' then
-               gvB2101Data.sAccAttrType := '2'  //외국인
-            else if SndItem.SubAccNo > '' then
-               gvB2101Data.sAccAttrType := '3'  //부계좌
-            else
-               gvB2101Data.sAccAttrType := '1' ;//국내
-            gf_CreateForm(2101);
-         end
-         else
-         begin
-            gvB2106Data.sClientNM := SndItem.AccName;
-            gf_CreateForm(2106);
-         end;
-      end;
-
-      7: // 상세 내역 조회 (매매 or 부계좌 or 잔고조회)
-      begin
-        if copy(SndItem.ReportID,1,2) = 'E2' then //잔고보고서
+        // 전송 대상 목록 생성 후 파일 갯수 체크.
+        if not EmailManyFileCheck(SndItemIdxList) then
         begin
-          if SndItem.AccGrpType = gcRGROUP_GRP then  //그룹별
-          begin
-            gvB2303Data.sTradeDate := ParentForm.JobDate;
-            gvB2303Data.sGrpName   := SndITem.AccName; //그룹명
-            gf_CreateForm(2303);
-          end
-          else
-          begin
-            gvB2303Data.sTradeDate := ParentForm.JobDate;
-            gvB2303Data.sAccNo     := SndItem.AccNo;
-            gf_CreateForm(2303);
-          end;
-        end
-        else //매매보고서
-        begin
-          if SndItem.AccGrpType = gcRGROUP_GRP then  //그룹별
-          begin
-            gvB2301Data.sTradeDate := ParentForm.JobDate;
-            gvB2301Data.sGrpName   := SndITem.AccName; //그룹명
-            gf_CreateForm(2301);
-          end
-          else
-          begin
+          gf_ShowMessage(MessageBar, mtInformation, 1082, ''); // 작업이 취소되었습니다.
+          Exit;
+        end;
 
-          end;
-        end; //if 매매보고서 or 잔고보고서
+        bChkSend := fn_SendEMail(SndItemIdxList);
       end;
-   end; // end of case
+
+      FThreadHoldFlag := true;
+      if bChkSend then
+      begin
+        gf_ShowMessage(MessageBar, mtInformation, 1013, ''); //전송 완료
+        HideProcessPanel;
+        gf_EnableSRMgrFrame(ParentForm);
+        EnableForm;
+      end  else
+      begin
+        gf_ShowMessage(MessageBar, mtError, 1073, '');    // 전송 중 오류 발생
+        ErrorProcessPanel(gwSendErrMsg + ' ' + gwClickOkMsg, True);
+      end;
+      FThreadHoldFlag := false;
+      
+      if Assigned(SndItemIdxList) then SndItemIdxList.Free;
+    end;
+
+    11: // E-mail만 메시지 보기(묶음)
+    begin
+
+
+    end;
+
+    12: // E-mail만 메시지 보기(개별)
+    begin
+
+
+    end;
+
+    3: // 전송제외
+    begin
+
+
+    end;
+
+    4: // 전송제외 취소
+    begin
+
+
+    end;
+
+    5: // P.S 입력
+    begin
+
+
+    end;
+
+    6: // P.S 삭제
+    begin
+
+
+    end;
+
+    7: // 미리보기
+    begin
+
+
+    end;
+
+    8: // 인쇄
+    begin
+
+
+    end;
+
+    9: // EXPORT
+    begin
+
+
+    end;
+
+    10: // 수신처 정보 조회
+    begin
+
+
+    end;
+  end; // end of case
 end;
 
 //------------------------------------------------------------------------------
@@ -4706,15 +4042,7 @@ end;
 procedure TForm_SCFH8801_SND.DRCheckBox_ViewClick(Sender: TObject);
 begin
   inherited;
-   SndFaxTlxSortIdx := SND_FAXTLX_ACCNO_IDX;
-   SndFaxTlxSortFlag[SND_FAXTLX_ACCNO_IDX] := True;  // Accending
-   SndFaxTlxList.Sort(SndFaxTlxListCompare);
-//   DisplaySndFaxTlxList(True);
 
-   SntFaxTlxSortIdx := SNT_FAXTLX_ACCNO_IDX;
-   SntFaxTlxSortFlag[SNT_FAXTLX_ACCNO_IDX] := True;  // Accending
-   SntFaxTlxList.Sort(SntFaxTlxListCompare);
-   DisplaySntFaxTlxList(True);
 end;
 
 //------------------------------------------------------------------------------
@@ -4754,119 +4082,10 @@ begin
    end;  // end of for
 end;
 
-procedure TForm_SCFH8801_SND.DRStrGrid_SndMailFiexedRowClick(
-  Sender: TObject; ACol: Integer);
-var //@@
-   iRptTypeIdx, i,iSndIdx : integer;
-   SelectedRect: TGridRect;
-   SndItem : pTFSndMail;
-begin
-  inherited;
-   if ACol = SELECT_IDX then
-   begin
-      SndMailSelected := not (SndMailSelected);  // toggle
-      if SndMailSelected then
-         DRStrGrid_SndMail.Cells[SELECT_IDX, 0] := gcSEND_MARK
-      else
-         DRStrGrid_SndMail.Cells[SELECT_IDX, 0] := '';
-
-      //@@ start
-      SelectedRect := DRStrGrid_SndMail.Selection; //@@
-      if SelectedRect.Bottom - SelectedRect.Top + 1 > 1 then //1개이상 multi 선택시
-      begin
-         for i := SelectedRect.Top to SelectedRect.Bottom do
-         begin
-            iSndIdx := GetSndMailListIdx(i);
-            if iSndIdx < 0 then continue;
-            SndItem := SndMailList.Items[iSndIdx];
-            SndItem.Selected := SndMailSelected;
-//            DisplaySndMailItem(SndItem);
-         end;
-      end
-      else //1개만 선택시
-//         DisplaySndMailList(true);
-   end else  // Sorting
-   begin
-      Screen.Cursor := crHourGlass;
-      SndMailSortIdx := ACol;
-      SndMailSortFlag[ACol] := not SndMailSortFlag[ACol];
-      SndMailList.Sort(SndMailListCompare);
-//      DisplaySndMailList(false);
-      Screen.Cursor := crDefault;
-   end;
-end;
-
 procedure TForm_SCFH8801_SND.DRStrGrid_SndMailMouseUp(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-var
-   ScreenP : TPoint;
-   SndItem : pTFSndMail;
-   FileItem : pTAttFile;
-   ACol, ARow : Integer;
-   iSndIdx, i : Integer;
-   MenuItem : TMenuItem;   
 begin
-   DRStrGrid_SndMail.MouseToCell(X, Y, ACol, ARow);
-   if (ARow <= 0) or (ACol < 0) then Exit;
-
-   SndMailColIdx := ACol;
-   SndMailRowIdx := ARow;
-
-   // Data 없는 경우(메일 서식이 없는경우는 없다라고 간주)
-   if Trim(DRStrGrid_SndMail.Cells[SND_MAIL_MAILID_IDX, ARow]) = '' then Exit;
-   iSndIdx := GetSndMailListIdx(ARow);
-   if iSndIdx < 0 then
-   begin
-      gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
-      Exit;
-   end;
-   SndItem := SndMailList.Items[iSndIdx];
-
-   if ((Button = mbLeft) and (ssCtrl in Shift))
-      or ((Button = mbLeft) and (ACol = SELECT_IDX)) then  // 전송 선택 클릭
-   begin
-      SndItem.Selected := not SndItem.Selected;
-//      DisplaySndMailItem(SndItem);
-   end
-   else if Button = mbRight then  // PopupMenu 처리
-   begin
-      gf_SelectStrGridRow(DRStrGrid_SndMail, SndMailRowIdx);
-      // 파일보기 SubMenu
-      if SndITem.AttFileList <> nil then
-      begin
-         PopupSndMail2.Clear;
-         for I := 0 to SndItem.AttFileList.Count -1 do
-         begin
-            FileItem := SndItem.AttFileList.Items[I] ;
-            MenuItem := TMenuItem.Create(nil);
-            MenuItem.Name    := 'PopupSndMail2_Sub' + IntToStr(I);
-            MenuItem.Caption := ExtractFileName(FileItem.FileName);
-            MenuItem.Tag     := I ;
-            MenuItem.OnClick := PopupSndMailSubClick;
-            PopupSndMail2.Add(MenuItem);
-         end;
-      end;
-      // 파일 에러 시
-      if SndItem.ErrMsg <> '' then
-      begin
-//         PopupSndMail0.Enabled := False; //E-mail 전송
-         PopupSndMail1.Enabled := False; //파일보기
-         PopupSndMail2.Enabled := False; //내역보기
-      end else
-      begin
-//         PopupSndMail0.Enabled := true; //E-mail 전송
-         PopupSndMail1.Enabled := true; //파일보기
-         PopupSndMail2.Enabled := true; //내역보기
-      end;
-      // 편집여부
-      if not SndItem.EditFlag then
-         PopupSndMail3.Enabled := False
-      else
-         PopupSndMail3.Enabled := True;
-
-      GetCursorPos(ScreenP);
-      DRPopupMenu_SndMail.Popup(ScreenP.X, ScreenP.Y);
-   end; // end of else
+  
 end;
 
 //------------------------------------------------------------------------------
@@ -4934,7 +4153,7 @@ begin
          ///////////////////////////////////////////////////////////////////////
 
          FThreadHoldFlag := true;
-         if SendEMail(SndItemIdxList) then
+         if fn_SendEMail(SndItemIdxList) then
          begin
             gf_ShowMessage(MessageBar, mtInformation, 1013, ''); //전송 완료
             HideProcessPanel;
@@ -4997,7 +4216,7 @@ begin
                exit;
             end;
             SndItem.EditFlag := False;
-//            DisplaySndMailItem(SndItem);
+//            DisplaySndItem(SndItem);
          end; // end of if
       end;
 
@@ -5033,11 +4252,11 @@ end;
 //------------------------------------------------------------------------------
 //  Create EMail File
 //------------------------------------------------------------------------------
-function TForm_SCFH8801_SND.SendEMail(SndItemIdxList: TStringList): boolean;
+function TForm_SCFH8801_SND.fn_SendEMail(SndItemIdxList: TStringList): boolean;
 var
-  SndItem      : pTFSndMail;
+  SndItem      : pTSnd;
   FileItem     : pTAttFile;
-  SndMailData  : TEMailSendFormat;
+  SndMailData  : pTSndMailData;
   MailAttList  : TList;
   MailAttItem  : pEMailSendAttach;
   sFileName, sErrMsg, sTokenFileName: string;
@@ -5047,150 +4266,141 @@ var
 
   iRetrySnd: integer;
 begin
-   Result  := False;
-   ErrFlag := False;
+  Result  := False;
+  ErrFlag := False;
 
-   if SndItemIdxList.Count <= 0 then Exit;
+  if SndItemIdxList.Count <= 0 then Exit;
 
-   // 전송 데이터 Clear
-   for I := 0 to SndItemIdxList.Count -1 do
-   begin
-      iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
-      SndItem := SndMailList.Items[iSndIdx];
-      SndItem.SendFlag     := True;
-      SndItem.ErrMsg       := '';
-   end; // end of for
+  // 전송 데이터 Clear
+  for I := 0 to SndItemIdxList.Count -1 do
+  begin
+    iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
+    SndItem := SndMailList.Items[iSndIdx];
+    SndItem.SendFlag     := True;
+    SndItem.ErrMsg       := '';
+  end; // end of for
 
-   // 수신처 정보
-   for I := 0 to SndItemIdxList.Count -1 do
-   begin
-      iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
-      SndItem := SndMailList.Items[iSndIdx];
+  // 수신처 정보
+  for I := 0 to SndItemIdxList.Count -1 do
+  begin
+    iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
+    SndItem := SndMailList.Items[iSndIdx];
 
-      SndMailData.sCurDate        := gf_GetCurDate;
-      SndMailData.sTradeDate      := ParentForm.JobDate;
-      SndMailData.sDeptCode       := gvDeptCode;
-      SndMailData.sSndUserName    := gvMailOprName;
-      SndMailData.sReturnMailAddr := gvRtnMailAddr;
-      SndMailData.sSubjectData    := SndItem.SubjectData;
-      SndMailData.sMailBodyData   := SndItem.MailBodyData;
-      SndMailData.sAccGrpType     := SndItem.AccGrpType;
-      SndMailData.sSecType        := gcSEC_EQUITY;
-      SndMailData.sGrpName        := SndItem.AccGrpName;
-      SndMailData.sFmtAccNoList   := SndItem.AccList;
-      SndMailData.sOprID          := gvOprUsrNo;
-      SndMailData.sOprTime        := gf_GetCurTime;
+    SndMailData.CurDate        := gf_GetCurDate;
+    SndMailData.JobDate        := ParentForm.JobDate;
+    SndMailData.JobSeq         := SndItem.JobSeq;
+    SndMailData.DeptCode       := gvDeptCode;
+    SndMailData.RcvMailAddr    := fn_BuildMailStrList(SndItem.MailAddr);
+    SndMailData.RcvMailName    := fn_BuildMailStrList(SndItem.MailName);
+    SndMailData.SndUserName    := gvMailOprName;
+    SndMailData.ReturnMailAddr := gvRtnMailAddr;
+    SndMailData.SubjectData    := SndItem.SubjectData;
+    SndMailData.MailBodyData   := SndItem.MailBodyData;
+    SndMailData.SecType        := gcSEC_FINANCIALINS;
+    SndMailData.OprID          := gvOprUsrNo;
+    SndMailData.OprTime        := gf_GetCurTime;
+    SndMailData.ReportID       := SndItem.ReportID;
+    SndMailData.CurTotSeqNo := -1;  // 초기화
 
-      SndMailData.sRcvMailAddr    := BuildMailStrList(SndItem.MailAddr);
-      SndMailData.sCCMailAddr     := BuildMailStrList(SndItem.CCMailAddr);
-      SndMailData.sCCBlindAddr    := BuildMailStrList(SndItem.CCBlindAddr);
-      SndMailData.sRcvMailName    := BuildMailStrList(SndItem.MailRcv);
-      SndMailData.sCCMailName     := BuildMailStrList(SndItem.CCMailRcv);
-      SndMailData.sCCBlindName    := BuildMailStrList(SndItem.CCBlindRcv);
-      SndMailData.sMailFormGrp    := copy(SndItem.MailFormId, 1, 2);
-      SndMailData.sMailFormID     := SndItem.MailFormId; //@@ 2004.11.01
-
-      SndMailData.iCurTotSeqNo := -1;  // 초기화
-
-      // Email 파일생성(이미 error 난것도 포함해서 진행한다)
-      sFileName := gf_CreateMailFile(SndItem, True, ParentForm.JobDate);
-      if Trim(sFileName) = '' then                 // 파일생성 Error
+    // Email 파일생성(이미 error 난것도 포함해서 진행한다)
+    sFileName := fn_ChkMailRptFile(SndItem, True, ParentForm.JobDate);
+    if Trim(sFileName) = '' then // 파일생성 Error
+    begin
+      ErrFlag  := True; // Error 발생
+      sErrMsg := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
+      for J := 0 to SndItemIdxList.Count -1 do
       begin
-         ErrFlag  := True; // Error 발생
-         sErrMsg := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
-         for J := 0 to SndItemIdxList.Count -1 do
-         begin
-            iSndIdx := StrToInt(SndItemIdxList.Strings[J]);
-            SndItem := SndMailList.Items[iSndIdx];
-            SndItem.ErrMsg := sErrMsg;
-//            DisplaySndMailItem(SndItem);
-         end; // end of for
-         Exit;
-      end;
+         iSndIdx := StrToInt(SndItemIdxList.Strings[J]);
+         SndItem := SndMailList.Items[iSndIdx];
+         SndItem.ErrMsg := sErrMsg;
+         DisplaySndItem(SndItem);
+      end; // end of for
+      Exit;
+    end;
 
-      // File Attach
-      MailAttList := TList.Create;
-      if not Assigned(MailAttList) then
-      begin
-         gvErrorNo := 9004;
-         gvExtMsg  := 'MailAttList - List Create Error';
-         exit;
-      end;
+    // File Attach
+    MailAttList := TList.Create;
+    if not Assigned(MailAttList) then
+    begin
+      gvErrorNo := 9004;
+      gvExtMsg  := 'MailAttList - List Create Error';
+      exit;
+    end;
 
-      iCnt := 1;
-      sTokenFileName := '';
-      while True do
+    iCnt := 1;
+    sTokenFileName := '';
+    while True do
+    begin
+      sTokenFileName := fnGetTokenStr(sFileName, gcSPLIT_MAILADDR, iCnt);
+      if sTokenFileName = '' then break;
+      New(MailAttItem);
+      MailAttList.Add(MailAttItem);
+      MailAttItem.sAttachFilePath := ExtractFilePath(sTokenFileName);   //FileName에 모든 경로가 있다.
+      MailAttItem.sAttachFileName := ExtractFileName(sTokenFileName);
+      Inc(iCnt);
+    end;
+    // 메일서버로 전송!!
+    Starttime := '';
+    Result := fnEMailDataSend_TFFI(@SndMailData, MailAttList, Starttime);
+    // 전송중 오류
+    if not Result then
+    begin
+      for iRetrySnd:=1 to 5 do
       begin
-         sTokenFileName := fnGetTokenStr(sFileName, gcSPLIT_MAILADDR, iCnt);
-         if sTokenFileName = '' then break;
-         New(MailAttItem);
-         MailAttList.Add(MailAttItem);
-         MailAttItem.sAttachFilePath := ExtractFilePath(sTokenFileName);   //FileName에 모든 경로가 있다.
-         MailAttItem.sAttachFileName := ExtractFileName(sTokenFileName);
-         Inc(iCnt);
+        gf_Log('[E-mail] Retry Send. (' + IntToStr(iRetrySnd) + ')'
+             + ' [계좌번호]' + SndItem.FullAccNo
+             + ' [ReportID]' + SndItem.ReportID);
+        Sleep(2000); // 잠시 쉬었다가 처리.
+        Result := fnEMailDataSend_TFFI(@SndMailData, MailAttList, Starttime); // 다시 한 번 시도.
+        if Result then
+        begin
+          gf_Log('[E-mail] Retry Send Success. (' + IntToStr(iRetrySnd) + ')'
+               + ' [계좌번호]' + SndItem.FullAccNo
+               + ' [ReportID]' + SndItem.ReportID);
+          Break;
+        end;
       end;
-      // 메일서버로 전송!!
-      Starttime := '';
-      Result := fnEMailDataSend(@SndMailData, MailAttList, Starttime);
-      // 전송중 오류
-      if not Result then
+      // 최종 전송 오류 처리.
+      if (iRetrySnd = 5) and (Result = False) then
       begin
-         for iRetrySnd:=1 to 5 do
-         begin
-           gf_Log('[E-mail] Retry Send. (' + IntToStr(iRetrySnd) + ')'
-                + ' [GRP]' + SndItem.AccGrpName
-                + ' [MailFormID]' + SndItem.MailFormId );
-           Sleep(2000); // 잠시 쉬었다가 처리.
-           Result := fnEMailDataSend(@SndMailData, MailAttList, Starttime); // 다시 한 번 시도.
-           if Result then
-           begin
-             gf_Log('[E-mail] Retry Send Success. (' + IntToStr(iRetrySnd) + ')'
-                  + ' [GRP]' + SndItem.AccGrpName
-                  + ' [MailFormID]' + SndItem.MailFormId );
-             Break;
-           end;
-         end;
-         // 최종 전송 오류 처리.
-         if (iRetrySnd = 5) and (Result = False) then
-         begin
-           SndITem.ErrMsg     := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
-           SndItem.StartTime  := gf_GetCurTime;
-//           DisplaySndMailItem(SndItem);
-           Exit;
-         end;
+        SndITem.ErrMsg     := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
+        SndItem.StartTime  := gf_GetCurTime;
+        DisplaySndItem(SndItem);
+        Exit;
       end;
-   end;  // end of for
+    end;
+  end;  // end of for
 
-   // Clear MailList
-   for I := 0 to MailAttList.Count - 1 do
-   begin
-      MailAttItem := MailAttList.Items[I];
-      Dispose(MailAttItem);
-   end;
-   MailAttList.Clear;
+  // Clear MailList
+  for I := 0 to MailAttList.Count - 1 do
+  begin
+    MailAttItem := MailAttList.Items[I];
+    Dispose(MailAttItem);
+  end;
+  MailAttList.Clear;
 
-   // SndMailList Update & 화면 Display & 송신 확인 내역 추가
-   sTokenFileName := '';
-   for I := 0 to SndItemIdxList.Count -1 do
-   begin
-      iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
-      SndItem := SndMailList.Items[iSndIdx];
-      SndItem.StartTime := Starttime;
-      for J := 0 to SndItem.AttFileList.Count - 1 do
-      begin
-        FileItem := SndItem.AttFileList.Items[J];
-        sTokenFileName := fnGetTokenStr(sFileName, gcSPLIT_MAILADDR, J+1);
-        FileItem.FileName := sTokenFileName;
-        // File Directory가 temp이면 지워라.......
-        if ExtractFilePath(FileItem.FileName) = gvDirTemp then
-           DeleteFile(FileItem.fileName);
-      end;
-      SndItem.iCurTotSeqNo  := SndMailData.iCurTotSeqNo;  //총 전송 횟수
-//      DisplaySndMailItem(SndItem);  // 화면 Display
-      // 송신 확인 내역 추가
-      if Result = True then  AddSntMailList(SndItem);
-   end;  // end of for
-   Result := True;
+  // SndList Update & 전송대상 화면 Display & 당일송신확인 내역 추가
+  sTokenFileName := '';
+  for I := 0 to SndItemIdxList.Count -1 do
+  begin
+    iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
+    SndItem := SndMailList.Items[iSndIdx];
+    SndItem.StartTime := Starttime;
+    for J := 0 to SndItem.AttFileList.Count - 1 do
+    begin
+      FileItem := SndItem.AttFileList.Items[J];
+      sTokenFileName := fnGetTokenStr(sFileName, gcSPLIT_MAILADDR, J+1);
+      FileItem.FileName := sTokenFileName;
+      // File Directory가 temp이면 지워라.......
+      if ExtractFilePath(FileItem.FileName) = gvDirTemp then
+         DeleteFile(FileItem.fileName);
+    end;
+    SndItem.CurTotSeqNo  := SndMailData.CurTotSeqNo;  //총 전송 횟수
+    DisplaySndItem(SndItem);  // 화면 Display
+    // 송신 확인 내역 추가
+    if Result = True then AddSntMailList(SndItem);
+  end;  // end of for
+  Result := True;
 end;
 
 
@@ -5198,52 +4408,10 @@ end;
 // 계좌별 선택 - 전송 내역
 //------------------------------------------------------------------------------
 procedure TForm_SCFH8801_SND.DRSpeedBtn_SndFaxTlxSelectClick(Sender: TObject);
-var
-   I, iIdx : Integer;
-   SndItem : pTESndFaxTlx;
-   sAccNo, sSubAccNo : string;
-   sGrpName : string;
+
 begin
   inherited;
-   //!!! MODIFY -----------------------------------
-   // 계좌 Sorting
-   SndFaxTlxSortIdx := SND_FAXTLX_ACCNO_IDX;
-   SndFaxTlxSortFlag[SndFaxTlxSortIdx] := True;  // Ascending
-   SndFaxTlxList.Sort(SndFaxTlxListCompare);
 
-   // 전체 선택 삭제
-   SndFaxTlxSelected := True;
-   DRStrGrid_SndFaxTlxFiexedRowClick(DRStrGrid_SndFaxTlx, SELECT_IDX);
-
-   sAccNo    := '';
-   sSubAccNo := '';
-   sGrpName  := '';
-   for I := 1 to DRStrGrid_SndFaxTlx.RowCount -1 do
-   begin
-      iIdx := GetSndFaxTlxListIdx(I);
-      if iIdx >= 0 then
-      begin
-         SndItem := SndFaxTlxList.Items[iIdx];
-         if SndItem.AccGrpType = gcRGROUP_GRP then
-         begin
-            if (sGrpName <> SndItem.AccName) then
-            begin
-               sGrpName := SndItem.AccName;
-               SndItem.Selected := True;
-            end;
-         end else
-         begin
-            if (sAccNo <> SndItem.AccNo) or
-               (sSubAccNo <> SndItem.SubAccNo) then
-            begin
-               sAccNo    := SndItem.AccNo;
-               sSubAccNo := SndItem.SubAccNo;
-               SndItem.Selected := True;
-            end;
-         end;
-      end;
-//      DisplaySndFaxTlxItem(SndItem);
-   end;  // end of for
 end;
 
 //------------------------------------------------------------------------------
@@ -5503,94 +4671,86 @@ end;
 
 
 //------------------------------------------------------------------------------
-//  전송 후 SntList에다가 추가시킨다
+//  E-mail 전송 후 SntList에다가 추가시킨다
 //------------------------------------------------------------------------------
-procedure TForm_SCFH8801_SND.AddSntMailList(SndItem: pTFSndMail);
+procedure TForm_SCFH8801_SND.AddSntMailList(SndItem: pTSnd);
 var
-   I, iLastFreqNo : Integer;
-   SntItem  : pTSntMail;
-   FreqItem : pTFreqMail;
-   AttItem  : pTAttFile;   
-   FileItem : pTAttFile;
-   ExistFlag : boolean;
-   sAccNo    : string;
+  I: Integer;
+  SntItem  : pTSnt;
+  AttItem  : pTAttFile;
+  FileItem : pTAttFile;
+  sAccNo    : string;
 begin
-   iLastFreqNo := 0;
-   ExistFlag := False;
-   // 기존에 존재하는지 확인
-   for I := 0 to SntMailList.Count -1 do
-   begin
-      SntItem := SntMailList.Items[I];
-      if (SntItem.AccGrpName = SndItem.AccGrpName) and
-         (SntItem.AccGrpType = SndItem.AccGrpType) then
-      begin
-         ExistFlag := True;
-         FreqItem := SntItem.FreqList.Items[0];  // 마지막 회차 정보
-         iLastFreqNo := FreqItem.FreqNo;
-         break;
-      end;  // end of if
-   end; // end of for
+  New(SntItem);
+  SntMailList.Add(SntItem);
 
-   if not ExistFlag then  // 존재하지 않을 경우
-   begin
-      New(SntItem);
-      SntMailList.Add(SntItem);
-      SntItem.AccGrpType   := SndItem.AccGrpType;
-      SntItem.AccGrpName   := SndItem.AccGrpName;
-      SntItem.DisplayAll   := DRCheckBox_EMailTotFreq.Checked;
-      SntItem.FreqList     := TList.Create;
-   end;
+  SntItem.SendType  := SndItem.SendType;
+  SntItem.JobSeq    := SndItem.JobSeq;
+  SntItem.EmpID     := SndItem.EmpID;
+  SntItem.EmpName   := SndItem.EmpName;
+  SntItem.FullAccNo := SndItem.FullAccNo;
+  SntItem.AccNo     := SndItem.AccNo;
+  SntItem.BlcNo     := SndItem.BlcNo;
+  SntItem.PrdNo     := SndItem.PrdNo;
+  SntItem.AccName   := SndItem.AccName;
+  SntItem.MediaName := SndItem.MediaName; // 공백
+  SntItem.MediaNo   := SndItem.MediaNo;   // 공백
 
-   New(FreqItem);
-   SntItem.FreqList.Add(FreqItem);
-   Inc(iLastFreqNo);
-   FreqItem.FreqNo       := iLastFreqNo;
-   FreqItem.CurTotSeqNo  := SndItem.iCurTotSeqNo;
-   FreqItem.AccGrpName   := SndITem.AccGrpName;
-   FreqItem.AccList      := TStringList.Create;
-   for I := 0 to SndItem.AccList.Count -1 do
-   begin
-      sAccNo := SndItem.AccList.Strings[I];
-      FreqItem.AccList.Add(sAccNo);
-   end;
-   FreqItem.RcvMailAddr  := BuildMailStrList(SndItem.MailAddr);
-   FreqItem.CCMailAddr   := BuildMailStrList(SndItem.CCMailAddr);
-   FreqItem.CCBlindAddr  := BuildMailStrList(SndItem.CCBlindAddr);
-   FreqItem.RcvMailName  := BuildMailStrList(SndItem.MailRcv);
-   FreqItem.CCMailName   := BuildMailStrList(SndItem.CCMailRcv);
-   FreqItem.CCBlindName  := BuildMailStrList(SndItem.CCBlindRcv);
-   FreqItem.SubjectData  := SndItem.SubjectData;
-   FreqItem.MailBodyData := SndItem.MailBodyData;
-   FreqItem.AttFileList  := TList.Create;
-   FreqItem.SendTime     := '';
-   FreqItem.SentTime     := '';
-   FreqItem.RSPFlag      := gcEMAIL_RSPF_WAIT;
-   FreqItem.ErrCode      := '';
-   FreqItem.ExtMsg       := '';
-   FreqItem.OprId        := gvOprUsrNo;
+  SntItem.MailName := TStringList.Create;
+  for i:= 0 to SndItem.MailName.Count-1 do
+  begin
+    SntItem.MailName.Add(SndItem.MailName.Strings[i]);
+  end;
 
-   // 화일 생성
-   if not Assigned(SndItem.AttFileList) then Exit;
-   for I := 0 to SndItem.AttFileList.Count -1 do
-   begin
-      FileItem := SndItem.AttFileList.Items[I];
-      New(AttItem);
-      FreqItem.AttFileList.Add(AttItem);
-      AttItem.FileName := ExtractFileName(FileItem.FileName);
-      AttItem.AttSeqNo := FileItem.AttSeqNo;
-   end;
+  SntItem.MailAddr := TStringList.Create;
+  for i:= 0 to SndItem.MailAddr.Count-1 do
+  begin
+    SntItem.MailAddr.Add(SndItem.MailAddr.Strings[i]);
+  end;
 
-   SntItem.FreqList.Sort(FreqMailListCompare);  // 회차 역순으로 보여주기 위해 Sorting
-   for I := 0 to SntItem.FreqList.Count -1 do     // Clear LastFlag
-   begin
-      FreqItem := SntItem.FreqList.Items[I];
-      FreqItem.LastFlag := False;
-   end;  // end of for
-   FreqItem := SntItem.FreqList.Items[0];  // Last Flag Setting
-   FreqItem.LastFlag := True;
-   SntMailList.Sort(SntMailListCompare);  // SbtMailList Sorting
-   DisplaySntMailList;
+  SntItem.FullMailName := SndItem.FullMailName;
+  SntItem.FullMailAddr := SndItem.FullMailAddr;
+  SntItem.ReportCode   := SndItem.ReportID;
+  SntItem.ReportName   := SndItem.ReportName;
+  SntItem.SubjectData  := SndITem.SubjectData;
+  SntItem.MailBodyData := SndItem.MailBodyData;
 
+  SntItem.AttFileList  := TList.Create;
+
+  SntItem.StartTime    := '';
+  SntItem.EndTime      := '';
+  SntItem.SendDate     := SndItem.SendDate;
+  SntItem.Direction    := '';
+
+  SntItem.DiffTime     := 0;
+  SntItem.TotalPageCnt := 0;
+  SntItem.SendPageCnt  := 0;
+  SntItem.BusyResndCnt := 0;
+  SntItem.RSPFlag      := gcEMAIL_RSPF_WAIT;
+  SntItem.ExportFlag   := False;
+  SntItem.CurTotSeqNo  := SndItem.CurTotSeqNo;
+  SntItem.Selected     := False;
+//  SntItem.GridRowIdx   := -1;
+  SntItem.ErrCode      := '';
+//  SntItem.ErrMsg       := '';
+  SntItem.ExtMsg       := '';
+  SntItem.OprID        := gvOprUsrNo;
+//  SntItem.OprTime      := '';
+
+  // 화일 생성
+  if not Assigned(SndItem.AttFileList) then Exit;
+  
+  for I := 0 to SndItem.AttFileList.Count -1 do
+  begin
+    FileItem := SndItem.AttFileList.Items[I];
+    New(AttItem);
+    SntItem.AttFileList.Add(AttItem);
+    AttItem.FileName := ExtractFileName(FileItem.FileName);
+    AttItem.AttSeqNo := FileItem.AttSeqNo;
+  end;
+
+  SntList.Sort(SntMailListCompare);  // SbtMailList Sorting
+  DisplaySntList(False);
 end;
 
 //------------------------------------------------------------------------------
@@ -5815,7 +4975,7 @@ end;
 //------------------------------------------------------------------------------
 // 수신/참조/숨은참조 List 만들기
 //------------------------------------------------------------------------------
-function TForm_SCFH8801_SND.BuildMailStrList(SndItem: TStringList): string;
+function TForm_SCFH8801_SND.fn_BuildMailStrList(SndItem: TStringList): string;
 var
   I : integer;
   Len : integer;
@@ -6076,7 +5236,7 @@ gf_Log('EXPORT: START!!');
 
       if SndITem.AttFileList = nil then
       begin
-//         DisplaySndMailItem(SndItem);  // 화면 Display
+//         DisplaySndItem(SndItem);  // 화면 Display
          Inc(iErrorCnt);
          Continue;
       end;
@@ -6121,7 +5281,7 @@ gf_Log('EXPORT: START!!');
          //FileItem.FileName := fnGetTokenStr(sFileName, gcSPLIT_MAILADDR, J+1);
       end; // end of if SndITem.EditFlag
    end;
-//   DisplaySndMailItem(SndItem);  // 화면 Display
+//   DisplaySndItem(SndItem);  // 화면 Display
 
    if iErrorCnt > 0 then // 오류 발생
    begin
@@ -6171,7 +5331,7 @@ begin
    begin
       SndItem.SendFlag := true;
       SndItem.ErrMsg   := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
-//      DisplaySndMailItem(SndItem);
+//      DisplaySndItem(SndItem);
       gf_ShowMessage(MessageBar, mtError, 9006, '');    // 파일 생성 오류;
       Enableform;
       exit;
@@ -6192,7 +5352,7 @@ begin
      FileItem := SndItem.AttFileList.Items[I];
      FileItem.FileName := fnGetTokenStr(sFilePath, gcSPLIT_MAILADDR, I+1);
    end;
-//   DisplaySndMailItem(SndItem);
+//   DisplaySndItem(SndItem);
    Enableform;
 
 end;
@@ -6261,7 +5421,7 @@ begin
             SntFaxTlxSelected := false; //@@
          end;
 
-//         DisplaySndFaxTlxList(True);
+//         DisplaySndList(True);
          DisplaySntFaxTlxList(True);
       end;
 
@@ -6392,7 +5552,7 @@ begin
          DRStrGrid_Snt.Cells[SELECT_IDX, 0] := '';
          bSntSelected := false; //@@
       end;
-      DisplaySntList(True);
+      DisplaySntList(False);
     end
     else  // Error
     begin
@@ -6633,7 +5793,7 @@ end;
 procedure TForm_SCFH8801_SND.DRCheckBox_ClientNMClick(Sender: TObject);
 begin
   inherited;
-//   DisplaySndFaxTlxList(True);
+//   DisplaySndList(True);
 
    DisplaySntFaxTlxList(True);
 
@@ -6652,7 +5812,6 @@ begin
       DRMaskEdit_Date1.SetFocus;
       DRMaskEdit_Date1.SelectAll;
    end;
-
 end;
 
 procedure TForm_SCFH8801_SND.DRMaskEdit_Date1Change(Sender: TObject);
@@ -6972,10 +6131,9 @@ begin
 end;
 
 // 이메일 보고서 전송 전 파일 갯수 체크
-function TForm_SCFH8801_SND.EmailManyFileCheck(
-  pSndItemIdxList: TStringList): boolean;
+function TForm_SCFH8801_SND.EmailManyFileCheck(pSndItemIdxList: TStringList): boolean;
 var
-  SndItem: pTFSndMail;
+  SndItem: pTSnd;
   i, iSndIdx, iCnt, iFileCnt, iItemCnt: integer;
   sManyFileStr,
   sFileName, sTotFileName: string;
@@ -6991,7 +6149,7 @@ begin
     SndItem := SndMailList.Items[iSndIdx];
 
     // 파일명 가져오기
-    sTotFileName := gf_CreateMailFile(SndItem, False, ParentForm.JobDate);
+    sTotFileName := fn_ChkMailRptFile(SndItem, False, ParentForm.JobDate);
 
     iCnt := 1;
     // 파일명 갯수 체크
@@ -7013,11 +6171,11 @@ begin
       end;
 
       if sManyFileStr = '' then
-        sManyFileStr := '[' + SndItem.AccGrpName + '] ' +
-            SndItem.MailFormName + ' (' + IntToStr(iCnt-1) + '건)' + #13#10
+        sManyFileStr := '[' + SndItem.FullAccNo + '] ' +
+            SndItem.ReportName + ' (' + IntToStr(iCnt-1) + '건)' + #13#10
       else
-        sManyFileStr := sManyFileStr + '[' + SndItem.AccGrpName + '] ' +
-            SndItem.MailFormName + ' (' + IntToStr(iCnt-1) + '건)' + #13#10;
+        sManyFileStr := sManyFileStr + '[' + SndItem.FullAccNo + '] ' +
+            SndItem.ReportName + ' (' + IntToStr(iCnt-1) + '건)' + #13#10;
 
       Inc(iItemCnt);
     end; // if ((iCnt-1) > 30) and ~
@@ -7255,7 +6413,17 @@ begin
 end;
 
 function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
-  procedure  BuildAttFileList(pFileInfo : string; pSndITem : pTSnd; pFileITem :pTFIAttFile);
+  function ChkMailRule(pChkStr: string): string;
+  begin
+    Result := '';
+
+    if Copy(pChkStr, Length(pChkStr)-1, 1) = gcSPLIT_MAILADDR then
+      Result := pChkStr + gcSPLIT_MAILADDR
+    else
+      Result := pChkStr;
+  end;
+
+  procedure BuildAttFileList(pFileInfo : string; pSndITem : pTSnd; pFileITem :pTFIAttFile);
   var
     sFileName : string;
     iCnt : integer;
@@ -7288,11 +6456,12 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
     with pADOQuery do
     begin
       pSndItem.SendType       := Trim(FieldByName('SEND_TYPE').AsString);
-      pSndItem.JobSeq         := FieldByName('JOB_SEQ').AsFloat;
+      pSndItem.JobSeq         := FieldByName('JOB_SEQ').AsInteger;
       pSndItem.JobDate        := Trim(FieldByName('JOB_DATE').AsString);
-      pSndItem.EmpNo          := Trim(FieldByName('EMP_NO').AsString);
+      pSndItem.EmpID          := Trim(FieldByName('EMP_ID').AsString);
       pSndItem.EmpName        := Trim(FieldByName('USER_NAME').AsString);
-      pSndItem.JobTime        := Trim(FieldByName('JOB_TIME').AsString);
+      pSndItem.JobTime        := Copy(Trim(FieldByName('JOB_TIME').AsString), 1, 6);
+      pSndItem.FullAccNo      := Trim(FieldByName('FULL_ACC_NO').AsString);
       pSndItem.AccNo          := Trim(FieldByName('ACC_NO').AsString);
       pSndItem.PrdNo          := Trim(FieldByName('PRD_NO').AsString);
       pSndItem.BlcNo          := Trim(FieldByName('BLC_NO').AsString);
@@ -7326,31 +6495,35 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
     sFileInfo: String;
     FileITem: pTFIAttFile;
     TDateTemp : TDateTime;
+    sMailName, sMailAddr: string;
   begin
     with pADOQuery do
     begin
-      sFileInfo := fn_CreateMailFile(pSndItem, False, ParentForm.JobDate);
+      sFileInfo := fn_ChkMailRptFile(pSndItem, False, ParentForm.JobDate);
 
       //Attch File Insert
       BuildAttFileList(sFileInfo, pSndITem, FileITem);
       
       pSndItem.SendType       := Trim(FieldByName('SEND_TYPE').AsString);
-      pSndItem.JobSeq         := FieldByName('JOB_SEQ').AsFloat;
+      pSndItem.JobSeq         := FieldByName('JOB_SEQ').AsInteger;
       pSndItem.JobDate        := Trim(FieldByName('JOB_DATE').AsString);
-      pSndItem.EmpNo          := Trim(FieldByName('EMP_NO').AsString);
+      pSndItem.EmpID          := Trim(FieldByName('EMP_ID').AsString);
       pSndItem.EmpName        := Trim(FieldByName('USER_NAME').AsString);
-      pSndItem.JobTime        := Trim(FieldByName('JOB_TIME').AsString);
+      pSndItem.JobTime        := Copy(Trim(FieldByName('JOB_TIME').AsString), 1, 6);
+      pSndItem.FullAccNo      := Trim(FieldByName('FULL_ACC_NO').AsString);
       pSndItem.AccNo          := Trim(FieldByName('ACC_NO').AsString);
       pSndItem.PrdNo          := Trim(FieldByName('PRD_NO').AsString);
       pSndItem.BlcNo          := Trim(FieldByName('BLC_NO').AsString);
       pSndItem.AccName        := Trim(FieldByName('ACC_NAME_KOR').AsString);
 
+      sMailName := ChkMailRule(Trim((FieldByName('E_RCV_NAME_KOR').AsString)));
       pSndItem.MailName       := TStringList.Create;
-      gf_DelimiterStringList(',', Trim(FieldByName('E_RCV_NAME_KOR').AsString), pSndItem.MailName);
+      gf_DelimiterStringList(';', sMailName, pSndItem.MailName);
       pSndItem.FullMailName   := Trim(FieldByName('E_RCV_NAME_KOR').AsString);
 
+      sMailAddr := ChkMailRule(Trim((FieldByName('MAIL_ADDR').AsString)));
       pSndItem.MailAddr       := TStringList.Create;
-      gf_DelimiterStringList(',', Trim(FieldByName('MAIL_ADDR').AsString), pSndItem.MailName);
+      gf_DelimiterStringList(';', sMailAddr, pSndItem.MailName);
       pSndItem.FullMailAddr   := Trim(FieldByName('MAIL_ADDR').AsString);
 
       pSndItem.ReportCode     := Trim(FieldByName('REPORT_CODE').AsString);
@@ -7377,7 +6550,6 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
       pSndItem.SubjectData    := Trim(FieldByName('SUBJECT_DATA').asString);
       pSndItem.MailBodyData   := Trim(FieldByName('MAIL_BODY_DATA').asString);
 
-
       TDateTemp :=  gf_StrToDate(gf_formatdate(ParentForm.JobDate));
       pSndItem.SubjectData  := Gf_FormatDateDollarDollar(pSndItem.SubjectData , TDateTemp);
       pSndItem.MailBodyData := Gf_FormatDateDollarDollar(pSndItem.MailBodyData, TDateTemp);
@@ -7389,11 +6561,12 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
     with pADOQuery do
     begin
       pSndItem.SendType       := Trim(FieldByName('SEND_TYPE').AsString);
-      pSndItem.JobSeq         := FieldByName('JOB_SEQ').AsFloat;
+      pSndItem.JobSeq         := FieldByName('JOB_SEQ').AsInteger;
       pSndItem.JobDate        := Trim(FieldByName('JOB_DATE').AsString);
-      pSndItem.EmpNo          := Trim(FieldByName('EMP_NO').AsString);
+      pSndItem.EmpID          := Trim(FieldByName('EMP_ID').AsString);
       pSndItem.EmpName        := Trim(FieldByName('USER_NAME').AsString);
-      pSndItem.JobTime        := Trim(FieldByName('JOB_TIME').AsString);
+      pSndItem.JobTime        := Copy(Trim(FieldByName('JOB_TIME').AsString), 1, 6);
+      pSndItem.FullAccNo      := Trim(FieldByName('FULL_ACC_NO').AsString);
       pSndItem.AccNo          := Trim(FieldByName('ACC_NO').AsString);
       pSndItem.PrdNo          := Trim(FieldByName('PRD_NO').AsString);
       pSndItem.BlcNo          := Trim(FieldByName('BLC_NO').AsString);
@@ -7407,7 +6580,7 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
       if Trim(pSndItem.ReportName) = '' then
         pSndItem.ReportName := Trim(FieldByName('REPORT_CODE').asString);
 
-//      pSndItem.PSStringList   := TStringList.Create;
+      pSndItem.PSStringList   := TStringList.Create;
       pSndItem.PSStringAll    := False;
       pSndItem.ExceptFlag     := False;
       pSndItem.SendFlag       := False;
@@ -7433,7 +6606,7 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
   procedure UpdateSndFaxList_OK(pSndQuery: TADOQuery);
   var
      SndItem : pTSnd;
-     dJobSeq: Double;
+     dJobSeq: Integer;
      i,iCurTotSeqNo : integer;
      sJobDate, sStartTime, sEndTime, sMediaNo: string;
   begin
@@ -7445,7 +6618,7 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
       while not Eof do
       begin
 
-        dJobSeq      := FieldByName('JOB_SEQ').AsFloat;
+        dJobSeq      := FieldByName('JOB_SEQ').AsInteger;
         sJobDate     := Trim(FieldByName('JOB_DATE').AsString);
         sStartTime   := Trim(FieldByName('STRT_TIME').AsString);
         sEndTime     := Trim(FieldByName('SENT_TIME').AsString);
@@ -7482,7 +6655,7 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
   var
     SndItem : pTSnd;
     i, iCurTotSeqNo : integer;
-    dJobSeq: Double;
+    dJobSeq: Integer;
     sJobDate, sStartTime, sEndTime, sRcvMailAddr: String;
   begin
     dJobSeq      := -1;
@@ -7498,10 +6671,11 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
     begin
       while not Eof do
       begin
-        dJobSeq      := FieldByName('JOB_SEQ').AsFloat;
+        dJobSeq      := FieldByName('JOB_SEQ').AsInteger;
         sJobDate     := Trim(FieldByName('JOB_DATE').AsString);
         sStartTime   := Trim(FieldByName('STRT_TIME').AsString);
         sEndTime     := Trim(FieldByName('SENT_TIME').AsString);
+        iCurTotSeqNo := FieldByName('CUR_TOT_SEQ_NO').AsInteger;
         sRcvMailAddr := Trim(FieldByName('RCV_MAIL_ADDR').AsString);
 
         for i := 0 to  SndList.Count -1 do
@@ -7514,7 +6688,7 @@ function TForm_SCFH8801_SND.fn_QueryToSndList: Boolean;
             if (SndItem.JobDate = sJobDate  ) and
                (SndItem.JobSeq  = dJobSeq ) then
             begin
-              if BuildMailStrList(SndItem.MailAddr) <> sRcvMailAddr then continue;
+              if fn_BuildMailStrList(SndItem.MailAddr) <> sRcvMailAddr then continue;
 
               SndItem.SendFlag    := true;
               SndItem.CurTotSeqNo := iCurTotSeqNo;
@@ -7542,267 +6716,103 @@ begin
     Close;
     SQL.Clear;
 
-    if DRRadioButton_SndType_ALL.Checked then
-    begin
-      // FAX
-      SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_FAX + ''', M.JOB_SEQ, M.EMP_NO, U.USER_NAME, M.JOB_TIME,  ');
-      SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
-      SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
-      SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
-      SQL.Add('                                  END)                                                       ');
-      SQL.Add('                       END),                                                                 ');
-      SQL.Add('        M.JOB_DATE,                                                                          ');
-      SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
-      SQL.Add(' 	     F_RCV_NAME_KOR = F.RCV_NAME_KOR, F.MEDIA_NO,                                         ');
-      SQL.Add(' 	     E_RCV_NAME_KOR = '''', MAIL_ADDR = '''',                                             ');
-      SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
-      SQL.Add(' 	     SUBJECT_DATA = '''', MAIL_BODY_DATA = ''''                                           ');
-      SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
-      SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZFAXDE_INS F                                                                          ');
-      SQL.Add('   ON M.DEPT_CODE = F.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = F.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
-      SQL.Add(' JOIN SZREPID_INS D                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
-      SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
-      SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.EMP_NO   = U.USER_ID                                                                ');
-      SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
-      SQL.Add('    AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                         ');
-      SQL.Add('   AND SUBSTRING(M.JOB_TIME, 1, 4) >= ''' + Trim(DRMaskEdit_Time.Text) + '''                 ');
+    // FAX
+    SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_FAX + ''', M.EMP_ID, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME,  ');
+    SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
+    SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
+    SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
+    SQL.Add('                                  END)                                                       ');
+    SQL.Add('                       END),                                                                 ');
+    SQL.Add('        M.JOB_DATE,                                                                          ');
+    SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
+    SQL.Add(' 	     F_RCV_NAME_KOR = F.RCV_NAME_KOR, F.MEDIA_NO,                                         ');
+    SQL.Add(' 	     E_RCV_NAME_KOR = '''', MAIL_ADDR = '''',                                             ');
+    SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
+    SQL.Add(' 	     SUBJECT_DATA = '''', MAIL_BODY_DATA = ''''                                           ');
+    SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
+    SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
+    SQL.Add(' JOIN SZFAXDE_INS F                                                                          ');
+    SQL.Add('   ON M.DEPT_CODE = F.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.ACC_NO   = F.ACC_NO                                                                 ');
+    SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
+    SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
+    SQL.Add(' JOIN SZREPID_INS D                                                                          ');
+    SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
+    SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
+    SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.EMP_ID   = U.USER_ID                                                                ');
+    SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
+    SQL.Add('    AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                         ');
 
-      if DRUserDblCodeCombo_Emp.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.EMP_NO = ''' + DRUserDblCodeCombo_Emp.Code + ''' ');
-      end;
+    SQL.Add('  UNION                                                                                      ');
 
-      if DRUserDblCodeCombo_Acc.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.ACC_NO = ''' + DRUserDblCodeCombo_Acc.Code + ''' ');
-      end;
+    // E-mail
+    SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_MAIL + ''', M.EMP_ID, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME, ');
+    SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
+    SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
+    SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
+    SQL.Add('                                  END)                                                       ');
+    SQL.Add('                       END),                                                                 ');
+    SQL.Add('        M.JOB_DATE,                                                                          ');
+    SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
+    SQL.Add(' 		   F_RCV_NAME_KOR = '''', MEDIA_NO = '''',		                                          ');
+    SQL.Add(' 	     E_RCV_NAME_KOR = E.RCV_NAME_KOR, E.MAIL_ADDR,                                        ');
+    SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
+    SQL.Add(' 	     R.SUBJECT_DATA, MAIL_BODY_DATA = CONVERT(VARCHAR(8000), R.MAIL_BODY_DATA)            ');
+    SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
+    SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
+    SQL.Add(' JOIN SZMELDE_INS E                                                                          ');
+    SQL.Add('   ON M.DEPT_CODE = E.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.ACC_NO   = E.ACC_NO                                                                 ');
+    SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
+    SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
+    SQL.Add(' JOIN SZREPID_INS D                                                                          ');
+    SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
+    SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
+    SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.EMP_ID   = U.USER_ID                                                                ');
+    SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
+    SQL.Add('    AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                         ');
 
-      SQL.Add('  UNION                                                                                      ');
+    SQL.Add('  UNION                                                                                      ');
 
-      // E-mail
-      SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_MAIL + ''', M.JOB_SEQ, M.EMP_NO, U.USER_NAME, M.JOB_TIME, ');
-      SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
-      SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
-      SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
-      SQL.Add('                                  END)                                                       ');
-      SQL.Add('                       END),                                                                 ');
-      SQL.Add('        M.JOB_DATE,                                                                          ');
-      SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
-      SQL.Add(' 		   F_RCV_NAME_KOR = '''', MEDIA_NO = '''',		                                          ');
-      SQL.Add(' 	     E_RCV_NAME_KOR = E.RCV_NAME_KOR, E.MAIL_ADDR,                                        ');
-      SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
-      SQL.Add(' 	     R.SUBJECT_DATA, MAIL_BODY_DATA = CONVERT(VARCHAR(8000), R.MAIL_BODY_DATA)            ');
-      SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
-      SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZMELDE_INS E                                                                          ');
-      SQL.Add('   ON M.DEPT_CODE = E.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = E.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
-      SQL.Add(' JOIN SZREPID_INS D                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
-      SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
-      SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.EMP_NO   = U.USER_ID                                                                ');
-      SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
-      SQL.Add('    AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                         ');
-      SQL.Add('   AND SUBSTRING(M.JOB_TIME, 1, 4) >= ''' + Trim(DRMaskEdit_Time.Text) + '''                 ');
+    // NONE
+    SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_NONE + ''', M.EMP_ID, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME, ');
+    SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
+    SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
+    SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
+    SQL.Add('                                  END)                                                       ');
+    SQL.Add('                       END),                                                                 ');
+    SQL.Add('        M.JOB_DATE,                                                                          ');
+    SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
+    SQL.Add(' 	     F_RCV_NAME_KOR = '''', MEDIA_NO = '''',		                                          ');
+    SQL.Add(' 	     E_RCV_NAME_KOR = '''', MAIL_ADDR = '''',                                             ');
+    SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
+    SQL.Add(' 	     SUBJECT_DATA = '''', MAIL_BODY_DATA = ''''                                           ');
+    SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
+    SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
+    SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
+    SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
+    SQL.Add(' JOIN SZREPID_INS D                                                                          ');
+    SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
+    SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
+    SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
+    SQL.Add('   AND M.EMP_ID   = U.USER_ID                                                                ');
+    SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
+    SQL.Add('   AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                          ');
+    SQL.Add('   AND (NOT EXISTS (SELECT 1                                                                 ');
+    SQL.Add('                    FROM SZFAXDE_INS F                                                       ');
+    SQL.Add('                    WHERE M.DEPT_CODE = F.DEPT_CODE                                          ');
+    SQL.Add('                      AND M.ACC_NO = F.ACC_NO)                                               ');
+    SQL.Add('   AND NOT EXISTS (SELECT 1                                                                  ');
+    SQL.Add('                   FROM SZMELDE_INS E                                                        ');
+    SQL.Add('                   WHERE M.DEPT_CODE = E.DEPT_CODE                                           ');
+    SQL.Add('                     AND M.ACC_NO = E.ACC_NO))                                               ');
 
-      if DRUserDblCodeCombo_Emp.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.EMP_NO = ''' + DRUserDblCodeCombo_Emp.Code + ''' ');
-      end;
-
-      if DRUserDblCodeCombo_Acc.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.ACC_NO = ''' + DRUserDblCodeCombo_Acc.Code + ''' ');
-      end;
-
-      SQL.Add('  UNION                                                                                      ');
-
-      // NONE
-      SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_NONE + ''', M.EMP_NO, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME, ');
-      SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
-      SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
-      SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
-      SQL.Add('                                  END)                                                       ');
-      SQL.Add('                       END),                                                                 ');
-      SQL.Add('        M.JOB_DATE,                                                                          ');
-      SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
-      SQL.Add(' 	     F_RCV_NAME_KOR = '''', MEDIA_NO = '''',		                                          ');
-      SQL.Add(' 	     E_RCV_NAME_KOR = '''', MAIL_ADDR = '''',                                             ');
-      SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
-      SQL.Add(' 	     SUBJECT_DATA = '''', MAIL_BODY_DATA = ''''                                           ');
-      SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
-      SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
-      SQL.Add(' JOIN SZREPID_INS D                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
-      SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
-      SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.EMP_NO   = U.USER_ID                                                                ');
-      SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
-      SQL.Add('   AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                          ');
-      SQL.Add('   AND (NOT EXISTS (SELECT 1                                                                 ');
-      SQL.Add('                    FROM SZFAXDE_INS F                                                       ');
-      SQL.Add('                    WHERE M.DEPT_CODE = F.DEPT_CODE                                          ');
-      SQL.Add('                      AND M.ACC_NO = F.ACC_NO)                                               ');
-      SQL.Add('   AND NOT EXISTS (SELECT 1                                                                  ');
-      SQL.Add('                   FROM SZMELDE_INS E                                                        ');
-      SQL.Add('                   WHERE M.DEPT_CODE = E.DEPT_CODE                                           ');
-      SQL.Add('                     AND M.ACC_NO = E.ACC_NO))                                               ');
-      SQL.Add(' AND SUBSTRING(M.JOB_TIME, 1, 4) >= ''' + Trim(DRMaskEdit_Time.Text) + '''                   ');
-
-      if DRUserDblCodeCombo_Emp.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.EMP_NO = ''' + DRUserDblCodeCombo_Emp.Code + ''' ');
-      end;
-
-      if DRUserDblCodeCombo_Acc.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.ACC_NO = ''' + DRUserDblCodeCombo_Acc.Code + ''' ');
-      end;
-    end else if DRRadioButton_SndType_FAX.Checked then
-    begin
-      // FAX
-      SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_FAX + ''', M.EMP_NO, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME,  ');
-      SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
-      SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
-      SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
-      SQL.Add('                                  END)                                                       ');
-      SQL.Add('                       END),                                                                 ');
-      SQL.Add('        M.JOB_DATE,                                                                          ');
-      SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
-      SQL.Add(' 	     F_RCV_NAME_KOR = F.RCV_NAME_KOR, F.MEDIA_NO,                                         ');
-      SQL.Add(' 	     E_RCV_NAME_KOR = '''', MAIL_ADDR = '''',                                             ');
-      SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
-      SQL.Add(' 	     SUBJECT_DATA = '''', MAIL_BODY_DATA = ''''                                           ');
-      SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
-      SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZFAXDE_INS F                                                                          ');
-      SQL.Add('   ON M.DEPT_CODE = F.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = F.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
-      SQL.Add(' JOIN SZREPID_INS D                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
-      SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
-      SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.EMP_NO   = U.USER_ID                                                                ');
-      SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
-      SQL.Add('    AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                         ');
-      SQL.Add('   AND SUBSTRING(M.JOB_TIME, 1, 4) >= ''' + Trim(DRMaskEdit_Time.Text) + '''                 ');
-
-      if DRUserDblCodeCombo_Emp.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.EMP_NO = ''' + DRUserDblCodeCombo_Emp.Code + ''' ');
-      end;
-
-      if DRUserDblCodeCombo_Acc.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.ACC_NO = ''' + DRUserDblCodeCombo_Acc.Code + ''' ');
-      end;
-    end else if DRRadioButton_SndType_Email.Checked then
-    begin
-      // E-mail
-      SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_MAIL + ''', M.EMP_NO, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME, ');
-      SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
-      SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
-      SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
-      SQL.Add('                                  END)                                                       ');
-      SQL.Add('                       END),                                                                 ');
-      SQL.Add('        M.JOB_DATE,                                                                          ');
-      SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
-      SQL.Add(' 		   F_RCV_NAME_KOR = '''', MEDIA_NO = '''',		                                          ');
-      SQL.Add(' 	     E_RCV_NAME_KOR = E.RCV_NAME_KOR, E.MAIL_ADDR,                                        ');
-      SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
-      SQL.Add(' 	     R.SUBJECT_DATA, MAIL_BODY_DATA = CONVERT(VARCHAR(8000), R.MAIL_BODY_DATA)            ');
-      SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
-      SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZMELDE_INS E                                                                          ');
-      SQL.Add('   ON M.DEPT_CODE = E.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = E.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
-      SQL.Add(' JOIN SZREPID_INS D                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
-      SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
-      SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.EMP_NO   = U.USER_ID                                                                ');
-      SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
-      SQL.Add('    AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                         ');
-      SQL.Add('   AND SUBSTRING(M.JOB_TIME, 1, 4) >= ''' + Trim(DRMaskEdit_Time.Text) + '''                 ');
-
-      if DRUserDblCodeCombo_Emp.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.EMP_NO = ''' + DRUserDblCodeCombo_Emp.Code + ''' ');
-      end;
-
-      if DRUserDblCodeCombo_Acc.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.ACC_NO = ''' + DRUserDblCodeCombo_Acc.Code + ''' ');
-      end;
-    end else if DRRadioButton_SndType_None.Checked then
-    begin
-      // NONE
-      SQL.Add(' SELECT SEND_TYPE = ''' + SND_TYPE_NONE + ''', M.EMP_NO, M.JOB_SEQ, U.USER_NAME, M.JOB_TIME, ');
-      SQL.Add('        FULL_ACC_NO = (CASE WHEN M.PRD_NO = '''' THEN M.ACC_NO                               ');
-      SQL.Add('                            ELSE (CASE WHEN M.BLC_NO = '''' THEN M.ACC_NO + ''-'' + M.PRD_NO ');
-      SQL.Add('                                       ELSE M.ACC_NO + ''-'' + M.PRD_NO + ''-'' + M.BLC_NO   ');
-      SQL.Add('                                  END)                                                       ');
-      SQL.Add('                       END),                                                                 ');
-      SQL.Add('        M.JOB_DATE,                                                                          ');
-      SQL.Add(' 		   M.ACC_NO, M.PRD_NO, M.BLC_NO, A.ACC_NAME_KOR,                                        ');
-      SQL.Add(' 	     F_RCV_NAME_KOR = '''', MEDIA_NO = '''',		                                          ');
-      SQL.Add(' 	     E_RCV_NAME_KOR = '''', MAIL_ADDR = '''',                                             ');
-      SQL.Add(' 	     R.REPORT_CODE, D.REPORT_ID, R.VIEW_FILENAME,                                         ');
-      SQL.Add(' 	     SUBJECT_DATA = '''', MAIL_BODY_DATA = ''''                                           ');
-      SQL.Add(' FROM SZMAIN_INS M JOIN SZACBIF_INS A                                                        ');
-      SQL.Add('   ON M.DEPT_CODE = A.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.ACC_NO   = A.ACC_NO                                                                 ');
-      SQL.Add(' JOIN SZREPIF_INS R                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = R.REPORT_CODE                                                          ');
-      SQL.Add(' JOIN SZREPID_INS D                                                                          ');
-      SQL.Add('   ON M.REPORT_CODE = D.REPORT_CODE                                                          ');
-      SQL.Add(' LEFT OUTER JOIN SUUSER_TBL U                                                                ');
-      SQL.Add('   ON M.DEPT_CODE = U.DEPT_CODE                                                              ');
-      SQL.Add('   AND M.EMP_NO   = U.USER_ID                                                                ');
-      SQL.Add(' WHERE M.DEPT_CODE = ''' + gvDeptCode + '''                                                  ');
-      SQL.Add('   AND M.JOB_DATE  = ''' + ParentForm.JobDate + '''                                          ');
-      SQL.Add('   AND (NOT EXISTS (SELECT 1                                                                 ');
-      SQL.Add('                    FROM SZFAXDE_INS F                                                       ');
-      SQL.Add('                    WHERE M.DEPT_CODE = F.DEPT_CODE                                          ');
-      SQL.Add('                      AND M.ACC_NO = F.ACC_NO)                                               ');
-      SQL.Add('   AND NOT EXISTS (SELECT 1                                                                  ');
-      SQL.Add('                   FROM SZMELDE_INS E                                                        ');
-      SQL.Add('                   WHERE M.DEPT_CODE = E.DEPT_CODE                                           ');
-      SQL.Add('                     AND M.ACC_NO = E.ACC_NO))                                               ');
-      SQL.Add(' AND SUBSTRING(M.JOB_TIME, 1, 4) >= ''' + Trim(DRMaskEdit_Time.Text) + '''                   ');
-
-      if DRUserDblCodeCombo_Emp.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.EMP_NO = ''' + DRUserDblCodeCombo_Emp.Code + ''' ');
-      end;
-
-      if DRUserDblCodeCombo_Acc.Code <> '전체' then
-      begin
-        SQL.ADd(' AND M.ACC_NO = ''' + DRUserDblCodeCombo_Acc.Code + ''' ');
-      end;
-    end;
-
-    SQL.Add(' ORDER BY SEND_TYPE, M.ACC_NO, M.PRD_NO, M.BLC_NO, R.REPORT_CODE  ');
+    SQL.Add(' ORDER BY M.EMP_ID, M.JOB_TIME, M.ACC_NO, R.REPORT_CODE');
 
     try
 //SQL.SaveToFile('C:\전송대상.SQL');
@@ -7843,7 +6853,7 @@ begin
       SQL.Add('        SND.SENT_TIME, SND.MEDIA_NO, SND.CUR_TOT_SEQ_NO ');
       SQL.Add(' FROM SCFAXSND_TBL SND JOIN SZFAXSNT_INS SNT            ');
       SQL.Add(' ON SND.SND_DATE = SNT.SND_DATE                         ');
-      SQL.Add(' AND SND.CUR_TOT_SEQ_NO = SNT.CUR_TOT_SEQ_NO            '); 
+      SQL.Add(' AND SND.CUR_TOT_SEQ_NO = SNT.CUR_TOT_SEQ_NO            ');
       SQL.Add(' WHERE SND.SND_DATE   = ''' + gvCurDate + '''           ');
       SQL.Add(' AND   SND.TRADE_DATE = ''' + ParentForm.JobDate + '''  ');
       SQL.Add(' AND   SND.DEPT_CODE  = ''' + gvDeptCode + '''          ');
@@ -7864,15 +6874,15 @@ begin
 
       Close;
       SQL.Clear;
-      SQL.Add(' SELECT SND.SND_DATE, SND.STRT_TIME, SND.SENT_TIME,     ');
-      SQL.Add('        SNT.JOB_SEQ, SND.RCV_MAIL_ADDR                  ');
-      SQL.Add(' FROM SCMELSND_TBL SND JOIN SZMELSNT_INS SNT            ');
-      SQL.Add(' ON SND.SND_DATE = SNT.SND_DATE                         ');
-      SQL.Add(' AND SND.CUR_TOT_SEQ_NO = SNT.CUR_TOT_SEQ_NO            ');
-      SQL.Add(' WHERE SND.SND_DATE   = ''' + gvCurDate + '''           ');
-      SQL.Add(' AND   SND.TRADE_DATE = ''' + ParentForm.JobDate + '''  ');
-      SQL.Add(' AND   SND.DEPT_CODE  = ''' + gvDeptCode + '''          ');
-      
+      SQL.Add(' SELECT SND.SND_DATE, SND.STRT_TIME, SND.SENT_TIME,        ');
+      SQL.Add('        SNT.JOB_SEQ, SND.RCV_MAIL_ADDR, SND.CUR_TOT_SEQ_NO ');
+      SQL.Add(' FROM SCMELSND_TBL SND JOIN SZMELSNT_INS SNT               ');
+      SQL.Add(' ON SND.SND_DATE = SNT.SND_DATE                            ');
+      SQL.Add(' AND SND.CUR_TOT_SEQ_NO = SNT.CUR_TOT_SEQ_NO               ');
+      SQL.Add(' WHERE SND.SND_DATE   = ''' + gvCurDate + '''              ');
+      SQL.Add(' AND   SND.TRADE_DATE = ''' + ParentForm.JobDate + '''     ');
+      SQL.Add(' AND   SND.DEPT_CODE  = ''' + gvDeptCode + '''             ');
+
       Try
 //SQL.SaveToFile('C:\E-MAIL서버전송시간.SQL');      
          gf_ADOQueryOpen(ADOQuery_Snd);
@@ -7890,59 +6900,40 @@ begin
   end;
 
   // Sorting 들어가야 됨
+  SndList.Sort(SndListCompare);
   Result := True;
 end;
 
 function TForm_SCFH8801_SND.fn_QueryToSntList: Boolean;
-//var
-//  SntItem: pTSnt;
+var
+  CommandText: string;
+  SntItem: pTSnt;
 begin
   Result := False;
   ClearSnTList;
 
-  { with ADODataSet_Snt do
+   with ADOQuery_Snt do
   begin
     Close;
-   CommandText :=
-            '(Select fa.ACC_NO, fa.SUB_ACC_NO, ACC_NAME = ac.ACC_NAME_KOR, '
-          + '    ac.CLIENT, '
-          + '    fs.FAX_TLX_GBN, fs.RCV_COMP_KOR, fs.NAT_CODE, fs.MEDIA_NO, '
-          + '    fi.REPORT_TYPE, fi.DIRECTION, fi.TXT_UNIT_INFO, fs.CUR_TOT_SEQ_NO, fs.SEND_TIME, '
-          + '    fs.SENT_TIME, fs.DIFF_TIME, fi.TOTAL_PAGES, fs.SEND_PAGE, fs.BUSY_RESND_CNT, '
-          + '    fs.RSP_FLAG, fs.ERR_CODE, fs.EXT_MSG, ac.MGR_NAME, ac.SUB_DEPT_NAME, ac.PGMAC_YN, ac.ACC_ATTR, '
-          + '    ac.FUND_CODE, ac.FUND_NAME_KOR, ' //@@
-          + '    ac.IDENTIFICATION, fs.OPR_ID, fs.OPR_TIME '
-          + ' From SCFAXSND_TBL fs, SCFAXIMG_TBL fi, SCFAXACT_TBL fa, '
-          + '      SEACBIF_TBL ac '
-          + ' Where fs.SND_DATE      = ''' + gvCurDate    + ''' '   // 당일자 전송
-          + '   and fs.FROM_PARTY_ID = ''' + gvMyPartyID  + ''' '
-          + '   and fs.DEPT_CODE = ''' + gvDeptCode  + ''' '
-          + '   and fi.SEC_TYPE      = ''' + gcSEC_EQUITY + ''' '
-          + '   and fs.SND_DATE   = fi.SND_DATE    '
-          + '   and fs.TRADE_DATE = fi.TRADE_DATE  '
-          + '   and fs.DEPT_CODE  = fi.DEPT_CODE   '
-          + '   and fs.IDX_SEQ_NO = fi.IDX_SEQ_NO  '
-          + '   and fs.SND_DATE   = fa.SND_DATE    '
-          + '   and fs.DEPT_CODE  = fa.DEPT_CODE   '
-          + '   and fs.IDX_SEQ_NO = fa.IDX_SEQ_NO  '
-          + '   and fs.DEPT_CODE  = ac.DEPT_CODE   '
-          + '   and fa.ACC_NO     = ac.ACC_NO      '
-          + '   and fa.SUB_ACC_NO = ''''           '
-          + ' Order By fa.ACC_NO, fa.SUB_ACC_NO, fs.RCV_COMP_KOR, fs.FAX_TLX_GBN, '
-          + '          fs.NAT_CODE, fs.MEDIA_NO, fs.CUR_TOT_SEQ_NO ';
+    SQL.Clear;
+
+    // FAX
+
+
+    // E-mail
+
+
     Try
-      open;
+      gf_ADOQueryOpen(ADOQuery_Snt);
     Except
       on E : Exception do
       begin    // Database 오류
-         gf_ShowErrDlgMessage(Self.Tag, 9001, 'ADODataSet_Snt[AFax/Tlx]: ' + E.Message, 0);
-         gf_ShowMessage(MessageBar, mtError, 9001, 'ADODataSet_Snt[AFax/Tlx]'); //Database 오류
-         Exit;
+        gf_ShowErrDlgMessage(Self.Tag, 9001, 'ADOQuery_Snt[당일송신확인]: ' + E.Message, 0);
+        gf_ShowMessage(MessageBar, mtError, 9001, 'ADOQuery_Snt[당일송신확인]'); //Database 오류
+        Exit;
       end;
     End;
-
-
-  end;  }
+  end; 
 end;
 
 procedure TForm_SCFH8801_SND.DisplaySndList(DefSelectFlag: boolean);
@@ -7973,6 +6964,33 @@ begin
       // 미전송 대상만 그리드에 보이게
       if (bNotSend) and (SndItem.SendFlag) then Continue;
 
+      if DRRadioButton_SndType_FAX.Checked then
+      begin
+        if SndItem.SendType <> SND_TYPE_FAX then Continue;
+      end else if DRRadioButton_SndType_Email.Checked then
+      begin
+        if SndItem.SendType <> SND_TYPE_MAIL then Continue;
+      end else if DRRadioButton_SndType_None.Checked then
+      begin
+        if SndItem.SendType <> SND_TYPE_NONE then Continue;
+      end;
+
+      // 사번
+      if DRUserDblCodeCombo_Emp.Code <> '전체' then
+      begin
+        if SndItem.EmpID <> DRUserDblCodeCombo_Emp.Code then Continue;
+      end;
+
+      // 생성시간
+      if Copy(SndItem.JobTime, 1, 4) < Trim(DRMaskEdit_Time.Text) then Continue;
+
+      // 계좌번호
+      if DRUserDblCodeCombo_Acc.Code <> '전체' then
+      begin
+        if SndItem.AccNo <> DRUserDblCodeCombo_Acc.Code then Continue;
+      end;
+
+
       DisplaySndItem(SndItem);
     end;
 
@@ -7980,9 +6998,9 @@ begin
     begin
       RowCount := 2;
       Rows[1].Clear;
-      
+
       HintCell[iSndEmpIdx, 1]        := '';
-      HintCell[iSndAccNoIdx, 1]      := '';
+
       HintCell[SND_RPT_IDX, 1]       := '';
       HintCell[SND_REQ_TIME_IDX, 1]  := '';
       HintCell[SND_FIN_TIME_IDX, 1]  := '';
@@ -7999,11 +7017,81 @@ begin
 end;
 
 procedure TForm_SCFH8801_SND.DisplaySntList(DefSelectFlag: boolean);
+var
+  SntItem: pTSnt;
+  i, iRowCnt, iRow: Integer;
 begin
+  DRLabel_Snt.Caption := '>> 당일송신확인';
   with DRStrGrid_Snt do
   begin
+    // Display될 StrGrid의 RowCount 계산
+    iRow := 0;
+    for I := 0 to SntList.Count -1 do
+    begin
+      SntItem := SntList.Items[I];
 
+
+      if DRRadioButton_SntType_ALL.Checked then
+      begin
+        if (DRRadioButton_Prc_Sending.Checked) and      // 진행중
+           ((SntItem.RSPFlag = SNT_PRC_FIN) or
+            (SntItem.RSPFlag = SNT_PRC_CANC)) then Continue;
+
+        if (DRRadioButton_Prc_Error.Checked) and     // 오류내역
+           ((SntItem.RSPFlag <> SNT_PRC_FIN) or
+            (Trim(SntItem.ErrCode) = '')) then Continue;
+      end else if DRRadioButton_SntType_FAX.Checked then
+      begin
+        if SntItem.SendType = SND_TYPE_MAIL then continue;
+
+        if (DRRadioButton_Prc_Sending.Checked) and      // 진행중
+           ((SntItem.RSPFlag = SNT_PRC_FIN) or
+            (SntItem.RSPFlag = SNT_PRC_CANC)) then Continue;
+
+        if (DRRadioButton_Prc_Error.Checked) and     // 오류내역
+           ((SntItem.RSPFlag <> SNT_PRC_FIN) or
+            (Trim(SntItem.ErrCode) = '')) then Continue;
+      end else if DRRadioButton_SntType_Email.Checked then
+      begin
+        if SntItem.SendType = SND_TYPE_FAX then continue;
+
+        if (DRRadioButton_Prc_Sending.Checked) and      // 진행중
+           ((SntItem.RSPFlag = SNT_PRC_FIN) or
+            (SntItem.RSPFlag = SNT_PRC_CANC)) then Continue;
+
+        if (DRRadioButton_Prc_Error.Checked) and     // 오류내역
+           ((SntItem.RSPFlag <> SNT_PRC_FIN) or
+            (Trim(SntItem.ErrCode) = '')) then Continue;
+      end;
+
+      Inc(iRow);
+
+      SntItem.GridRowIdx := iRow;
+
+      if DefSelectFlag then
+        SntItem.Selected := bSntSelected;
+
+      DisplaySntItem(SntItem);  
+    end;  // end of for I
+
+    if iRowCnt <= 0 then   // Data 없는 경우
+    begin
+      RowCount := 2;
+      Rows[1].Clear;
+      HintCell[SNT_EMP_IDX, 1]       := '';
+      HintCell[SNT_DEST_NAME_IDX, 1] := '';
+      HintCell[SNT_DEST_IDX, 1]      := '';
+      HintCell[SNT_RPT_IDX, 1]       := '';
+      HintCell[SNT_PRC_IDX, 1]       := '';
+
+      Exit;
+    end else
+    begin
+      iRowCnt  := iRow;
+      RowCount := iRowCnt + 1;
+    end;
   end;
+  DRLabel_Snt.Caption := DRLabel_Snt.Caption + ' (' + IntToStr(iRowCnt) + ')';
 end;
 
 procedure TForm_SCFH8801_SND.DRPanel_SndTitleDblClick(Sender: TObject);
@@ -8055,25 +7143,28 @@ begin
   bSntOnlyViewFlag := not bSntOnlyViewFlag;
   bSndOnlyViewFlag := False;
   
-  if bSndOnlyViewFlag then // 전송대상 그리드만 보기
-    ChangeViewType(gcVIEW_SEND, DRPanel_TotPanel, DRPanel_Snd, DRPanel_Snt, DRSplitter_Tot)
+  if bSntOnlyViewFlag then // 당일송신확인만 보이기 
+    ChangeViewType(gcVIEW_SENT, DRPanel_TotPanel, DRPanel_Snd, DRPanel_Snt, DRSplitter_Tot)
   else // 전체 보기
     ChangeViewType(gcVIEW_ALL, DRPanel_TotPanel, DRPanel_Snd, DRPanel_Snt, DRSplitter_Tot)
 end;
 
 procedure TForm_SCFH8801_SND.ClearSndList;
 var
-   i, k : Integer;
-   SndItem : pTSnd;
-   FileItem: pTAttFile;
+  i, k : Integer;
+  SndItem : pTSnd;
+  FileItem: pTAttFile;
 begin
-   if not Assigned(SndList) then Exit;
-   for I := 0 to SndList.Count -1 do
-   begin
-      SndItem := SndList.Items[I];
+  if SndList.Count <= 0 then Exit;
+
+  for I := 0 to SndList.Count -1 do
+  begin
+    SndItem := SndList.Items[I];
+//  try
+    if SndItem.SendType = SND_TYPE_MAIL then
+    begin
       if Assigned(SndItem.MailName) then SndItem.MailName.Free;
       if Assigned(SndItem.MailAddr) then SndItem.MailAddr.Free;
-      if Assigned(SndItem.PSStringList) then SndItem.PSStringList.Free;
 
       if Assigned(SndItem.AttFileList) then
       begin
@@ -8084,16 +7175,57 @@ begin
         end;
         SndItem.AttFileList.Free;
       end;
-      Dispose(SndItem);
-   end;
-   SndList.Clear;
+    end;
+
+    if Assigned(SndItem.PSStringList) then SndItem.PSStringList.Free;
+//  except
+//    On E:Exception do
+//      Continue;
+//  end;
+
+    Dispose(SndItem);
+  end;
+
+  SndList.Clear;
 end;
 
 procedure TForm_SCFH8801_SND.ClearSnTList;
 var
-  i: Integer;
+  i, k : Integer;
+  SntItem : pTSnt;
+  FileItem: pTAttFile;
 begin
+  if SntList.Count <= 0 then Exit;
 
+  for I := 0 to SntList.Count -1 do
+  begin
+    SntItem := SntList.Items[I];
+//  try
+    if SntItem.SendType = SND_TYPE_MAIL then
+    begin
+      if Assigned(SntItem.MailName) then SntItem.MailName.Free;
+      if Assigned(SntItem.MailAddr) then SntItem.MailAddr.Free;
+
+      if Assigned(SntItem.AttFileList) then
+      begin
+        for K := 0 to  SntItem.AttFileList.Count -1 do
+        begin
+          FileItem := SntItem.AttFileList.Items[K];
+          Dispose(FileItem);
+        end;
+        SntItem.AttFileList.Free;
+      end;
+    end;
+
+//  except
+//    On E:Exception do
+//      Continue;
+//  end;
+
+    Dispose(SntItem);
+  end;
+
+  SntList.Clear;
 end;
 
 function TForm_SCFH8801_SND.fn_MakeColOrdCombo: Boolean;
@@ -8111,83 +7243,82 @@ begin
   Result := True;
 end;
 
-function TForm_SCFH8801_SND.fn_CreateMailFile(SndItem: pTSnd; CallFlag: boolean; JobDate: string): string;
+function TForm_SCFH8801_SND.fn_ChkMailRptFile(pSndItem: pTSnd; CallFlag: boolean; pJobDate: string): string;
 var
-  sPathName, sDirName, sFileName, sTmpStr: string;
+  sPathName, sDirName, sFileName, sSearchFileName, sTmpStr: string;
   iCnt: integer;
   SR: TSearchRec;
   SearchRec: boolean;
   StartTime: Double;
 begin
+  Result := '';
 
   StartTime := GetTickCount;
-  gf_Log('송수신 갱신 - MAIL_ID : ' + SndItem.ReportID + ' MailGroup : ' + SndITem.FullAccNo + ' Start');
-
+  gf_Log('송수신 갱신 - MAIL_ID : ' + pSndItem.ReportID + ' 계좌번호 : ' + pSndItem.FullAccNo + ' Start');
+  
   try
-    sPathNAme := '';
-    sFileName := '';
-    sDirName := '';
-    iCnt := 1;
-    Result := '';
+    sPathName       := '';
+    sFileName       := '';
+    sDirName        := '';
+    sSearchFileName := '';
 
+    iCnt   := 1;
 
-    // Tmp Dir 만들기
+    // 1. Tmp Dir 만들기 (gvDirTemp := C:\SettleNet\Client\Temp\)
     if not DirectoryExists(gvDirTemp) then if not CreateDir(gvDirTemp) then Exit;
 
-    // 사용자 디렉토리 생성
-    sDirName := gvDirUserData + SndItem.FullAccNo + '\'; // 사용자 디렉토리
+    // 2. 사용자 디렉토리 생성(gvDirUserData := C:\SettleNet\Client\UserData\)
+    sDirName := gvDirUserData + pSndItem.FullAccNo + '\'; // 사용자 디렉토리
 
+    // 3. 만들어질 파일명 리턴(sFileName := 출력화일명 - 계좌번호 - 생성일자 (- 순번))
+    sFileName := fn_MakeRptFileName(gvDirTemp, pSndItem.ReportCode, pSndItem.FullAccNo);
 
-    // 파일 이름만 Return
-    if fn_CreateEMailFile(SndItem.ReportID, gvDirTemp, gvDeptCode, JobDate,
-      SndITem.FullAccNo, sFileName, False) then
-    begin
-      sPathName := sFileName //경로명 포함해서
-    end else
-    begin
-      Result := '';
-      Exit;
-    end;
+    // 4. sPathName := C:\SettleNet\Client\Temp\파일명
+    sPathName := gvDirTemp + sFileName;
 
+    // 4. UserData 폴더에 sFileName의 파일 있는지 확인
     SearchRec := false;
     while True do
-    begin //UserData에 있는지 판단
-      sFileName := ExtractFileName(fnGetTokenStr(sPathName, gcSPLIT_MAILADDR, iCnt));
-      if Trim(sFileName) = '' then Break;
-      if FindFirst(sDirName + sFileName, faAnyFile, SR) = 0 then
+    begin
+      sSearchFileName := ExtractFileName(fnGetTokenStr(sPathName, gcSPLIT_MAILADDR, iCnt));
+      if Trim(sSearchFileName) = '' then Break;
+      if FindFirst(sDirName + sSearchFileName, faAnyFile, SR) = 0 then
         repeat
           begin
             Result := Result + sDirName + SR.Name + gcSPLIT_MAILADDR;
-//            SndItem.EditFlag := True;
             SearchRec := true;
           end;
         until FindNext(SR) <> 0;
       Inc(iCnt);
-    end; // end of While
+    end;
 
     FindClose(SR);
-    
+
     if IOResult <> 0 then // Error 발생
     begin
       Result := '';
       exit;
     end;
-   //UserData에 없으면.
+
+    // 5. UserData 폴더에 sFileName의 파일이 없으면 Temp 폴더에서 파일명 캐치한다.
     if not SearchRec then
     begin
-      if CallFlag then // Email Send시
+      // 5-1. 실제 이메일 전송시(CallFlag = True) Tmp 폴더에 첨부파일 생성하고,
+      //      Temp 경로 + 파일명 리턴한다.
+      if CallFlag then
       begin
-         // MailFile 생성
-        if fn_CreateEMailFile(SndItem.ReportID, gvDirTemp, gvDeptCode, JobDate,
-          SndITem.FullAccNo, sFileName, True) then
+        if fn_CreateMailRptFile(gvDirTemp, gvDeptCode, pJobDate, pSndItem.SendType,
+                             pSndItem.ReportID, pSndItem.JobSeq, sFileName, True) then
         begin
-          Result := sFileName
+          Result := sPathName;
         end else
         begin
           Result := '';
           Exit;
         end;
-      end else //Query시
+      // 5-2. 갱신, 파일 보기 등 이메일 전송 안하고 함수 호출할 때(CallFlag = False)
+      //      Temp 경로 + 파일명만 리턴한다.
+      end else
         Result := sPathName;
     end; // end of else
 
@@ -8199,24 +7330,22 @@ begin
 
     end;
 
-    gf_Log('송수신 갱신 - MAIL_ID : ' + SndItem.ReportID + ' MailGroup : ' + SndITem.FullAccNo + ' End');
+    gf_Log('송수신 갱신 - REPORT_ID   : ' + pSndItem.ReportID   + NL +
+           '            - REPORT_CODE : ' + pSndItem.ReportCode + NL +
+           '            - 계좌번호    : ' + pSndItem.FullAccNo  + ' End');
   end;
-
-
 end;
 
 //------------------------------------------------------------------------------
-//  [L.J.S] 2018.02.05 손봐야 되는 함수임
-//  EMail File 생성 Main Function
+//  [L.J.S] EMail File 생성 Main Function
 //------------------------------------------------------------------------------
-function TForm_SCFH8801_SND.fn_CreateEMailFile(pEMailFormId, pDirName, pDeptCode, pTradeDate: string;
-  pGrpName: string; var FileName: string; CreateFlag: boolean): boolean;
-
+function TForm_SCFH8801_SND.fn_CreateMailRptFile(pDirName, pDeptCode, pJobDate,
+                                                 pRptGbn, pReportCode: string; pJobSeq: Integer;
+                                                 pFileName: string; CreateFlag: boolean): boolean;
 type
-  // [L.J.S] 2018.02.05 수정해야됨 !!!! EMailFile 생성 Function Type - PDF:  
-  TCrePMailFunc = function(MainADOC: TADOConnection;
-    EmailID, DirName, DeptCode, TradeDate, OprUsrNo: string; pGrpName: string;
-    CreateFlag: boolean; FileName: PChar;
+  TCreRptMailFunc = function(MainADOC: TADOConnection;
+    DirName, DeptCode, JobDate, RptGbn, ReportCode, FileName: string;
+    JobSeq: Integer; CreateFlag: boolean;
     var ErrorNo: Integer; ExtMsg: PChar): boolean; StdCall;
 var
   DllHandle: THandle;
@@ -8224,24 +7353,20 @@ var
   iErrorNo: Integer;
   ExtMsgArr: array[0..1024] of Char;
   FileNameArr: array of Char;
-  CrePMailFunc: TCrePMailFunc;
+  CreRptMailFunc: TCreRptMailFunc;
   dt: DWORD;
 begin
-  FileName := ''; // Clear
   Result := True;
-
-  SetLength(FileNameArr, 100000);
 
   FillChar(ExtMsgArr, SizeOf(ExtMsgArr), #0);
 
-  // !!!!!!!!!! 수정해야 됨 !!!!!!!!!!!
-  sDllName := '크리스탈레포트 만드는 dll 파일명';
-  sFuncName := '안에 호출할 함수명';
+  sDllName := 'LIB_RPT_.DLL';
+  sFuncName := 'gf_LIB_RPT';
 
   dt := GetTickCount;
   DllHandle := LoadLibrary(pChar(sDllName));
   dt := GetTickCount - dt;
-  gf_Log('PDF LoadLibrary : ' + pEMailFormID + ' (' + IntToStr(dt) + ')');
+  gf_Log('PDF LoadLibrary : ' + pReportCode + ' (' + IntToStr(dt) + ')');
 
   if (DllHandle = HINSTANCE_ERROR) or (DllHandle = 0) then
   begin
@@ -8255,22 +7380,20 @@ begin
     try
       dt := GetTickCount;
 
-      @CrePMailFunc := GetProcAddress(DllHandle, pChar(sFuncName));
-      if @CrePMailFunc <> nil then
+      @CreRptMailFunc := GetProcAddress(DllHandle, pChar(sFuncName));
+      if @CreRptMailFunc <> nil then
       begin
-        if not CrePMailFunc(DataModule_SettleNet.ADOConnection_Main,
-          pEMailFormID, pDirName, pDeptCode, pTradeDate, gvOprUsrNo, pGrpName,
-          CreateFlag, PChar(FileNameArr), iErrorNo, ExtMsgArr) then
+        if not CreRptMailFunc(DataModule_SettleNet.ADOConnection_Main,
+          pDirName, pDeptCode, pJobDate, pRptGbn, pReportCode, pFileName,
+          pJobSeq, CreateFlag, iErrorNo, ExtMsgArr) then
         begin
           Result := False;
           gvErrorNo := iErrorNo;
           gvExtMsg := StrPas(ExtMsgArr);
-        end
-        else
-          FileName := StrPas(PChar(FileNameArr));
+        end;
       end;
       dt := GetTickCount - dt;
-      gf_Log('PDF CrePMailFunc : ' + pEMailFormID + ' (' + IntToStr(dt) + ')');
+      gf_Log('PDF CrePMailFunc : ' + pReportCode + ' (' + IntToStr(dt) + ')');
 
     except
       on E: Exception do
@@ -8311,7 +7434,11 @@ procedure TForm_SCFH8801_SND.DisplaySndItem(pSndItem: pTSnd);
 var
   iRow, iPreIdx, i: Integer;
   PreItem: pTSnd;
-  sPreEmpNo, sPreJobTime, sPreFullAccNo, sPreAccNo, sPreSndType, sPreDest: String;
+  sPreSndType, sPreDest: String;
+
+  sPreCol1, sPreCol2, sPreCol3: String;
+  sPostCol1, sPostCol2, sPostCol3, sPostCol4: String;
+
   sDest, sDestName: String;
 begin
   with DRStrGrid_Snd do
@@ -8320,111 +7447,175 @@ begin
     if iRow <= 0 then Exit; // List의 해당 Item은 Update되었으나 Display는 되지 않는 경우
 
     Rows[iRow].Clear;
-    HintCell[iSndEmpIdx, iRow]        := '';
-    HintCell[iSndAccNoIdx, iRow]      := '';
-    HintCell[SND_RPT_IDX, iRow]       := '';
-    HintCell[SND_REQ_TIME_IDX, iRow]  := '';
-    HintCell[SND_FIN_TIME_IDX, iRow]  := '';
+
+    HintCell[iSndEmpIdx, 1]        := '';
+    HintCell[SND_RPT_IDX, 1]       := '';
+    HintCell[SND_REQ_TIME_IDX, 1]  := '';
+    HintCell[SND_FIN_TIME_IDX, 1]  := '';
+
 
     if pSndItem.Selected then
       RowFont[iRow].Color := gcSelectItemColor
     else
       RowFont[iRow].Color := clBlack;
-
     SelectedFontColorRow[iRow] := RowFont[iRow].Color;
 
+    // 전송 구분
     if pSndItem.SendType = SND_TYPE_FAX then
     begin
       sDest := pSndItem.MediaNo;
       sDestname := pSndItem.MediaName;
+
+      CellFont[SND_TYPE_IDX, iRow].Color := RowFont[iRow].Color;
+      CellFont[SND_DEST_NAME_IDX, iRow].Color := RowFont[iRow].Color;
+      CellFont[SND_DEST_IDX, iRow].Color := RowFont[iRow].Color;
     end else if pSndItem.SendType = SND_TYPE_MAIL then
     begin
       sDest := pSndItem.FullMailAddr;
       sDestName := pSndItem.FullMailName;
+
+      CellFont[SND_TYPE_IDX, iRow].Color := RowFont[iRow].Color;
+      CellFont[SND_DEST_NAME_IDX, iRow].Color := RowFont[iRow].Color;
+      CellFont[SND_DEST_IDX, iRow].Color := RowFont[iRow].Color;
     end else if pSndItem.SendType = SND_TYPE_NONE then
     begin
       sDest := pSndItem.MediaNo;
       sDestname := pSndItem.MediaName;
+      
+      CellFont[SND_TYPE_IDX, iRow].Color := gcErrorColor;
+      CellFont[SND_DEST_NAME_IDX, iRow].Color := gcErrorColor;
+      CellFont[SND_DEST_IDX, iRow].Color := gcErrorColor;
     end;
-
-    sPreEmpNo      := '';
-    sPreJobTime    := '';
-    sPreFullAccNo  := '';
-    sPreAccNo      := '';
+    
     sPreSndType    := '';
     sPreDest       := '';
+
+    sPreCol1  := '';
+    sPreCol2  := '';
+    sPreCol3  := '';
+
+    sPostCol1 := '';
+    sPostCol2 := '';
+    sPostCol3 := '';
+    sPostCol4 := '';
 
     iPreIdx := fn_GetSndListIdx(iRow-1);
 
     if iPreIdx > -1 then
     begin
       PreItem            := SndList.Items[iPreIdx];
-      sPreEmpNo          := PreItem.EmpNo;
-      sPreJobTime        := PreItem.JobTime;
-      sPreFullAccNo      := PreItem.FullAccNo;
-      sPreACcNo          := PreItem.AccNo;
       sPreSndType        := PreItem.SendType;
 
+      case iSndColOpt of
+        // 사번 - 생성시간 - 계좌번호 - 계좌명
+        0: begin
+          sPreCol1  := PreItem.EmpID;
+          sPreCol2  := gf_FormatTime(PreItem.JobTime);
+          sPreCol3  := PreItem.FullAccNo;
+
+          sPostCol1 := pSndItem.EmpID;
+          sPostCol2 := gf_FormatTime(pSndItem.JobTime);
+          sPostCol3 := pSndItem.FullAccNo;
+          sPostCol4 := pSndItem.AccName;
+        end;
+
+        // 생성시간 - 계좌번호 - 계좌명
+//        1: begin
+//          sPreCol1  :=
+//          sPreCol2  :=
+//          sPreCol3  :=
+//
+//          sPostCol1 :=
+//          sPostCol2 :=
+//          sPostCol3 :=
+//          sPostCol4 :=
+//        end;
+
+        // 계좌번호 - 계좌명 - 생성시간
+//        2: begin
+//          sPreCol1  :=
+//          sPreCol2  :=
+//          sPreCol3  :=
+//
+//          sPostCol1 :=
+//          sPostCol2 :=
+//          sPostCol3 :=
+//          sPostCol4 :=
+//        end;
+      end;
+
       if sPresndType = SND_TYPE_FAX then sPreDest := PreItem.MediaNo
-      else if sPresndType = SND_TYPE_FAX then sPreDest := PreItem.FullMailAddr
+      else if sPresndType = SND_TYPE_MAIL then sPreDest := PreItem.FullMailAddr
       else if sPresndType = SND_TYPE_NONE then sPreDest := PreItem.MediaNo;
+    end else begin
+      case iSndColOpt of
+        // 사번 - 생성시간 - 계좌번호 - 계좌명
+        0: begin
+          sPostCol1 := pSndItem.EmpID;
+          sPostCol2 := gf_FormatTime(pSndItem.JobTime);
+          sPostCol3 := pSndItem.FullAccNo;
+          sPostCol4 := pSndItem.AccName;
+        end;
+
+        // 생성시간 - 계좌번호 - 계좌명
+//        1: begin
+//          sPostCol1 :=
+//          sPostCol2 :=
+//          sPostCol3 :=
+//          sPostCol4 :=
+//        end;
+
+        // 계좌번호 - 계좌명 - 생성시간
+//        2: begin//
+//          sPostCol1 :=
+//          sPostCol2 :=
+//          sPostCol3 :=
+//          sPostCol4 :=
+//        end;
+      end;
     end;
 
-    case iSndColOpt of
-      // 사번 - 생성시간 - 계좌번호 - 계좌명
-      0 : begin
-        if (sPreEmpNo <> pSndItem.EmpNo) then
+    if (sPreCol1 <> sPostCol1) then
+    begin
+      Cells[SND_COL1_IDX, iRow]      := sPostCol1;
+      Cells[SND_COL2_IDX, iRow]      := sPostCol2;
+      Cells[SND_COL3_IDX, iRow]      := sPostCol3;
+      Cells[SND_COL4_IDX, iRow]      := sPostCol4;
+      Cells[SND_TYPE_IDX, iRow]      := pSndItem.SendType;
+      Cells[SND_DEST_NAME_IDX, iRow] := sDestName;
+      Cells[SND_DEST_IDX, iRow]      := sDest;
+    end else
+    begin
+      if (sPreCol2 <> sPostCol2) then
+      begin
+        Cells[SND_COL1_IDX, iRow]      := sPostCol1;
+        Cells[SND_COL2_IDX, iRow]      := sPostCol2;
+        Cells[SND_COL3_IDX, iRow]      := sPostCol3;
+        Cells[SND_COL4_IDX, iRow]      := sPostCol4;
+        Cells[SND_TYPE_IDX, iRow]      := pSndItem.SendType;
+        Cells[SND_DEST_NAME_IDX, iRow] := sDestName;
+        Cells[SND_DEST_IDX, iRow]      := sDest;
+      end else begin
+        if (sPreCol3 <> sPostCol3) then
         begin
-          Cells[iSndEmpIdx, iRow]        := pSndItem.EmpNo;
-          Cells[iSndJobTimeIdx, iRow]    := pSndItem.JobTime;
-          Cells[iSndAccNoIdx, iRow]      := pSndItem.FullAccNo;
-          Cells[iSndAccNameIdx, iRow]    := pSndItem.AccName;
+          Cells[SND_COL3_IDX, iRow]      := sPostCol3;
+          Cells[SND_COL4_IDX, iRow]      := sPostCol4;
           Cells[SND_TYPE_IDX, iRow]      := pSndItem.SendType;
           Cells[SND_DEST_NAME_IDX, iRow] := sDestName;
           Cells[SND_DEST_IDX, iRow]      := sDest;
         end else
         begin
-          if (sPreJobTime <> pSndItem.JobTime) then
+          if (sPreDest <> sDest) then
           begin
-            Cells[iSndJobTimeIdx, iRow]    := pSndItem.JobTime;
-            Cells[iSndAccNoIdx, iRow]      := pSndItem.FullAccNo;
-            Cells[iSndAccNameIdx, iRow]    := pSndItem.AccName;
             Cells[SND_TYPE_IDX, iRow]      := pSndItem.SendType;
             Cells[SND_DEST_NAME_IDX, iRow] := sDestName;
             Cells[SND_DEST_IDX, iRow]      := sDest;
-          end else begin
-            if (sPreFullAccNo <> pSndItem.FullAccNo) then
-            begin
-              Cells[iSndAccNoIdx, iRow]      := pSndItem.FullAccNo;
-              Cells[iSndAccNameIdx, iRow]    := pSndItem.AccName;
-              Cells[SND_TYPE_IDX, iRow]      := pSndItem.SendType;
-              Cells[SND_DEST_NAME_IDX, iRow] := sDestName;
-              Cells[SND_DEST_IDX, iRow]      := sDest;
-            end else
-            begin
-              if (sPreDest <> sDest) then
-              begin
-                Cells[SND_TYPE_IDX, iRow]      := pSndItem.SendType;
-                Cells[SND_DEST_NAME_IDX, iRow] := sDestName;
-                Cells[SND_DEST_IDX, iRow]      := sDest;
-              end;
-            end;
           end;
         end;
       end;
-
-      // 생성시간 - 계좌번호 - 계좌명
-      1 : begin
-
-      end;
-
-      // 계좌번호 - 계좌명 - 생성시간
-      2 : begin
-
-      end;
     end;
 
-    HintCell[iSndEmpIdx, iRow]        := pSndItem.EmpNo + ' ' + pSndItem.EmpName;
+    HintCell[iSndEmpIdx, iRow]        := pSndItem.EmpID + ' ' + pSndItem.EmpName;
     HintCell[SND_DEST_NAME_IDX, iRow] := sDestname;
     HintCell[SND_DEST_IDX, iRow]      := sDest;
     HintCell[SND_RPT_IDX, iRow]       := pSndItem.ReportCode + ' ' + pSndItem.ReportName;
@@ -8436,11 +7627,10 @@ begin
     // 보고서 서식
     Cells[SND_RPT_IDX, iRow] := pSndItem.ReportName;
 
-
     // 요청시간, 완료시간
     if pSndItem.SendFlag then
     begin
-      if pSndItem.CancFlag then   // 전송 후 취소
+      if pSndItem.CancFlag then // 전송 후 취소
       begin
         Cells[SND_REQ_TIME_IDX, iRow] := gwRSPCancel;
         CellFont[SND_REQ_TIME_IDX, iRow].Color := gcRSPCancColor;
@@ -8448,7 +7638,7 @@ begin
         Cells[SND_FIN_TIME_IDX, iRow] := gwRSPCancel;
         CellFont[SND_FIN_TIME_IDX, iRow].Color := gcRSPCancColor;
       end
-      else if pSndItem.CurTotSeqNo > 0 then   // 정상 전송
+      else if pSndItem.CurTotSeqNo > 0 then // 정상 전송
       begin
         Cells[SND_REQ_TIME_IDX, iRow] := gf_FormatTime(pSndItem.StartTime);
         CellFont[SND_REQ_TIME_IDX, iRow].Color := RowFont[iRow].Color;
@@ -8456,15 +7646,15 @@ begin
         Cells[SND_FIN_TIME_IDX, iRow] := gf_FormatTime(pSndItem.EndTime);
         CellFont[SND_FIN_TIME_IDX, iRow].Color := RowFont[iRow].Color;
       end
-      else   // Error
+      else // Error
       begin
         Cells[SND_REQ_TIME_IDX, iRow] := gwRSPError;
         HintCell[SND_REQ_TIME_IDX, iRow]       := pSndItem.ErrMsg;
-        CellFont[SND_REQ_TIME_IDX, iRow].Color := gcErrorColor;;
+        CellFont[SND_REQ_TIME_IDX, iRow].Color := gcErrorColor;
 
         Cells[SND_FIN_TIME_IDX, iRow] := gwRSPError;
         HintCell[SND_FIN_TIME_IDX, iRow]       := pSndItem.ErrMsg;
-        CellFont[SND_FIN_TIME_IDX, iRow].Color := gcErrorColor;;
+        CellFont[SND_FIN_TIME_IDX, iRow].Color := gcErrorColor;
       end;
       SelectedFontColorCell[SND_REQ_TIME_IDX, iRow] := CellFont[SND_REQ_TIME_IDX, iRow].Color;
       SelectedFontColorCell[SND_FIN_TIME_IDX, iRow] := CellFont[SND_FIN_TIME_IDX, iRow].Color;
@@ -8473,16 +7663,191 @@ begin
     // 전송제외
     if pSndItem.ExceptFlag then
       Cells[SND_EXP_IDX, iRow] := 'Y';
+
+
   end;
 end;
 
-
-
 procedure TForm_SCFH8801_SND.DisplaySntItem(pSntItem: pTSnt);
+  function GetSntResult(pRSPFlag: Integer): string;
+  begin
+    case pRSPFlag of
+      SNT_PRC_WAIT: Result := gwRSPWaiting;
+      SNT_PRC_SEND: Result := gwRSPSend;
+      SNT_PRC_BUSY: Result := gwRSPBusy;
+      SNT_PRC_CANC: Result := gwRSPCancel;
+      SNT_PRC_SENT: Result := gwRSPSent;
+      SNT_PRC_FIN:  Result := gwRSPFinish
+    else
+      Result := '';
+    end;
+  end;
+
+  function GetRSPFlagColor(pRSPFlagName: string): TColor;
+  begin
+    if pRSPFlagName = gwRSPWaiting then Result := gcRSPWaitColor
+    else if pRSPFlagName = gwRSPSend then Result := gcRSPSendColor
+    else if pRSPFlagName = gwRSPSent then Result := gcRSPSentColor
+    else if pRSPFlagName = gwRSPBusy then Result := gcRSPBusyColor
+    else if pRSPFlagName = gwRSPFinish then Result := gcRSPFinColor
+    else if pRSPFlagName = gwRSPCancel then Result := gcRSPCancColor
+    else if pRSPFlagName = gwRSPError then Result := gcErrorColor
+    else Result := clBlack;
+  end;
+
+var
+  iRow, iPreIdx, i: Integer;
+  PreItem: pTSnt;
+  sPreSndType, sPreDest: String;
+
+  sPreEmpID, sPreFullAccNo: String;
+  sPostEmpID, sPostFullAccNo, sPostAccName: String;
+
+  sDest, sDestName, sPage, sResnd: String;
 begin
   with DRStrGrid_Snt do
   begin
+    iRow := pSntItem.GridRowIdx;
+    if iRow <= 0 then Exit; // List의 해당 Item은 Update되었으나 Display는 되지 않는 경우
 
+    Rows[iRow].Clear;
+
+    HintCell[SNT_EMP_IDX, iRow]       := '';
+    HintCell[SNT_DEST_NAME_IDX, iRow] := '';
+    HintCell[SNT_DEST_IDX, iRow]      := '';
+    HintCell[SNT_RPT_IDX, iRow]       := '';
+    HintCell[SNT_PRC_IDX, iRow]       := '';
+
+    sPreSndType    := '';
+    sPreDest       := '';
+    sPreEmpID      := '';
+    sPreFullAccNo  := '';
+    sPostEmpID     := '';
+    sPostFullAccNo := '';
+    sPostAccName   := '';
+    sPage          := '';
+    sResnd         := '';
+
+    if pSntItem.Selected then
+      RowFont[iRow].Color := gcSelectItemColor
+    else
+      RowFont[iRow].Color := clBlack;
+    SelectedFontColorRow[iRow] := RowFont[iRow].Color;
+
+    // 선택 여부
+    if pSntItem.Selected then
+      Cells[SELECT_IDX, iRow] := gcSEND_MARK;
+
+    // 전송 구분
+    if pSntItem.SendType = SND_TYPE_FAX then
+    begin
+      sDest := pSntItem.MediaNo;
+      sDestname := pSntItem.MediaName;
+
+      sResnd := FormatFloat('##', pSntItem.BusyResndCnt);
+      sPage  := IntToStr(pSntItem.SendPageCnt) + '/' + IntToStr(pSntItem.TotalPageCnt);
+    end else if pSntItem.SendType = SND_TYPE_MAIL then
+    begin
+      sDest := pSntItem.FullMailAddr;
+      sDestName := pSntItem.FullMailName;
+
+      sResnd := '';
+      sPage  := '';
+    end;
+
+    CellFont[SNT_TYPE_IDX, iRow].Color := RowFont[iRow].Color;
+    CellFont[SNT_DEST_NAME_IDX, iRow].Color := RowFont[iRow].Color;
+    CellFont[SNT_DEST_IDX, iRow].Color := RowFont[iRow].Color;
+    
+
+    iPreIdx := fn_GetSntListIdx(iRow-1);
+
+    if iPreIdx > -1 then
+    begin
+      PreItem            := SntList.Items[iPreIdx];
+      sPreSndType        := PreItem.SendType;
+
+      // 사번 - 생성시간 - 계좌번호 - 계좌명
+      sPreEmpID  := PreItem.EmpID;
+      sPreFullAccNo  := PreItem.FullAccNo;
+
+      sPostEmpID := pSntItem.EmpID;
+      sPostFullAccNo := pSntItem.FullAccNo;
+      sPostAccName := pSntItem.AccName;
+
+      if sPresndType = SND_TYPE_FAX then sPreDest := PreItem.MediaNo
+      else if sPresndType = SND_TYPE_MAIL then sPreDest := PreItem.FullMailAddr;
+    end else begin
+      // 사번 - 생성시간 - 계좌번호 - 계좌명
+      sPostEmpID := pSntItem.EmpID;
+      sPostFullAccNo := pSntItem.FullAccNo;
+      sPostAccName := pSntItem.AccName;
+    end;
+
+    if (sPreEmpID <> sPostEmpID) then
+    begin
+      Cells[SNT_EMP_IDX, iRow]       := sPostEmpID;
+      Cells[SNT_ACC_NO_IDX, iRow]    := sPostFullAccNo;
+      Cells[SNT_ACC_NAME_IDX, iRow]  := sPostAccName;
+      Cells[SNT_TYPE_IDX, iRow]      := pSntItem.SendType;
+      Cells[SNT_DEST_NAME_IDX, iRow] := sDestName;
+      Cells[SNT_DEST_IDX, iRow]      := sDest;
+    end else
+    begin
+      if (sPreFullAccNo <> sPostFullAccNo) then
+      begin
+        Cells[SNT_EMP_IDX, iRow]       := sPostEmpID;
+        Cells[SNT_ACC_NO_IDX, iRow]    := sPostFullAccNo;
+        Cells[SNT_ACC_NAME_IDX, iRow]  := sPostAccName;
+        Cells[SNT_TYPE_IDX, iRow]      := pSntItem.SendType;
+        Cells[SNT_DEST_NAME_IDX, iRow] := sDestName;
+        Cells[SNT_DEST_IDX, iRow]      := sDest;
+      end else
+      begin
+        if (sPreDest <> sDest) then
+        begin
+          Cells[SNT_TYPE_IDX, iRow]      := pSntItem.SendType;
+          Cells[SNT_DEST_NAME_IDX, iRow] := sDestName;
+          Cells[SNT_DEST_IDX, iRow]      := sDest;
+        end;
+      end;
+    end;
+
+    HintCell[SNT_EMP_IDX, iRow]       := pSntItem.EmpID + ' ' + pSntItem.EmpName;
+    HintCell[SNT_DEST_NAME_IDX, iRow] := sDestname;
+    HintCell[SNT_DEST_IDX, iRow]      := sDest;
+
+    // Process
+    Cells[SNT_FIN_TIME_IDX, iRow] := GetSntResult(pSntItem.RSPFlag);
+
+    // Error 확인 후 Error Message 출력
+    if Trim(pSntItem.ErrCode) <> '' then
+    begin
+      if pSntItem.RSPFlag = SNT_PRC_FIN then
+         Cells[SNT_PRC_IDX, iRow] := gwRSPError;
+
+      if (pSntItem.RSPFlag = SNT_PRC_FIN) or
+         (pSntItem.RSPFlag = SNT_PRC_BUSY) then
+         HintCell[SNT_PRC_IDX, iRow] := pSntItem.ErrMsg + Chr(13) + '(' + pSntItem.ExtMsg + ')';
+    end;
+    CellFont[SNT_PRC_IDX, iRow].Color := GetRSPFlagColor(Cells[SNT_PRC_IDX, iRow]);
+    SelectedFontColorCell[SNT_PRC_IDX, iRow] := CellFont[SNT_PRC_IDX, iRow].Color;
+
+    // 보고서 서식
+    Cells[SNT_RPT_IDX, iRow] := pSntItem.ReportName;
+    HintCell[SNT_RPT_IDX, iRow] := pSntItem.ReportCode + ' ' + pSntItem.ReportName;
+
+    // 시작시간
+    Cells[SNT_REQ_TIME_IDX, iRow] := gf_FormatTime(copy(pSntItem.StartTime, 1, 6));
+
+    // 완료시간
+    Cells[SNT_FIN_TIME_IDX, iRow] := gf_FormatTime(copy(pSntItem.EndTime, 1, 6));
+
+    // 재전송
+    Cells[SNT_RESEND_IDX, iRow]   := sResnd;
+
+    // Page
+    Cells[SNT_FIN_TIME_IDX, iRow] := sPage;
   end;
 end;
 
@@ -8493,27 +7858,27 @@ begin
   case iSndColOpt of
     // 사번 - 생성시간 - 계좌번호 - 계좌명
     0: begin
-      iSndEmpIdx     := SND_NO1_IDX;
-      iSndJobTimeIdx := SND_NO2_IDX;
-      iSndAccNoIdx   := SND_NO3_IDX;
-      iSndAccNameIdx := SND_NO4_IDX;
+      iSndEmpIdx     := SND_COL1_IDX;
+      iSndJobTimeIdx := SND_COL2_IDX;
+      iSndAccNoIdx   := SND_COL3_IDX;
+      iSndAccNameIdx := SND_COL4_IDX;
     end;
 
     // 생성시간 - 계좌번호 - 계좌명
     1: begin
-      iSndEmpIdx     := SND_NO1_IDX;
-      iSndJobTimeIdx := SND_NO2_IDX;
-      iSndAccNoIdx   := SND_NO3_IDX;
-      iSndAccNameIdx := SND_NO4_IDX;
+      iSndEmpIdx     := SND_COL1_IDX;
+      iSndJobTimeIdx := SND_COL2_IDX;
+      iSndAccNoIdx   := SND_COL3_IDX;
+      iSndAccNameIdx := SND_COL4_IDX;
 
     end;
 
     // 계좌번호 - 계좌명 - 생성시간
     2: begin
-      iSndEmpIdx     := SND_NO1_IDX;
-      iSndAccNoIdx   := SND_NO2_IDX;
-      iSndAccNameIdx := SND_NO3_IDX;
-      iSndJobTimeIdx := SND_NO4_IDX;
+      iSndEmpIdx     := SND_COL1_IDX;
+      iSndAccNoIdx   := SND_COL2_IDX;
+      iSndAccNameIdx := SND_COL3_IDX;
+      iSndJobTimeIdx := SND_COL4_IDX;
     end;
   end;
 end;
@@ -8524,5 +7889,384 @@ begin
   SetColOpt;
   DefSetSndStrGrid;
 end;
+procedure TForm_SCFH8801_SND.DRRadioButton_SndType_Click(
+  Sender: TObject);
+begin
+  inherited;
+  FThreadHoldFlag := true;
+  RefreshListNGrid(True, False);
+  FThreadHoldFlag := false;
+end;
+
+procedure TForm_SCFH8801_SND.DRStrGrid_SndFiexedRowClick(Sender: TObject;
+  ACol: Integer);
+var //@@
+   i,iSndIdx : integer;
+   SelectedRect: TGridRect;
+   SndItem : pTSnd;
+begin
+  inherited;
+  if ACol = SELECT_IDX then
+  begin
+    bSndSelected := not (bSndSelected);  // toggle
+    if bSndSelected then
+      DRStrGrid_Snd.Cells[SELECT_IDX, 0] := gcSEND_MARK
+    else
+      DRStrGrid_Snd.Cells[SELECT_IDX, 0] := '';
+
+    SelectedRect := DRStrGrid_Snd.Selection; //@@
+    if SelectedRect.Bottom - SelectedRect.Top + 1 > 1 then //1개이상 multi 선택시
+    begin
+      for i := SelectedRect.Top to SelectedRect.Bottom do
+      begin
+        iSndIdx := GetSndListIdx(i);
+        if iSndIdx < 0 then continue;
+        SndItem := SndList.Items[iSndIdx];
+        SndItem.Selected := bSndSelected;
+        DisplaySndItem(SndItem);
+      end;
+    end
+    else //1개만 선택시
+      DisplaySndList(True); //@@ end
+  end
+  else  // Sorting
+  begin
+    Screen.Cursor := crHourGlass;
+    iSndSortIdx := ACol;
+    arrSndSortFlag[ACol] := not arrSndSortFlag[ACol];
+    SndList.Sort(SndListCompare);
+    DisplaySndList(False);
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+procedure TForm_SCFH8801_SND.DRStrGrid_SndMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+   ACol, ARow : Integer;
+   ScreenP : TPoint;
+   iSndIdx : Integer;
+   SndItem : pTSnd;
+begin
+   inherited;
+   DRStrGrid_Snd.MouseToCell(X, Y, ACol, ARow);
+   if (ARow <= 0) or (ACol < 0) then Exit;
+
+   iSndColIdx := ACol;
+   iSndRowIdx := ARow;
+
+   if Trim(DRStrGrid_Snd.Cells[SND_RPT_IDX, ARow]) = '' then
+      Exit;  // Data 없는 경우
+
+   if ((Button = mbLeft) and (ssCtrl in Shift))
+      or ((Button = mbLeft) and (ACol = SELECT_IDX)) then  // 전송 선택 클릭
+   begin
+      iSndIdx := GetSndListIdx(ARow);
+      if iSndIdx < 0 then
+      begin
+         gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
+         Exit;
+      end;
+      SndItem := SndList.Items[iSndIdx];
+      SndItem.Selected := not SndItem.Selected;
+
+      DisplaySndItem(SndItem);
+   end
+   else if Button = mbRight then
+   begin
+      gf_SelectStrGridRow(DRStrGrid_Snd, iSndRowIdx);
+
+      // Popup Menu 처리
+      iSndIdx := GetSndListIdx(ARow);
+      if iSndIdx < 0 then
+      begin
+         gf_ShowMessage(MessageBar, mtError, 1068, ''); //해당 정보를 읽어올 수 없습니다.
+         Exit;
+      end;
+      SndItem := SndList.Items[iSndIdx];
+
+      GetCursorPos(ScreenP);
+
+      if SndItem.SendType = SND_TYPE_FAX then
+        DRPopupMenu_SndFax.Popup(ScreenP.X, ScreenP.Y)
+      else if SndItem.SendType = SND_TYPE_MAIL then
+        DRPopupMenu_SndMail.Popup(ScreenP.X, ScreenP.Y)
+      else if SndItem.SendType = SND_TYPE_MAIL then
+        DRPopupMenu_SndNone.Popup(ScreenP.X, ScreenP.Y);
+   end;
+
+end;
+
+function TForm_SCFH8801_SND.GetSndListIdx(pGridRowIdx: Integer): Integer;
+var
+   I : Integer;
+   SndItem : pTSnd;
+begin
+   Result := -1;
+   if pGridRowIdx <= 0 then Exit;
+
+   for I := 0 to SndList.Count -1 do
+   begin
+      SndItem := SndList.Items[I];
+      if SndItem.GridRowIdx = pGridRowIdx then
+      begin
+         Result := I;
+         Break;
+      end;
+   end;  // end of for
+end;
+
+function TForm_SCFH8801_SND.fn_GetSntListIdx(pGridRowIdx: Integer): Integer;
+var
+   I : Integer;
+   SntItem : pTSnt;
+begin
+  Result := -1;
+  if pGridRowIdx <= 0 then Exit;
+
+  for I := 0 to SntList.Count -1 do
+  begin
+    SntItem := SntList.Items[I];
+    if SntItem.GridRowIdx = pGridRowIdx then
+    begin
+      Result := I;
+      Break;
+    end;
+  end;  // end of for
+end;
+
+function TForm_SCFH8801_SND.fn_SendFax(SndItemIdxList: TStringList): boolean;
+var
+  SndItem : pTSnd;
+  SndFmtItem  : TFAXTLXSendFormat;
+  ReportItem  : pTReportList;
+  AccExtInfo  : pTBACTrade;
+  ReportList  : TList;
+  I, J, K, iSndIdx, iTotPageCnt : Integer;
+  ErrFlag : boolean;
+  sSndFileName, sTmpFileName, sErrMsg : string;
+  sLogoPageNo, sTxtUnitInfo : string;
+  iReportIdx, iIdxSeqNo : Integer;
+  Starttime : string;
+begin
+  Result  := False;
+  ErrFlag := False;
+  //동일 수신처에 여러 레포트가 딸려온다.
+  if SndItemIdxList.Count <= 0 then Exit;
+
+  // 전송 데이터 Clear
+  for I := 0 to SndItemIdxList.Count -1 do
+  begin
+    iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
+    SndItem := SndList.Items[iSndIdx];
+    SndItem.SendFlag     := True;
+    SndItem.CancFlag     := False;
+    SndItem.CurTotSeqNo  := -1;
+    SndItem.ErrMsg       := '';
+  end; // end of for
+
+  iSndIdx := StrToInt(SndItemIdxList.Strings[0]); // 첫번째 Item (Because 수신처가 같기 때문)
+  SndItem := SndList.Items[iSndIdx];
+
+  SndFmtItem.sCurDate      := gvCurDate;
+  SndFmtItem.sFromPartyId  := gvMyPartyID;
+  SndFmtItem.sFaxTlxGbn    := gcSEND_FAX;
+  SndFmtItem.sRcvCompKor   := SndITem.MediaName;
+  SndFmtItem.sMediaNo      := SndITem.MediaNo;
+  SndFmtItem.sIntTelYn     := 'N';
+  SndFmtItem.sNatCode      := '';
+
+  // Report List 생성
+  ReportList := TList.Create;
+  if not Assigned(ReportList) then
+  begin
+    ErrFlag := True;
+    sErrMsg := gf_ReturnMsg(9004); // List 생성 오루
+    exit;
+  end;
+
+  //수신처에 하나에 대한 여러 보고서 List 생성
+  for I := 0 to SndItemIdxList.Count -1 do
+  begin
+    iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
+    SndItem := SndList.Items[iSndIdx];
+
+    // Report 파일 생성(이전에 동일한 레포트가 없었을 경우)
+    sTmpFileName := '';
+    sSndFileName := '';
+    sLogoPageNo  := '';
+    sTxtUnitInfo := '';
+    iTotPageCnt  := 0;
+
+    if SndItem.RIdxSeqNo <= 0 then //  동일 Img Idx가 없었을 경우
+    begin
+      // Report 생성 : sSndFileName 유일성 강조(계좌번호+부계좌번호)★☆
+      sSndFileName := gvDirTemp + 'FT' + gf_GetCurTime + SndITem.FullAccNo + IntToStr(I) + '.tmp'; //@@
+
+      // Report Export   계좌별 & 그룹별
+     { if not gf_Export_CRB_EI1_1(SndItem.ReportID, SndItem.RcvCompKor, SndItem.MediaNo, sSndFileName, ParentForm.JobDate,
+             SndItem.AccName, SndItem.AccGrpType, SndItem.ClientMgrName, SndItem.ClientTelNo, SndItem.ClientFaxNo,
+             SndItem.AccNoList, SndItem.PSList.PSStringList, SndItem.PSList.L_PSStringList, SndItem.PSList.R_PSStringList,
+             SndItem.InsertAmd, gvStampSignFlag, iTotPageCnt) then
+      begin
+        ErrFlag := True;
+        sErrMsg := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
+      end;      }
+      
+      if ErrFlag then // Error 발생
+      begin
+        for J := 0 to SndItemIdxList.Count -1 do
+        begin
+          iSndIdx := StrToInt(SndItemIdxList.Strings[J]);
+          SndITem := SndList.Items[iSndIdx];
+          SndITem.ErrMsg := sErrMsg;
+          DisplaySndItem(SndItem);
+        end; // end of for
+
+        if Assigned(ReportList) then gf_FreeReportList(ReportList);
+        DeleteFile(sSndFileName);
+        if Trim(sTmpFileName) <> '' then DeleteFile(sTmpFileName);
+        Exit;
+      end;
+    end;
+
+    New(ReportItem);
+    ReportList.Add(ReportItem);
+
+    // ReportList 정보
+    ReportItem.sSecCode      := gcSEC_FINANCIALINS;
+    ReportItem.sTradeDate    := ParentForm.JobDate;
+    ReportItem.sReportId     := SndITem.ReportId;
+    ReportItem.sDirection    := gf_GetReportDirection(SndITem.ReportId);
+    ReportItem.iTotalPageCnt := iTotPageCnt;
+    ReportItem.sReportType   := gf_GetReportType(SndItem.ReportID);
+    ReportItem.sLogoPageNo   := sLogoPageNo;
+    ReportItem.sTxtUnitInfo  := sTxtUnitInfo;
+    ReportItem.sFileName     := sSndFileName;
+    ReportItem.iCurTotSeqNo  := -1;                 // 초기화
+    ReportItem.iIdxSeqNo     := SndITem.RIdxSeqNo;  // 레포트이미지 Index
+    ReportItem.iExtFlag      := 1;                  // 계좌별
+
+    New(AccExtInfo);
+    ReportItem.tExtInfo      := AccExtInfo;
+
+    // 추가정보(계좌별)
+    AccExtInfo.sAccNo           := SndItem.AccNo;
+//    AccExtInfo.sSubAccNo        := SndItem.SubAccNo;
+//    AccExtInfo.dBuyExecAmt      := SndItem.BuyExecAmt;
+//    AccExtInfo.dSellExecAmt     := SndItem.SellExecAmt;
+//    AccExtInfo.dBuyComm         := SndItem.BuyComm;
+//    AccExtInfo.dSellComm        := SndItem.SellComm;
+//    AccExtInfo.dTotTax          := SndItem.TotTax;
+//    AccExtInfo.dNetAmt          := SndItem.NetAmt;
+
+  end; //end of for
+  // End of ReportList 생성 ---------------------------------------------------
+
+  // FaxTlx 내역 전송
+  Starttime := ''; // 전송시작시간을 받아옴.
+  Result := fnFaxDataSend(@SndFmtItem, ReportList, Starttime);
+
+
+  sErrMsg := '';
+  if Result = False then
+    sErrMsg := gf_ReturnMsg(gvErrorNo) + ' (' + gvExtMsg + ')';
+
+
+  // SndList Update & 화면 Display & 송신 확인 내역 추가
+  for I := 0 to SndItemIdxList.Count -1 do
+  begin
+    iSndIdx := StrToInt(SndItemIdxList.Strings[I]);
+    SndItem := SndList.Items[iSndIdx];
+
+    ReportItem := ReportList.Items[I];
+    SndItem.CurTotSeqNo  := ReportItem.iCurTotSeqNo;
+    SndItem.ErrMsg       := sErrMsg;
+    SndItem.StartTime    := Starttime;
+    SndItem.RIdxSeqNo    := ReportItem.iIdxSeqNo;
+    //DisplaySndItem(SndItem);  // 화면 Display
+
+    // 송신 확인 내역 추가
+    if Result = True then
+//       AddSntFaxTlxList(SndItem, ReportItem.iTotalPageCnt, ReportItem.sTxtUnitInfo);
+
+    // 동일레포트 Index 처리
+    if SndItem.ReportIdx > 0 then
+    begin
+      iReportIdx  := SndItem.ReportIdx;
+      iIdxSeqNo   := SndItem.RIdxSeqNo;
+      for K := 0 to SndList.Count - 1 do
+      begin
+        SndItem := SndList.Items[K];
+        if not SndItem.Selected then Continue;
+
+        if iReportIdx = SndItem.ReportIdx then
+            SndItem.RIdxSeqNo := iIdxSeqNo;
+      end;
+    end; // end of if
+
+    if Trim(ReportITem.sFileName) <> '' then
+    begin
+      if not DeleteFile(ReportITem.sFileName) then  //temp\지우기
+      begin
+         gf_log('can not delete file=' + ReportITem.sFileName);
+      end;
+    end;
+  end;
+  gf_FreeReportList(ReportList);
+  Result := True;
+end;
+
+function TForm_SCFH8801_SND.fn_MakeRptFileName(pDirName, pRptCode, pFullAccNo: string): string;
+var
+  SR: TSearchRec;
+  SearchRec: boolean;
+  sAddFileName, sFileName: string;
+  iCnt: integer;
+begin
+  with ADOQuery_temp do
+  begin
+    Close;
+    SQL.Clear;
+    SQL.Add('SELECT ADD_FILENAME FROM SZREPIF_INS WHERE REPORT_CODE = ''' + pRptCode + ''' ');
+
+    try
+      gf_ADOQueryOpen(ADOQuery_temp);
+    except
+      on E : Exception do
+      begin
+        gf_Log('Error!!! Rpt 보고서 파일명 가져오기 Report Code: ' + pRptCode + E.Message);
+        Exit;
+      end;
+    end;
+
+    iCnt      := 1;
+    SearchRec := False;
+    sAddFileName := Trim(FieldByName('ADD_FILENAME').AsString) + '-' +
+                    pFullAccNo + '-' + ParentForm.JobDate;
+
+    // 1. 파일명 찾기
+    while True do
+    begin
+      SearchRec:= False;
+      if SysUtils.FindFirst(pDirName + sFileName + '.pdf', faAnyFile, SR) = 0 then
+      begin
+        repeat
+          // 2. 찾으면 순번(-1, 2, 3 ...) 붙이기
+          sFileName := sAddFileName + '-' + IntToStr(iCnt);
+          SearchRec := True;
+          Inc(iCnt);
+        until SysUtils.FindNext(SR) <> 0;
+      end;
+
+      if not SearchRec then break;
+    end;
+    FindClose(SR);
+
+    // 3. 마지막 순번 붙으면 Result 값으로 내보내기
+    Result := sFileName;
+  end;
+end;
+
 end.
 

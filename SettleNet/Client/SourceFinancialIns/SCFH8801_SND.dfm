@@ -1,7 +1,7 @@
 inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
   Tag = 2801
-  Left = 3032
-  Top = 475
+  Left = 3080
+  Top = 468
   Caption = 'Form_SCFH8801_SND'
   ClientHeight = 785
   ClientWidth = 1305
@@ -270,7 +270,6 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
           Height = 248
           ColCount = 12
           Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowSelect, goThumbTracking]
-          OnDblClick = DRStrGrid_SndFaxTlxDblClick
           OnMouseUp = DRStrGrid_SndFaxTlxMouseUp
           ColWidths = (
             14
@@ -411,7 +410,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417934337)
+            417522689)
         end
         inherited DRPanel_SndFaxTlxTitle: TDRPanel
           Width = 1297
@@ -1046,7 +1045,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417934337)
+            417522689)
         end
       end
     end
@@ -1387,7 +1386,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
               -12
               #44404#47548#52404
               0
-              417819649)
+              417408001)
           end
         end
         inherited DRPanel_SntEmail: TDRPanel
@@ -1728,7 +1727,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
               -12
               #44404#47548#52404
               0
-              417819649)
+              417408001)
           end
         end
       end
@@ -2265,7 +2264,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313)
+            417521665)
         end
         object DRPanel_SntTitle: TDRPanel
           Left = 0
@@ -3214,28 +3213,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid2: TDRStringGrid
           Tag = 2
@@ -3577,28 +3576,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid3: TDRStringGrid
           Tag = 3
@@ -3940,28 +3939,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid4: TDRStringGrid
           Tag = 4
@@ -4303,28 +4302,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid5: TDRStringGrid
           Tag = 5
@@ -4666,28 +4665,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid6: TDRStringGrid
           Tag = 6
@@ -5029,28 +5028,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid7: TDRStringGrid
           Tag = 7
@@ -5392,28 +5391,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid8: TDRStringGrid
           Tag = 8
@@ -5755,28 +5754,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid9: TDRStringGrid
           Tag = 9
@@ -6118,28 +6117,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStringGrid11: TDRStringGrid
           Tag = 9
@@ -6481,28 +6480,28 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
+            417521665
             5
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             6
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312
+            417521664
             7
             29
             255
             -12
             #44404#47548#52404
             0
-            417933312)
+            417521664)
         end
         object DRStrGrid_Snd: TDRStringGrid
           Left = 0
@@ -6611,7 +6610,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313)
+            417521665)
         end
       end
     end
@@ -6935,7 +6934,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
   object DRPopupMenu_SndNone: TDRPopupMenu
     AutoHotkeys = maManual
     AutoPopup = False
-    Left = 296
+    Left = 440
     Top = 176
     object MenuItem13: TMenuItem
       Tag = 7

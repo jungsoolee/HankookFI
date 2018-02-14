@@ -1,6 +1,6 @@
 inherited Form_SCF_SND: TForm_SCF_SND
-  Left = 307
-  Top = 221
+  Left = 230
+  Top = 166
   Caption = 'Form_SCF_SND'
   ClientWidth = 829
   KeyPreview = True
@@ -591,7 +591,7 @@ inherited Form_SCF_SND: TForm_SCF_SND
             -12
             #44404#47548#52404
             0
-            417522689)
+            417934337)
         end
         object DRPanel_SndFaxTlxTitle: TDRPanel
           Left = 0
@@ -1068,7 +1068,7 @@ inherited Form_SCF_SND: TForm_SCF_SND
             -12
             #44404#47548#52404
             0
-            417522689)
+            417934337)
         end
       end
     end
@@ -1332,7 +1332,7 @@ inherited Form_SCF_SND: TForm_SCF_SND
               -12
               #44404#47548#52404
               0
-              417408001)
+              417819649)
           end
         end
         object DRPanel_SntEmail: TDRPanel
@@ -1671,7 +1671,7 @@ inherited Form_SCF_SND: TForm_SCF_SND
               -12
               #44404#47548#52404
               0
-              417408001)
+              417819649)
           end
         end
       end

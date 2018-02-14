@@ -1,7 +1,7 @@
 inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
   Tag = 2801
-  Left = 728
-  Top = 552
+  Left = 472
+  Top = 115
   Caption = 'Form_SCFH8801_SND'
   ClientHeight = 785
   ClientWidth = 1305
@@ -272,7 +272,6 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
           Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowSelect, goThumbTracking]
           OnDblClick = DRStrGrid_SndFaxTlxDblClick
           OnMouseUp = DRStrGrid_SndFaxTlxMouseUp
-          OnFiexedRowClick = DRStrGrid_SndFaxTlxFiexedRowClick
           ColWidths = (
             14
             118
@@ -1283,7 +1282,6 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             Height = 248
             Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking]
             OnMouseUp = DRStrGrid_SndMailMouseUp
-            OnFiexedRowClick = DRStrGrid_SndMailFiexedRowClick
             ColWidths = (
               14
               147
@@ -2798,6 +2796,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             ParentFont = False
             TabOrder = 1
             TabStop = True
+            OnClick = DRRadioButton_SndType_Click
           end
           object DRRadioButton_SndType_FAX: TDRRadioButton
             Left = 538
@@ -2812,6 +2811,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             Font.Style = []
             ParentFont = False
             TabOrder = 2
+            OnClick = DRRadioButton_SndType_Click
           end
           object DRRadioButton_SndType_Email: TDRRadioButton
             Left = 590
@@ -2826,6 +2826,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             Font.Style = []
             ParentFont = False
             TabOrder = 3
+            OnClick = DRRadioButton_SndType_Click
           end
           object DRCheckBox_NotSnd: TDRCheckBox
             Left = 296
@@ -2854,12 +2855,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             Font.Style = []
             ParentFont = False
             TabOrder = 4
+            OnClick = DRRadioButton_SndType_Click
           end
           object DRComboBox_SndColOrder: TDRComboBox
             Left = 1016
             Top = 2
             Width = 192
             Height = 20
+            Enabled = False
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -6511,7 +6514,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
           ColCount = 11
           DefaultRowHeight = 18
           FixedCols = 0
-          RowCount = 37
+          RowCount = 2
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -6522,6 +6525,8 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
+          OnMouseUp = DRStrGrid_SndMouseUp
+          OnFiexedRowClick = DRStrGrid_SndFiexedRowClick
           AllowFixedRowClick = True
           TopRow = 1
           LeftCol = 0
@@ -6551,291 +6556,51 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             1
             1
             '975001'
-            1
-            13
-            '975023'
-            1
-            17
-            '123456'
-            1
-            29
-            '123456'
             2
             0
             #49373#49457#49884#44036
             2
             1
             '11:24:00'
-            2
-            13
-            '11:30:24'
-            2
-            17
-            '12:00:03'
-            2
-            29
-            '13:10:48'
             3
             0
             #44228#51340#48264#54840
             3
             1
             '12345678'
-            3
-            7
-            '12345678-12'
-            3
-            13
-            '00000000-00'
-            3
-            17
-            '99999999-99-9999'
-            3
-            29
-            '88888888'
             4
             0
             #44228#51340#47749
             4
             1
             #45936#51060#53552#47196#46300'_'#44228#51340'_1'
-            4
-            7
-            #45936#51060#53552#47196#46300'_'#44228#51340'_1_12'
-            4
-            13
-            #44221#45224#51008#54665'_'#44228#51340'_1'
-            4
-            17
-            #45936#51060#53552#47196#46300'_'#44592#44288'_9'
-            4
-            29
-            #49888#54620#51008#54665'_'#44228#51340
             5
             0
             #51204#49569#44396#48516
             5
             1
             'FAX'
-            5
-            3
-            'FAX'
-            5
-            5
-            'E-mail'
-            5
-            7
-            'FAX'
-            5
-            9
-            'FAX'
-            5
-            12
-            'FAX'
-            5
-            13
-            'E-mail'
-            5
-            15
-            'FAX'
-            5
-            17
-            'E-mail'
-            5
-            20
-            'Fax'
-            5
-            23
-            'Fax'
-            5
-            26
-            'Fax'
-            5
-            29
-            #48120#46321#47197
             6
             0
             #49688#49888#52376#47749
             6
             1
             #51064#44592#54596
-            6
-            3
-            #50976#44305#51652
-            6
-            5
-            #51064#44592#54596';'#50976#44305#51652';'
-            6
-            7
-            #51064#44592#54596
-            6
-            9
-            #50976#44305#51652
-            6
-            12
-            #51060#51221#49688
-            6
-            13
-            #51060#51221#49688';'
-            6
-            15
-            #51060#51221#49688
-            6
-            17
-            #51064#44592#54596';'#50976#44305#51652';'#51060#51221#49688
-            6
-            20
-            #51064#44592#54596
-            6
-            23
-            #50976#44305#51652
-            6
-            26
-            #51060#51221#49688
-            6
-            29
-            #48120#46321#47197
             7
             0
             #49688#49888#52376
             7
             1
             '0000-0000'
-            7
-            3
-            '1234-5678'
-            7
-            5
-            'in@dr.com;yk@dr.com;'
-            7
-            6
-            #13#10
-            7
-            7
-            '0000-0000'
-            7
-            9
-            '1234-5678'
-            7
-            12
-            '9999-9999'
-            7
-            13
-            'js@naver.com'
-            7
-            15
-            '9999-9999'
-            7
-            17
-            'in@dr.com;yk@dr.com;js@naver.com;'
-            7
-            20
-            '0000-0000'
-            7
-            23
-            '1234-5678'
-            7
-            26
-            '9999-9999'
-            7
-            29
-            #48120#46321#47197
             8
             0
             #48372#44256#49436#49436#49885
             8
             1
             #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            2
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            3
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            4
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            5
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            6
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            7
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            8
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            9
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            10
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#47588#46020#49888#52397
-            8
-            12
-            #51092#44256#51613#47749#49436
-            8
-            13
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            14
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            15
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            16
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            17
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            18
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            19
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            20
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            21
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            22
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            23
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            24
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            25
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            26
-            #44552#50997#49345#54408' '#54788#44552#47588#49688' '#54869#51064#49436' '#50808#54868'RP '#49888#44508#47588#49688
-            8
-            27
-            'RP'#49688#51061#44552#44228#49328#49436' RP'
-            8
-            28
-            #50896#52380#51669#49688#50689#49688#51613
-            8
-            29
-            #51092#44256#51613#47749#49436
-            8
-            30
-            #50896#52380#51669#49688#50689#49688#51613
             9
             0
             #49436#48260#51204#49569
-            9
-            5
-            #13#10
             10
             0
             #51204#49569#51228#50808)
@@ -6846,35 +6611,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
             -12
             #44404#47548#52404
             0
-            417933313
-            5
-            29
-            255
-            -12
-            #44404#47548#52404
-            0
-            417933312
-            6
-            29
-            255
-            -12
-            #44404#47548#52404
-            0
-            417933312
-            7
-            29
-            255
-            -12
-            #44404#47548#52404
-            0
-            417933312)
+            417933313)
         end
       end
     end
   end
   inherited DRSaveDialog_GridExport: TDRSaveDialog
-    Left = 312
-    Top = 192
+    Left = 616
+    Top = 216
   end
   object ADOQuery_Snd: TADOQuery
     Connection = DataModule_SettleNet.ADOConnection_Main
@@ -6891,12 +6635,12 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
       Tag = 1
       AutoHotkeys = maManual
       Caption = #51204#49569'('#47926#51020')'
-      OnClick = PopupSndFaxTlxClick
+      OnClick = PopupSndClick
     end
     object PopupSndFax2: TMenuItem
       Tag = 2
       Caption = #51204#49569'('#44060#48324')'
-      OnClick = PopupSndFaxTlxClick
+      OnClick = PopupSndClick
     end
     object N1: TMenuItem
       Tag = -1
@@ -6906,12 +6650,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
       Tag = 3
       AutoHotkeys = maManual
       Caption = #51204#49569#51228#50808
-      OnClick = PopupSndFaxTlxClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndFax4: TMenuItem
       Tag = 4
       Caption = #51204#49569#51228#50808' '#52712#49548
-      OnClick = PopupSndFaxTlxClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndFaxTlx33: TMenuItem
       Tag = -1
@@ -6920,12 +6666,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndFax5: TMenuItem
       Tag = 5
       Caption = 'P.S '#51077#47141
-      OnClick = PopupSndFaxTlxClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndFax6: TMenuItem
       Tag = 6
       Caption = 'P.S '#49325#51228
-      OnClick = PopupSndFaxTlxClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object N4: TMenuItem
       Tag = -1
@@ -6935,18 +6683,20 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
       Tag = 7
       AutoHotkeys = maManual
       Caption = #48120#47532#48372#44592
-      OnClick = PopupSndFaxTlxClick
+      OnClick = PopupSndClick
     end
     object PopupSndFax8: TMenuItem
       Tag = 8
       AutoHotkeys = maManual
       Caption = #51064#49604
-      OnClick = PopupSndFaxTlxClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndFax9: TMenuItem
       Tag = 9
       Caption = 'Export'
-      OnClick = PopupSndFaxTlxClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object N2: TMenuItem
       Tag = -1
@@ -6955,7 +6705,7 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndFax10: TMenuItem
       Tag = 10
       Caption = #49688#49888#52376' '#51221#48372' '#51312#54924
-      OnClick = PopupSndFaxTlxClick
+      OnClick = PopupSndClick
     end
   end
   object ADOQuery_Snt: TADOQuery
@@ -7096,12 +6846,12 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndMail1: TMenuItem
       Tag = 1
       Caption = #51204#49569'('#47926#51020')'
-      OnClick = PopupSndMailClick
+      OnClick = PopupSndClick
     end
     object PopupSndMail2: TMenuItem
       Tag = 2
-      Caption = #47926#51020'('#44060#48324')'
-      OnClick = PopupSndMailClick
+      Caption = #51204#49569'('#44060#48324')'
+      OnClick = PopupSndClick
     end
     object N5: TMenuItem
       Tag = -1
@@ -7110,12 +6860,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndMail11: TMenuItem
       Tag = 11
       Caption = #47700#49884#51648' '#48372#44592'('#47926#51020')'
-      OnClick = PopupSndMailClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndMail12: TMenuItem
       Tag = 12
       Caption = #47700#49884#51648' '#48372#44592'('#44060#48324')'
-      OnClick = PopupSndMailClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object MenuItem1: TMenuItem
       Tag = -1
@@ -7124,12 +6876,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndMail3: TMenuItem
       Tag = 3
       Caption = #51204#49569#51228#50808
-      OnClick = PopupSndMailClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndMail4: TMenuItem
       Tag = 4
       Caption = #51204#49569#51228#50808' '#52712#49548
-      OnClick = PopupSndMailClick
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object MenuItem5: TMenuItem
       Tag = -1
@@ -7138,10 +6892,14 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndMail5: TMenuItem
       Tag = 5
       Caption = 'P.S '#51077#47141
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndMail6: TMenuItem
       Tag = 6
       Caption = 'P.S '#49325#51228
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object N3: TMenuItem
       Tag = -1
@@ -7150,14 +6908,19 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndMail7: TMenuItem
       Tag = 7
       Caption = #48120#47532#48372#44592
+      OnClick = PopupSndClick
     end
     object PopupSndMail8: TMenuItem
       Tag = 8
       Caption = #51064#49604
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object PopupSndMail9: TMenuItem
       Tag = 9
       Caption = 'Export'
+      Enabled = False
+      OnClick = PopupSndClick
     end
     object N8: TMenuItem
       Tag = -1
@@ -7166,6 +6929,32 @@ inherited Form_SCFH8801_SND: TForm_SCFH8801_SND
     object PopupSndMail10: TMenuItem
       Tag = 10
       Caption = #49688#49888#52376' '#51312#54924' '#54868#47732
+      OnClick = PopupSndClick
+    end
+  end
+  object DRPopupMenu_SndNone: TDRPopupMenu
+    AutoHotkeys = maManual
+    AutoPopup = False
+    Left = 296
+    Top = 176
+    object MenuItem13: TMenuItem
+      Tag = 7
+      AutoHotkeys = maManual
+      Caption = #48120#47532#48372#44592
+      OnClick = PopupSndClick
+    end
+    object MenuItem14: TMenuItem
+      Tag = 8
+      AutoHotkeys = maManual
+      Caption = #51064#49604
+      Enabled = False
+      OnClick = PopupSndClick
+    end
+    object MenuItem15: TMenuItem
+      Tag = 9
+      Caption = 'Export'
+      Enabled = False
+      OnClick = PopupSndClick
     end
   end
 end
